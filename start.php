@@ -20,14 +20,11 @@ function more_solr_init()
 
     $action_url = elgg_get_plugins_path() . "more_solr/actions/";
     elgg_register_action("options", "{$action_url}options.php");
-    elgg_register_action("getUsers", "{$action_url}getUsers.php");
     elgg_register_action('more_solr/settings/save', dirname(__FILE__) . '/actions/plugin_settings.php', 'admin');
 
     elgg_register_page_handler('more_solr', 'more_page_handler');
-    elgg_register_page_handler('getUsers', 'getUsers');
 
     elgg_register_js('jsStyle', elgg_get_simplecache_url('css/admin/more_solr_style.js'));
-    elgg_register_js('resultHandler', elgg_get_simplecache_url('handlers/resultHandler.js'));
 }
 
 function more_page_handler($page) {
@@ -46,14 +43,4 @@ function more_page_handler($page) {
     }
     return true;
 
-}
-
-function getUsers(){
-    $users = elgg_get_entities(array(
-            'types' => 'user',
-            'limit' => 0,)
-    );
-    echo json_encode($users);
-
-    return true;
 }
