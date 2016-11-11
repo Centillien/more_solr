@@ -3,9 +3,18 @@ elgg_load_js('jsStyle');
 
 $title = elgg_echo('search:results:title');
 
-$search = [$_GET['search'], $_GET['synonym'], $_GET['category'], $_GET['tags'], $_GET['user'], $_GET['results'], $_GET['sort']];
+$search =  array('search' => $_GET['search'],
+            'synonym' => $_GET['synonym'],
+            'category' => $_GET['category'],
+            'tags' => $_GET['tags'],
+            'users' => $_GET['user'],
+            'results' => $_GET['results'],
+            'sort' => $_GET['sort']);
 
-switch($search[6]){
+$user = preg_split("/[:]+/", $search['users']);
+$search['users'] = end($user);
+
+switch($search['sort']){
     case 'timeon':
             $sort = 'time_created ASC';
         break;
@@ -23,6 +32,8 @@ switch($search[6]){
         break;
 }
 
+
+// If cat isset search only those subtypes!!!!!!!!!!!!!!!!!!TODO:this
 $results = elgg_get_entities(array(
     'order_by' => $sort,
     'limit' => 0,
@@ -78,9 +89,8 @@ $content .= '<ul class="elgg-list advancedResults">';
         $description = $result->description;
         $description = strip_tags($description);
 
-        ResultsToShow($search, $result);
         // view
-        if(1){
+        if(ResultsToShow($search, $result)){
             $content .=  "
             <li class='advancedItem'>
                 <a href='/".$subtype."/view/".$guid."'>
@@ -130,7 +140,10 @@ elgg_require_js('resultHandler');
  *  $results contains current item result
  */
 function ResultsToShow (&$search, &$result) {
-    if($search->search == $result->title){
+    if(strpos($result->title, $search['search']) !== false ||
+        strpos($result->description, $search['search']) !== false ||
+        strpos($result->owner_guid, $search['users']) !== false)
+    {
         return true;
     }
 }

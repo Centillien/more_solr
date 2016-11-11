@@ -1,9 +1,9 @@
-/**
- * Created by niels on 9/11/16.
- */
 <?php
 
-?>
-<script type="text/javascript">
-
-</script>
+function getUsers() {
+    $users = elgg_get_entities(array(
+        'types' => 'user',
+        'limit' => 0,
+    ));
+    return $users;
+}

@@ -21,15 +21,18 @@ $syn_bar = elgg_view('input/select', array(
     ),
 ));
 // TODO: usersettings default
-
+$arr = [];
+$arr['all'] = 'all';
+$types = get_registered_entity_types();
+foreach($types['object'] as $type){
+    print_r($types['object'][$type]);
+    $arr["$type"] = $type;
+}
 $category = elgg_echo('options:category');
 $cat_bar = elgg_view('input/select', array(
     'name' => 'category',
-    'options_values' => array(
-        'list of cats' => elgg_echo('cat1'),
-    ),
+    'options_values' => $arr,
 ));
-// TODO: autotype + dropdown + make array list of cats
 
 $sort = elgg_echo('options:sort');
 $sort_bar = elgg_view('input/select', array(
@@ -54,6 +57,7 @@ $tags_bar = elgg_view('input/text', array(
 $user = elgg_echo('options:user');
 $user_bar = elgg_view('input/text', array(
     'name' => 'user',
+    'id' => 'userAuto',
     'class' => 'elgg-input-thin',
     'placeholder' => elgg_echo('options:user:placeholder'),
 ));
@@ -72,13 +76,29 @@ $results_bar = elgg_view('input/select', array(
     ),
 ));
 
+$userArray = [];
+$userResults = elgg_get_entities(array(
+        'types' => 'user',
+        'limit' => 0,)
+);
+foreach($userResults as $userResult){
+    array_push($userArray, $userResult->name.":".$userResult->guid);
+}
+
+$json = json_encode(utf8ize($userArray), JSON_UNESCAPED_UNICODE);
+$kappa_bar = elgg_view('input/text', array(
+    'name' => 'getUsers',
+    'class' => 'hiddenUsers',
+    'value' => $json,
+));
+
+
 $submit = elgg_view('input/submit', array('value' => elgg_echo('search:go')));
-
 $optionsTitle = elgg_echo('options:title');
-
 $settings = "
 <div class='popup-body'>
         <h1>$optionsTitle</h1>
+        $last
     <table>
      <thead>
       <tr>
@@ -117,9 +137,21 @@ $settings = "
       <tr>
         <td><label>$results</label></td>
         <td>$results_bar</td>
+        $kappa_bar
       </tr>
     </table>
     $submit
 </div>";
 
 echo $settings;
+
+function utf8ize($d) {
+    if (is_array($d)) {
+        foreach ($d as $k => $v) {
+            $d[$k] = utf8ize($v);
+        }
+    } else if (is_string ($d)) {
+        return utf8_encode($d);
+    }
+    return $d;
+}
