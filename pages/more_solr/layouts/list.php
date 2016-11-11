@@ -11,8 +11,6 @@ $search =  array('search' => $_GET['search'],
             'results' => $_GET['results'],
             'sort' => $_GET['sort']);
 
-$user = preg_split("/[:]+/", $search['users']);
-$search['users'] = end($user);
 
 switch($search['sort']){
     case 'timeon':
@@ -32,12 +30,12 @@ switch($search['sort']){
         break;
 }
 
-
-// If cat isset search only those subtypes!!!!!!!!!!!!!!!!!!TODO:this
-$results = elgg_get_entities(array(
-    'order_by' => $sort,
-    'limit' => 0,
-));
+// TODO:BUG'cannot cat search without setting a search term'
+$params = array('type' => 'object', 'subtype' => ELGG_ENTITIES_ANY_VALUE, 'order_by' => $sort, 'limit' => 0);
+if ($search['category'] != 'all') {
+    $params['subtype'] = $search['category'];
+}
+$results = elgg_get_entities($params);
 
 $sort = elgg_echo('options:sort');
 $sort_bar = elgg_view('input/select', array(

@@ -6,9 +6,9 @@ $sort = get_input('sort');
 $tags = get_input('tags');
 $user = get_input('user');
 $results = get_input('results');
-if($category != 'all'){
-    $category = get_subtype_id('object', $category);
-}
+
+$user = preg_split("/[:]+/", $user);
+$user = end($user);
 
 forward(elgg_get_site_url() . "more_solr/list" .
     "?search=" . $search .
