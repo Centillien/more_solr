@@ -63,6 +63,7 @@ return array(
     'options:search:placeholder' => "Search",
     'options:tags:placeholder' => "tags",
     'options:user:placeholder' => "User",
+    'options:date:placeholder' => "Date",
 
     /**
      *  Resultpage

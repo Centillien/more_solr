@@ -63,6 +63,7 @@ return array(
     'options:search:placeholder' => "Zoeken",
     'options:tags:placeholder' => "Termen",
     'options:user:placeholder' => "Gebruiker",
+    'options:date:placeholder' => "Datum",
 
     /**
      *  Resultpage

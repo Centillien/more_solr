@@ -27,7 +27,7 @@ sort.change(function () {
     var url = window.location.toString();
     console.log(url);
     console.log(changeto);
-    window.location = url.replace(/sort=.+&/g, 'sort='+ changeto +'&');
+    window.location = url.replace(/sort=(.|\n)*?&/g, 'sort='+ changeto +'&');
 });
 
 if(!$( "#advancedResults").find("li" ).length) {

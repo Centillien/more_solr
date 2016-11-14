@@ -63,6 +63,12 @@ $user_bar = elgg_view('input/text', array(
 ));
 
 $date = elgg_echo('options:date');
+$date_bar = elgg_view('input/date', array(
+    'name' => 'date',
+    'id' => 'date',
+    'class' => 'elgg-input-thin',
+    'placeholder' => elgg_echo('options:date:placeholder'),
+));
 // TODO: elgg datepicker
 
 $results = elgg_echo('options:results');
@@ -132,7 +138,7 @@ $settings = "
       </tr>
       <tr>
         <td><label>$date</label></td>
-        <td></td>
+        <td>$date_bar</td>
       </tr>
       <tr>
         <td><label>$results</label></td>

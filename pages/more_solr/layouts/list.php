@@ -9,7 +9,8 @@ $search =  array('search' => $_GET['search'],
             'tags' => $_GET['tags'],
             'users' => $_GET['user'],
             'results' => $_GET['results'],
-            'sort' => $_GET['sort']);
+            'sort' => $_GET['sort'],
+            'date' => $_GET['date']);
 
 
 switch($search['sort']){
@@ -29,9 +30,10 @@ switch($search['sort']){
             $sort = 'time_created DESC';
         break;
 }
-
+// Userpicker, Elgg heeft een datepicker
 // TODO:BUG'cannot cat search without setting a search term'
-$params = array('type' => 'object', 'subtype' => ELGG_ENTITIES_ANY_VALUE, 'order_by' => $sort, 'limit' => 0);
+$params = array('type' => 'object', 'subtype' => ELGG_ENTITIES_ANY_VALUE,
+                'order_by' => $sort, 'limit' => 0);
 if ($search['category'] != 'all') {
     $params['subtype'] = $search['category'];
 }
@@ -120,7 +122,6 @@ $content .= "
     <div id='noItems'><h3>".elgg_echo('search:results:none')."</h3></div>
 </ul>
 </div>";
-
 $params = array(
     'content' => $content,
     'sidebar' => $sidebar,
@@ -140,7 +141,8 @@ elgg_require_js('resultHandler');
 function ResultsToShow (&$search, &$result) {
     if(strpos($result->title, $search['search']) !== false ||
         strpos($result->description, $search['search']) !== false ||
-        strpos($result->owner_guid, $search['users']) !== false)
+        strpos($result->owner_guid, $search['users']) !== false
+        )
     {
         return true;
     }
