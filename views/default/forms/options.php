@@ -20,13 +20,13 @@ $syn_bar = elgg_view('input/select', array(
         'no' => elgg_echo('option:no'),
     ),
 ));
-// TODO: usersettings default
+
 $arr = [];
-$arr['all'] = 'all';
-$types = get_registered_entity_types();
-foreach($types['object'] as $type){
-    print_r($types['object'][$type]);
-    $arr["$type"] = $type;
+$pizza  = elgg_get_plugin_setting('cat_list', 'more_solr');
+$pieces = explode(",", $pizza);
+foreach($pieces as $piece){
+    print_r($types['object'][$piece]);
+    $arr["$piece"] = elgg_echo($piece);
 }
 $category = elgg_echo('options:category');
 $cat_bar = elgg_view('input/select', array(
@@ -34,15 +34,17 @@ $cat_bar = elgg_view('input/select', array(
     'options_values' => $arr,
 ));
 
+$arr = [];
+$pizza  = elgg_get_plugin_setting('sort_list', 'more_solr');
+$pieces = explode(",", $pizza);
+foreach($pieces as $piece){
+    print_r($types['object'][$piece]);
+    $arr["$piece"] = elgg_echo('option:'.$piece);
+}
 $sort = elgg_echo('options:sort');
 $sort_bar = elgg_view('input/select', array(
     'name' => 'sort',
-    'options_values' => array(
-        'timeon' => elgg_echo('option:timeon'), // Time old - new
-        'timeno' => elgg_echo('option:timeno'), // Time new - old
-        'abcaz' => elgg_echo('option:abcaz'),   // Alphabet A - Z
-        'abcza' => elgg_echo('option:abcza'),   // Alphabet Z - A
-    ),
+    'options_values' => $arr,
 ));
 // TODO: default user setting
 
@@ -69,17 +71,19 @@ $date_bar = elgg_view('input/date', array(
     'class' => 'elgg-input-thin',
     'placeholder' => elgg_echo('options:date:placeholder'),
 ));
-// TODO: elgg datepicker
 
+$pizza  = elgg_get_plugin_setting('res_am', 'more_solr');
+$carr = [];
+$arr = [$pizza - 30, $pizza - 10, $pizza, $pizza + 10, $pizza + 30];
+$farr = array_filter($arr, function ($x) { return $x > 0; });
+foreach($farr as $f){
+    print_r($types['object'][$f]);
+    $carr["$f"] = elgg_echo($f);
+}
 $results = elgg_echo('options:results');
 $results_bar = elgg_view('input/select', array(
     'name' => 'results',
-    'options_values' => array(
-        'timeon' => elgg_echo('option:timeon'), // Time old - new
-        'timeno' => elgg_echo('option:timeno'), // Time new - old
-        'abcaz' => elgg_echo('option:abcaz'),   // Alphabet A - Z
-        'abcza' => elgg_echo('option:abcza'),   // Alphabet Z - A
-    ),
+    'options_values' => $carr,
 ));
 
 $userArray = [];
@@ -98,13 +102,11 @@ $kappa_bar = elgg_view('input/text', array(
     'value' => $json,
 ));
 
-
 $submit = elgg_view('input/submit', array('value' => elgg_echo('search:go')));
 $optionsTitle = elgg_echo('options:title');
 $settings = "
 <div class='popup-body'>
         <h1>$optionsTitle</h1>
-        $last
     <table>
      <thead>
       <tr>
@@ -115,36 +117,65 @@ $settings = "
       <tr>
         <td><label>$search</label></td>
         <td>$search_bar</td>
-      </tr>
+      </tr>";
+$setting = elgg_get_plugin_setting('syn_en', 'more_solr');
+if($setting != 'no'){
+    $settings .= "
       <tr>
         <td><label>$synonym</label></td>
         <td>$syn_bar</td>
-      </tr>
+      </tr>";
+}
+$setting = elgg_get_plugin_setting('cat_en', 'more_solr');
+if($setting != 'no'){
+    $settings .= "
       <tr>
         <td><label>$category</label></td>
         <td>$cat_bar</td>
-      </tr>
+      </tr>";
+}
+$setting = elgg_get_plugin_setting('sort_en', 'more_solr');
+if($setting != 'no'){
+    $settings .= "
       <tr>
         <td><label>$sort</label></td>
         <td>$sort_bar</td>
-      </tr>
+      </tr>";
+}
+$setting = elgg_get_plugin_setting('tags_en', 'more_solr');
+if($setting != 'no'){
+    $settings .= "
       <tr>
         <td><label>$tags</label></td>
         <td>$tags_bar</td>
-      </tr>
+      </tr>";
+}
+$setting = elgg_get_plugin_setting('user_en', 'more_solr');
+if($setting != 'no'){
+    $settings .= "
       <tr>
         <td><label>$user</label></td>
         <td>$user_bar</td>
-      </tr>
+      </tr>";
+}
+$setting = elgg_get_plugin_setting('date_en', 'more_solr');
+if($setting != 'no') {
+    $settings .= "
       <tr>
         <td><label>$date</label></td>
         <td>$date_bar</td>
-      </tr>
+      </tr>";
+}
+$setting = elgg_get_plugin_setting('res_en', 'more_solr');
+if($setting != 'no') {
+    $settings .= "
       <tr>
         <td><label>$results</label></td>
         <td>$results_bar</td>
         $kappa_bar
-      </tr>
+      </tr>";
+}
+    $settings .= "
     </table>
     $submit
 </div>";

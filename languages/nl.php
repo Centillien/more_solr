@@ -21,6 +21,7 @@ return array(
     'options:synonym:help' => "Link naar lijst met synoniemen",
 
     'options:category' => "Categorie",
+    'options:cat:list:help' => "Houd ctrl in om meerdere te selecteren, selecteer om aan/uit te zetten.",
 
     'options:sort' => "Sorteren op",
     'options:sort:list' => "Lijst met sorteer opties",

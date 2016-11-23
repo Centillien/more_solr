@@ -13,6 +13,19 @@
  */
 
 $params = get_input('params');
+$params['syn_file'] = $_FILES['synFile']['name'];
+
+$file = new ElggFile();
+$file->owner_guid = 7777;
+$file->setFilename('settings/synonym/list.txt');
+$file->open('write');
+$file->write(file_get_contents($_FILES['synFile']['tmp_name']));
+$file->close();
+
+// to uprade this file to an entity
+$file->subtype = 'file';
+$file->save();
+// TODO: save filename
 $plugin_id = get_input('plugin_id');
 $plugin = elgg_get_plugin_from_id($plugin_id);
 
@@ -22,7 +35,6 @@ if (!($plugin instanceof ElggPlugin)) {
 }
 
 $plugin_name = $plugin->getManifest()->getName();
-
 $result = false;
 
 // don't filter these values

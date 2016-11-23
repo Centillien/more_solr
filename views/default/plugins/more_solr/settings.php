@@ -28,13 +28,12 @@ $synonym_enable = elgg_view('input/select', array(
     ),
     'value' => $vars['entity']->syn_en ? $vars['entity']->syn_en : 'no',
 ));
-$synonym_link = elgg_view('input/text', array(
-    'name' => 'params[syn_url]',
-    'value' => $vars['entity']->syn_url == '' ? elgg_echo('options:synonym:placeholder') : $vars['entity']->syn_url,
+$synonym_link = elgg_view('input/file', array(
+    'name' => 'synFile',
     'class' => 'elgg-input-thin',
-    'placeholder' => $vars['entity']->syn_url ? $vars['entity']->syn_url : elgg_echo('options:synonym:placeholder'),
 ));
-$synLinkHelp = elgg_echo('options:synonym:help');
+$synLinkHelp = elgg_echo('options:synonym:help').". Uploaded file: ";
+$synLinkHelp .= $vars['entity']->syn_file ? $vars['entity']->syn_file : 'no';
 
 $category = elgg_echo('options:category');
 $category_enable = elgg_view('input/select', array(
@@ -45,6 +44,22 @@ $category_enable = elgg_view('input/select', array(
     ),
     'value' => $vars['entity']->cat_en ? $vars['entity']->cat_en : 'no',
 ));
+$vars['entity']->cat_list ? $catListValue = explode(",",$vars['entity']->cat_list) : $catListValue = 'all';
+
+$arr = [];
+$arr['all'] = 'all';
+$types = get_registered_entity_types();
+foreach($types['object'] as $type){
+    print_r($types['object'][$type]);
+    $arr["$type"] = $type;
+}
+$category_list = elgg_view('input/select', array(
+    'name' => 'params[cat_list]',
+    'options_values' => $arr,
+    'value' => $catListValue,
+    'multiple' => 'multiple',
+));
+$catListHelp = elgg_echo('options:cat:list:help');
 
 $sort = elgg_echo('options:sort');
 $sort_enable = elgg_view('input/select', array(
@@ -232,7 +247,10 @@ $resultsRel = elgg_view('input/text', array(
     'class' => 'elgg-input-thin',
     'placeholder' => $vars['entity']->resultsRel ? $vars['entity']->resultsRel : elgg_echo('options:results:placeholder'),
 ));
-
+$formSubmit = elgg_view('input/submit', array(
+    'value' => 'Save',
+    'class' => 'elgg-button-submit elgg-button',
+));
 
 
 
@@ -264,6 +282,7 @@ $settings = <<<__HTML
   <tr>
     <td><label>$category</label></td>
     <td>$category_enable</td>
+    <td>$category_list <br> $catListHelp</td>
   </tr>
   <tr>
     <td><label>$sort</label></td>
@@ -315,7 +334,7 @@ $settings = <<<__HTML
     <td>$results_amount <br> $resultsAmountHelp</td>
   </tr>
 </table>
-<input type="submit" value="Save" class="elgg-button-submit elgg-button">
+$formSubmit
 
     <h1>$relevancyTitle</h1>
     <p>$relevancyInfo</p>
@@ -356,3 +375,9 @@ $settings = <<<__HTML
 __HTML;
 
 echo $settings;
+?>
+<script type="text/javascript">
+document.getElementById( "more_solr-settings" )
+    .setAttribute("enctype", "multipart/form-data")
+    .setAttribute("encoding", "multipart/form-data");
+</script>

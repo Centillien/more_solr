@@ -21,6 +21,7 @@ return array(
     'options:synonym:help' => "Link to list of synonyms",
 
     'options:category' => "Category",
+    'options:cat:list:help' => "Hold ctrl to select multiple, select to turn on/off",
 
     'options:sort' => "Sort on",
     'options:sort:list' => "List of sort options",

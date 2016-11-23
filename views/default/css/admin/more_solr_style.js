@@ -21,7 +21,7 @@ $( "div.foot" ).hover(function ( event ) {
 
 // Renew page upon sort change
 var sort = $( "#sortDrop" );
-sort.val(window.location.search.substr(4)); // Makes the Sort on option value empty so you can change back too
+sort.val(' '); // Makes the Sort on option value empty so you can change back too
 sort.change(function () {
     var changeto = $( "#sortDrop" ).val();
     var url = window.location.toString();
