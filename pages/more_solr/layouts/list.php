@@ -206,7 +206,7 @@ function boolean(&$search, &$result) {
                 }
             }
         } else {
-            return true;
+            return 1;
         }
     }
 
