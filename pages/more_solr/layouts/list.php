@@ -55,6 +55,7 @@ $sort_bar = elgg_view('input/select', array(
     ),
 ));
 
+// navigation/pagination can add pagination to page
 $content = "<h1 class='sortOptions'>$title</h1><div class='sortOptions'>$sort $sort_bar</div><div id='advancedResults'>";
 $content .= '<ul class="elgg-list advancedResults">';
     foreach ($results as $result) {
