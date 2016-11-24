@@ -91,8 +91,24 @@ $userResults = elgg_get_entities(array(
         'types' => 'user',
         'limit' => 0,)
 );
-foreach($userResults as $userResult){
-    array_push($userArray, $userResult->name.":".$userResult->guid);
+
+//  Get admins
+$admin_guids = elgg_get_admins(array(
+    'limit' => 0,
+    'callback' => function ($row) { return $row->guid; }, // no overhead of entity creation
+));
+
+foreach($userResults as $v){
+    $president  = elgg_get_plugin_setting('usAd_en', 'more_solr');
+    if($president == 'no'){
+        if(!in_array($v->guid,$admin_guids))
+        {
+            array_push($userArray, $v->name.":".$v->guid);
+        }
+    }
+    else {
+        array_push($userArray, $v->name.":".$v->guid);
+    }
 }
 
 $json = json_encode(utf8ize($userArray), JSON_UNESCAPED_UNICODE);
