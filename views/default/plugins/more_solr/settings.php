@@ -106,18 +106,6 @@ $tags_enable = elgg_view('input/select', array(
     'value' => $vars['entity']->tags_en ? $vars['entity']->tags_en : 'no',
 ));
 
-$vars['entity']->sort_list ? $tagsListValue = explode(",",$vars['entity']->tags_list) : $tagsListValue = elgg_echo('option:timeno');
-$tags_list = elgg_view('input/select', array(
-    'name' => 'params[tags_list]',
-    'options_values' => array(
-        'and' => elgg_echo('option:and'),
-        'or' => elgg_echo('option:or'),
-        'not' => elgg_echo('option:not'),
-    ),
-    'value' => $tagsListValue,
-    'multiple' => 'multiple',
-));
-$tagsListHelp = elgg_echo('options:tags:list:help');
 //  STOPWOORDEN(de het een)
 $user = elgg_echo('options:user');
 $user_enable = elgg_view('input/select', array(
@@ -299,7 +287,6 @@ $settings = <<<__HTML
   <tr>
     <td><label>$tags</label></td>
     <td>$tags_enable</td>
-    <td>$tags_list <br> $tagsListHelp</td>
   </tr>
   <tr>
     <td><label>$user</label></td>

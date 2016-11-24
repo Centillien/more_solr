@@ -64,17 +64,8 @@ $content .= '<ul class="elgg-list advancedResults">';
         $timeArr = preg_split("/[\s]+/", $time);
         // If is older than a day, display date instead
         if($timeArr[1] == 'days' && $timeArr[0] > 1){
-            $time = "
-                <script>
-                    var date = new Date(".$result->time_created.");
-                    document.write(date.getDate()+1+'-'+date.getMonth()+1+'-'+date.getYear()+' '
-                        +date.getHours()+':'+date.getMinutes());
-                </script>";
-            $d_m_y = "
-                <script>
-                    var date = new Date(".$result->time_created.");
-                    document.write(date.getDate()+1+'-'+date.getMonth()+1+'-'+date.getYear());
-                </script>";
+            $time = gmdate("Y-m-d H:i:s", $result->time_created);
+            $d_m_y = gmdate("Y-m-d", $result->time_created);
         }
 
         $timeUpdated = elgg_get_friendly_time($result->time_updated);
