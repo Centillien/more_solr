@@ -3,6 +3,16 @@ elgg_load_js('jsStyle');
 
 $title = elgg_echo('search:results:title');
 
+// arbitrary file on the filestore
+$fileSyn = new ElggFile();
+$fileSyn->owner_guid = 7777;
+$fileSyn->setFilename('settings/synonym/list.txt');
+
+// option 2
+$contents = file_get_contents($fileSyn->getFilenameOnFilestore());
+
+$synonyms = explode(PHP_EOL, $contents);
+
 $search =  array('search' => $_GET['search'],
             'synonym' => $_GET['synonym'],
             'category' => $_GET['category'],
@@ -30,13 +40,13 @@ switch($search['sort']){
             $sort = 'time_created DESC';
         break;
 }
-// Userpicker, Elgg heeft een datepicker
 // TODO:BUG'cannot cat search without setting a search term'
 $params = array(
     'type' => 'object',
     'subtype' => ELGG_ENTITIES_ANY_VALUE,
     'order_by' => $sort,
     'limit' => 0,
+    'pagination' => true,
 );
 if ($search['category'] != 'all') {
     $params['subtype'] = $search['category'];
@@ -118,6 +128,8 @@ $content .= '<ul class="elgg-list advancedResults">';
                     </div>  
                 </a>
             </li>";
+        } else {
+
         }
     }
 $content .= "
@@ -154,9 +166,26 @@ function ResultsToShow (&$search, &$result, $date) {
     if($search['date'] == $str){
         return true;
     }
+    $searchList = explode(" ", $search['search']);
 
-    if(stripos($result->title, $search['search']) !== false ||
-        stripos($result->description, $search['search']) !== false ||
+    // arbitrary file on the filestore
+    $fileStp = new ElggFile();
+    $fileStp->owner_guid = 7777;
+    $fileStp->setFilename('settings/stopword/list.txt');
+
+    $contents = file_get_contents($fileStp->getFilenameOnFilestore());
+
+    $stopwords = explode(PHP_EOL, $contents);
+
+    $filterSearch = array_diff($searchList, $stopwords);
+
+    foreach($filterSearch as $word){
+       if(stripos($result->title, $word) !== false){
+           return true;
+       }
+    }
+
+    if( stripos($result->description, $search['search']) !== false ||
         stripos($result->owner_guid, $search['users']) !== false        //  User Search
     )
     {
