@@ -102,3 +102,27 @@ h1 {
 .hiddenUsers {
     display: none;
 }
+
+#popup-stop-open {
+    width: 400px;
+    height: 300px;
+    overflow-y:scroll;
+}
+
+#popup-syn-open {
+    width: 400px;
+    height: 300px;
+    overflow-y:scroll;
+}
+
+.popup-content {
+    overflow:hidden;
+    padding:5px;
+    padding-right:10px;
+}
+
+.scrollTable td{
+    border: 1px solid black;
+    border-radius: 4px;
+    width:100%;
+}

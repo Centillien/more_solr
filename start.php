@@ -18,7 +18,11 @@ function more_solr_init()
     elgg_extend_view('css/admin', 'css/admin/more_solr_admin');
     elgg_extend_view('css/elgg', 'css/admin/more_solr_admin');
 
+    elgg_extend_view('css/elgg', 'jquery.dataTables.min.css');
+    elgg_extend_view('js/elgg', 'jquery.dataTables.min.js');
+
     $action_url = elgg_get_plugins_path() . "more_solr/actions/";
+    elgg_register_action("more_solr/word_handler", "{$action_url}word_handler.php");
     elgg_register_action("options", "{$action_url}options.php");
     elgg_register_action('more_solr/settings/save', dirname(__FILE__) . '/actions/plugin_settings.php', 'admin');
 

@@ -20,6 +20,9 @@ return array(
     'options:synonym' => "Synoniem zoeken",
     'options:synonym:help' => "Link naar lijst met synoniemen",
 
+    'options:stop' => "Stopwoorden",
+    'options:stop:help' => "Link naar lijst met stopwoorden",
+
     'options:category' => "Categorie",
     'options:cat:list:help' => "Houd ctrl in om meerdere te selecteren, selecteer om aan/uit te zetten.",
 
@@ -74,4 +77,15 @@ return array(
     'search:results:created' => "Gemaakt op",
     'search:results:latest' => "Bijgewerkt op",
     'search:results:none' => "Geen resultaten gevonden",
+
+    /**
+     *      Buttons
+     */
+    'options:buttons:synonym' => "Synoniem toevoegen",
+    'options:buttons:stopword' => "Stopwoord toevoegen",
+    'options:buttons:stpAdd' => "Stopwoord toevoegen",
+    'options:buttons:stpEdd' => "Stopwoord veranderen",
+    'options:buttons:synAdd' => "Synoniem toevoegen",
+    'options:buttons:synEdd' => "Synoniem veranderen",
+    'options:buttons:back' => "Back",
 );

@@ -20,6 +20,9 @@ return array(
     'options:synonym' => "Synonym search",
     'options:synonym:help' => "Link to list of synonyms",
 
+    'options:stop' => "Stopwords",
+    'options:stop:help' => "Link to list of stopwords",
+
     'options:category' => "Category",
     'options:cat:list:help' => "Hold ctrl to select multiple, select to turn on/off",
 
@@ -58,13 +61,17 @@ return array(
     'options:synonym:placeholder' => "Link to list",
 
     /**
-     *  User translations
+     *  Placeholders
      */
 
     'options:search:placeholder' => "Search",
     'options:tags:placeholder' => "tags",
     'options:user:placeholder' => "User",
     'options:date:placeholder' => "Date",
+    'options:stpAdd:placeholder' => 'New word to add to list',
+    'options:stpEdd:placeholder' => 'Placeholder should be old word',
+    'options:synAdd:placeholder' => 'New word to add to list',
+    'options:synEdd:placeholder' => 'Placeholder should be old word',
 
     /**
      *  Resultpage
@@ -74,4 +81,15 @@ return array(
     'search:results:created' => "Date created",
     'search:results:latest' => "latest change",
     'search:results:none' => "No items found",
+
+    /**
+     *      Buttons
+     */
+    'options:buttons:synonym' => "Add synonyms",
+    'options:buttons:stopword' => "Add stopwords",
+    'options:buttons:stpAdd' => "Add stopword",
+    'options:buttons:stpEdd' => "Edit stopword",
+    'options:buttons:synAdd' => "Add synonyms",
+    'options:buttons:synEdd' => "Edit synonyms",
+    'options:buttons:back' => "Back",
 );
