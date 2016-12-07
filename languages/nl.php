@@ -7,6 +7,8 @@ return array(
 
     'option:yes' => "Ja",
     'option:no' => "Nee",
+    'option:all' => "alle",
+    'option:save' => 'Opslaan',
 
     'options:title' => "Opties",
     'options:relevancy:title' => "Relevantie",
@@ -21,7 +23,7 @@ return array(
     'options:synonym:help' => "Link naar lijst met synoniemen",
 
     'options:stop' => "Stopwoorden",
-    'options:stop:help' => "Link naar lijst met stopwoorden",
+    'options:stop:help' => "Link naar lijst met stopwoorden. Geupload bestand: ",
 
     'options:category' => "Categorie",
     'options:cat:list:help' => "Houd ctrl in om meerdere te selecteren, selecteer om aan/uit te zetten.",
@@ -89,4 +91,28 @@ return array(
     'options:buttons:synEdd' => "Synoniem veranderen",
     'options:buttons:back' => "Terug",
     'options:buttons:addField' => "nieuw veld",
+
+    /**
+     *      Word handler
+     */
+    'handler:minAmWords' => 'We hebben minimaal 2 woorden nodig voor synoniemen',
+    'handler:newAdd' => ' toegevoegd, herlaad de pagina om verandering te zien.',
+    'handler:duplicate' => 'Woord bestaad al',
+    'handler:successful:change' => ' succesvol veranderd naar ',
+    'handler:refresh' => ', herlaad de pagina om verandering te zien.',
+    'handler:successful:remove' => ' succesvol verwijderd, herlaad de pagina om verandering te zien.',
+
+    /**
+     *      Words to sort
+     */
+    'no:file' => 'geen bestand gekozen',
+    'new:word' => 'Nieuw woord',
+    'add' => 'Veranderen',
+    'delete' => 'Verwijderen',
+    'stopwords:title' => 'Stopwoorden',
+    'stopword:new' => 'Nieuw stopwoord toevoegen',
+    'stopword:edit' => 'Stopwoord veranderen',
+    'synonyms:title' => 'Synoniemen',
+    'synonym:new' => 'Nieuw synoniem toevoegen',
+    'synonym:edit' => 'Verander een synoniem'
 );

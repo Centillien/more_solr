@@ -91,11 +91,14 @@ for (i=0; i < backStp.length; i++) {
 for (i=0; i < backSyn.length; i++) {
     backSyn[i].onclick = function () {
         var elements = document.getElementsByClassName('extraInput');
-        Array.prototype.forEach.call(elements, function (item, index, arr) {
-            console.log(arr[index]);
-            document.getElementById('eddInputList').removeChild(arr[index]);
-            counterEd = 1;
-        });
+        var myControls = document.querySelectorAll("input[name^='eddSins[']");
+        for (var i = 0; i < myControls.length; i++) {
+            Array.prototype.forEach.call(elements, function (item, index, arr) {
+                document.getElementById('eddInputList').removeChild(arr[index]);
+                console.log(index);
+                counterEd = 1;
+            });
+        }
         hideSynThem.style.display = 'block';
         newSyn.style.display = 'none';
         addSyn.style.display = 'none';

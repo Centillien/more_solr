@@ -7,6 +7,8 @@ return array(
 
     'option:yes' => "yes",
     'option:no' => "no",
+    'option:all' => "all",
+    'option:save' => 'Save',
 
     'options:title' => "Options",
     'options:relevancy:title' => "Relevancy",
@@ -21,7 +23,7 @@ return array(
     'options:synonym:help' => "Link to list of synonyms",
 
     'options:stop' => "Stopwords",
-    'options:stop:help' => "Link to list of stopwords",
+    'options:stop:help' => "Link to list of stopwords. Uploaded file: ",
 
     'options:category' => "Category",
     'options:cat:list:help' => "Hold ctrl to select multiple, select to turn on/off",
@@ -93,4 +95,29 @@ return array(
     'options:buttons:synEdd' => "Edit synonyms",
     'options:buttons:back' => "Back",
     'options:buttons:addField' => "add field",
+
+    /**
+     *      Word handler
+     */
+    'handler:minAmWords' => 'Need at least 2 words for synonyms',
+    'handler:newAdd' => ' added, refresh to see changes.',
+    'handler:duplicate' => 'Value already exists',
+    'handler:successful:change' => ' successfully changed to ',
+    'handler:refresh' => ', refresh to see changes.',
+    'handler:successful:remove' => ' successfully removed, refresh to see changes.',
+
+
+    /**
+     *      Words to sort
+     */
+    'no:file' => 'no file set',
+    'new:word' => 'New word',
+    'add' => 'Add',
+    'delete' => 'Delete',
+    'stopwords:title' => 'Stopwords',
+    'stopword:new' => 'Add a new stopword',
+    'stopword:edit' => 'Edit a stopword',
+    'synonyms:title' => 'Synonyms',
+    'synonym:new' => 'Add a new synonym',
+    'synonym:edit' => 'Edit a synonym'
 );

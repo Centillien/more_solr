@@ -5,10 +5,6 @@
  * Date: 2/12/16
  * Time: 9:59
  */
-if (!elgg_is_xhr()) {
-    register_error('Sorry, Ajax only!');
-    forward();
-}
 $type = get_input('type');
 $method = get_input('method');
 $input = get_input('input');
@@ -39,12 +35,12 @@ function addWord ($type, $input) {
             if(count($input) > 1){
                 $input = implode(",", $input);
                 array_push($synonyms, $input);
-                system_message($input . ' added, refresh to see changes.');
+                system_message($input . elgg_echo('handler:newAdd'));
             } else {
-                register_error('Need at least 2 words for synonyms');
+                register_error(elgg_echo('handler:minAmWords'));
             }
         } else{
-            register_error('Value already exists');
+            register_error(elgg_echo('handler:duplicate'));
         }
         $synonyms = implode(PHP_EOL, $synonyms);
         setSyns($synonyms);
@@ -52,9 +48,9 @@ function addWord ($type, $input) {
         $stopwords = getStops();
         if(!in_array($input, $stopwords)){
             array_push($stopwords, $input);
-            system_message($input . ' added, refresh to see changes.');
+            system_message($input . elgg_echo('handler:newAdd'));
         } else{
-            register_error('Value already exists');
+            register_error(elgg_echo('handler:duplicate'));
         }
         $stopwords = implode(PHP_EOL, $stopwords);
         setStops($stopwords);
@@ -63,23 +59,23 @@ function addWord ($type, $input) {
 
 function editWord ($type, $input, $old) {
     if($type == 'synonym'){
+        $synonyms = getSyns();
         //  Remove empty values
         $input = array_filter($input, function($value) { return $value !== ''; });
         if(count($input) > 1){
             $input = implode(",", $input);
-            $arr = getSyns();
-            $arr = implode(PHP_EOL, $arr);
-            $test = str_replace($old, $input, $arr);
-            system_message($old." successfully changed to ".$input.", refresh to see changes.");
+            $synonyms = implode(PHP_EOL, $synonyms);
+            $synonyms = str_replace($old, $input, $synonyms);
+            system_message($old.elgg_echo('handler:successful:change').$input.elgg_echo('handler:refresh'));
         } else {
-            register_error('Need at least 2 words for synonyms');
+            register_error(elgg_echo('handler:minAmWords'));
         }
-        setSyns($test);
+        setSyns($synonyms);
     } elseif ($type == 'stopword') {
         $arr = getStops();
         $arr = implode(PHP_EOL, $arr);
         $test = str_replace($old, $input, $arr);
-        system_message($old." successfully changed to ".$input.", refresh to see changes.");
+        system_message($old.elgg_echo('handler:successful:change').$input.elgg_echo('handler:refresh'));
         setStops($test);
     }
     return $input;
@@ -91,14 +87,14 @@ function deleteWord ($type, $old) {
         $arr = implode(PHP_EOL, $arr);
         $test = str_replace("\n".$old."\n", "\n", $arr);
         $test = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $test);
-        system_message($old." successfully removed, refresh to see changes.");
+        system_message($old.elgg_echo('handler:successful:remove'));
         setSyns($test);
     } elseif ($type == 'stopword') {
         $arr = getStops();
         $arr = implode(PHP_EOL, $arr);
         $test = str_replace("\n".$old."\n", "\n", $arr);
         $test = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $test);
-        system_message($old." successfully removed, refresh to see changes.");
+        system_message($old.elgg_echo('handler:successful:remove'));
         setStops($test);
     }
     return $old;
