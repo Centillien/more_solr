@@ -39,7 +39,7 @@ $search_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->search_en ? $vars['entity']->search_en : 'no',
+    'value' => $vars['entity']->search_en ? $vars['entity']->search_en : elgg_echo('option:no'),
 ));
 
 $synonym = elgg_echo('options:synonym');
@@ -49,14 +49,14 @@ $synonym_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->syn_en ? $vars['entity']->syn_en : 'no',
+    'value' => $vars['entity']->syn_en ? $vars['entity']->syn_en : elgg_echo('option:no'),
 ));
 $synonym_link = elgg_view('input/file', array(
     'name' => 'synFile',
     'class' => 'elgg-input-thin',
 ));
 $synLinkHelp = elgg_echo('options:synonym:help').". Uploaded file: ";
-$synLinkHelp .= $vars['entity']->syn_file ? $vars['entity']->syn_file : 'no file set';
+$synLinkHelp .= $vars['entity']->syn_file ? $vars['entity']->syn_file : elgg_echo('no:file');
 
 $stopwords = elgg_echo('options:stop');
 $stopwords_enable = elgg_view('input/select', array(
@@ -65,14 +65,14 @@ $stopwords_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->stp_en ? $vars['entity']->stp_en : 'no',
+    'value' => $vars['entity']->stp_en ? $vars['entity']->stp_en : elgg_echo('option:no'),
 ));
 $stopwords_link = elgg_view('input/file', array(
     'name' => 'stpFile',
     'class' => 'elgg-input-thin',
 ));
-$stopLinkHelp = elgg_echo('options:stop:help').". Uploaded file: ";
-$stopLinkHelp .= $vars['entity']->stp_file ? $vars['entity']->stp_file : 'no file set';
+$stopLinkHelp = elgg_echo('options:stop:help');
+$stopLinkHelp .= $vars['entity']->stp_file ? $vars['entity']->stp_file : elgg_echo('no:file');
 
 $category = elgg_echo('options:category');
 $category_enable = elgg_view('input/select', array(
@@ -81,12 +81,12 @@ $category_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->cat_en ? $vars['entity']->cat_en : 'no',
+    'value' => $vars['entity']->cat_en ? $vars['entity']->cat_en : elgg_echo('option:no'),
 ));
-$vars['entity']->cat_list ? $catListValue = explode(",",$vars['entity']->cat_list) : $catListValue = 'all';
+$vars['entity']->cat_list ? $catListValue = explode(",",$vars['entity']->cat_list) : $catListValue = elgg_echo('option:all');
 
 $arr = [];
-$arr['all'] = 'all';
+$arr['all'] = elgg_echo('option:all');
 $types = get_registered_entity_types();
 foreach($types['object'] as $type){
     print_r($types['object'][$type]);
@@ -107,7 +107,7 @@ $sort_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->sort_en ? $vars['entity']->sort_en : 'no',
+    'value' => $vars['entity']->sort_en ? $vars['entity']->sort_en : elgg_echo('option:no'),
 ));
 $vars['entity']->sort_list ? $sortListValue = explode(",",$vars['entity']->sort_list) : $sortListValue = 'timeno';
 
@@ -142,7 +142,7 @@ $tags_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->tags_en ? $vars['entity']->tags_en : 'no',
+    'value' => $vars['entity']->tags_en ? $vars['entity']->tags_en : elgg_echo('option:no'),
 ));
 
 //  STOPWOORDEN(de het een)
@@ -153,7 +153,7 @@ $user_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->user_en ? $vars['entity']->user_en : 'no',
+    'value' => $vars['entity']->user_en ? $vars['entity']->user_en : elgg_echo('option:no'),
 ));
 $userAd = elgg_echo('options:user:admin');
 $userAd_enable = elgg_view('input/select', array(
@@ -162,7 +162,7 @@ $userAd_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->usAd_en ? $vars['entity']->usAd_en : 'no',
+    'value' => $vars['entity']->usAd_en ? $vars['entity']->usAd_en : elgg_echo('option:no'),
 ));
 $userAdHelp = elgg_echo('options:user:admin:help');
 
@@ -173,7 +173,7 @@ $date_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->date_en ? $vars['entity']->date_en : 'no',
+    'value' => $vars['entity']->date_en ? $vars['entity']->date_en : elgg_echo('option:no'),
 ));
 $dateDay = elgg_echo('options:date:day');
 $dateDay_en = elgg_view('input/select', array(
@@ -182,7 +182,7 @@ $dateDay_en = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->day_en ? $vars['entity']->day_en : 'no',
+    'value' => $vars['entity']->day_en ? $vars['entity']->day_en : elgg_echo('option:no'),
 ));
 $dateDayHelp = elgg_echo('options:date:day:help');
 $dateMonth = elgg_echo('options:date:month');
@@ -192,7 +192,7 @@ $dateMonth_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->mon_en ? $vars['entity']->mon_en : 'no',
+    'value' => $vars['entity']->mon_en ? $vars['entity']->mon_en : elgg_echo('option:no'),
 ));
 $dateMonthHelp = elgg_echo('options:date:month:help');
 $dateYear = elgg_echo('options:date:year');
@@ -202,7 +202,7 @@ $dateYear_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->year_en ? $vars['entity']->year_en : 'no',
+    'value' => $vars['entity']->year_en ? $vars['entity']->year_en : elgg_echo('option:no'),
 ));
 $dateYearHelp = elgg_echo('options:date:year:help');
 
@@ -213,7 +213,7 @@ $results_enable = elgg_view('input/select', array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->res_en ? $vars['entity']->res_en : 'no',
+    'value' => $vars['entity']->res_en ? $vars['entity']->res_en : elgg_echo('option:no'),
 ));
 $results_amount = elgg_view('input/text', array(
     'name' => 'params[res_am]',
@@ -342,7 +342,7 @@ $syn_AddEddButt = elgg_view('input/button', array(
 
 //  Submit button
 $formSubmit = elgg_view('input/submit', array(
-    'value' => 'Save',
+    'value' => elgg_echo('option:save'),
     'class' => 'elgg-button-submit elgg-button',
 ));
 
@@ -372,42 +372,42 @@ $stpPopup = elgg_view('output/url', [
 //  Stop options
 $newStop = elgg_view('output/url', [
     'href' => '#',
-    'text' => 'New word',
+    'text' => elgg_echo('new:word'),
     'id' => 'stpNewWord',
     'class' => 'hideStpTable'
 ]);
 $addStop = elgg_view('output/url', [
     'href' => '#',
-    'text' => 'Add',
+    'text' => elgg_echo('add'),
     'class' => 'hideStpTable stpAddWord'
 ]);
 $delStop = elgg_view('output/url', [
     'href' => '#',
-    'text' => 'Delete',
+    'text' => elgg_echo('delete'),
     'class' => 'stpDelWord'
 ]);
 //  Syn options
 $newSyn = elgg_view('output/url', [
     'href' => '#',
-    'text' => 'New word',
+    'text' => elgg_echo('new:word'),
     'id' => 'synNewWord',
     'class' => 'hideSynTable'
 ]);
 $addSyn = elgg_view('output/url', [
     'href' => '#',
-    'text' => 'Add',
+    'text' => elgg_echo('add'),
     'class' => 'hideSynTable synAddWord'
 ]);
 $delSyn = elgg_view('output/url', [
     'href' => '#',
-    'text' => 'Delete',
+    'text' => elgg_echo('delete'),
     'class' => 'synDelWord'
 ]);
 
 //  Lists of words tables
 $stopTable = '<div class="popup-content">
                 <table id="stopwordTable" class="scrollTable">
-                    <th><h2>stopwords</h2></th>
+                    <th><h2>'.elgg_echo("stopwords:title").'</h2></th>
                     <th>'.$newStop.'</th>';
 //  Sort array alphabetically
 sort($stopWordList);
@@ -421,12 +421,12 @@ foreach($stopWordList as $word){
 }
 $stopTable .= ' </table>
                     <div id="newStop" class="hidden">
-                        <h2>Add a new stopword</h2><br>
+                        <h2>'.elgg_echo("stopword:new").'</h2><br>
                         '.$stpAdd.'<br>
                         '.$stpAddButt.$stpBackButt.'
                     </div>
                     <div id="addStop" class="hidden">
-                        <h2>Edit a stopword</h2><br>
+                        <h2>'.elgg_echo("stopword:edit").'</h2><br>
                         '.$stpEdd.'<br>
                         '.$stpEddButt.$stpBackButt.'
                     </div>
@@ -434,7 +434,7 @@ $stopTable .= ' </table>
 
 $synTable = '<div class="popup-content">
                 <table id="synwordTable" class="scrollTable">
-                    <th><h2>Synonyms</h2></th>
+                    <th><h2>'.elgg_echo("synonyms:title").'</h2></th>
                     <th>'.$newSyn.'</th>';
 //  Sort array alphabetically
 sort($synWordList);
@@ -448,14 +448,14 @@ foreach($synWordList as $word){
 }
 $synTable .= '  </table>
                     <div id="newSyn" class="hidden">
-                        <h2>Add a new synonym</h2><p id="addcounter">1 / 5</p>
+                        <h2>'.elgg_echo("synonym:new").'</h2><p id="addcounter">1 / 5</p>
                         <div id="addInputList">
                             '.$synAdd.'<br>
                         </div>
                         '.$synAddButt.$synBackButt.$syn_AddAddButt.'
                     </div>
                     <div id="addSyn" class="hidden">
-                        <h2>Edit a synonym</h2><p id="eddcounter">1 / 5</p>
+                        <h2>'.elgg_echo("synonym:edit").'</h2><p id="eddcounter">1 / 5</p>
                         <div id="eddInputList">
                             '.$synEdd.'<br>
                         </div>

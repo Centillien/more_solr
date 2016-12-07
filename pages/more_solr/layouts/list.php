@@ -191,6 +191,23 @@ function ResultsToShow (&$search, &$result, $date) {
     {
         return true;
     }
+
+    //  Synonym search
+    if($search['synonym'] == 'yes'){
+        $synonyms = synonymSearch($search['search']);
+
+        $synonyms = explode(",", $synonyms);
+        $synonyms = array_diff($synonyms, [$search['search']]);
+
+        foreach ($synonyms as $synonym){
+            if( stripos($result->title, $synonym) !== false ||
+                stripos($result->description, $synonym) !== false
+            )
+            {
+                return true;
+            }
+        }
+    }
     return false;
 }
 
@@ -263,4 +280,39 @@ function strposAnd($haystack, $needles=array(), $offset=0) {
         }
     }
     return $validResult;
+}
+
+function synonymSearch ($search){
+    $synonyms = getSyns();
+    $string = $search; // insert code here
+    $index = -1;
+    for ($i=0;$i<count($synonyms);$i++) {
+        if (strpos($synonyms[$i], $string) !== false) {
+            $index = $i;
+        }
+    }
+    $index = $synonyms[$index];
+    return $index;
+}
+
+function getStops(){
+// arbitrary file on the filestore
+    $fileStp = new ElggFile();
+    $fileStp->owner_guid = 7777;
+    $fileStp->setFilename('settings/stopword/list.txt');
+
+    $contents = file_get_contents($fileStp->getFilenameOnFilestore());
+
+    return explode(PHP_EOL, $contents);
+}
+
+function getSyns(){
+// arbitrary file on the filestore
+    $fileStp = new ElggFile();
+    $fileStp->owner_guid = 7777;
+    $fileStp->setFilename('settings/synonym/list.txt');
+
+    $contents = file_get_contents($fileStp->getFilenameOnFilestore());
+
+    return explode(PHP_EOL, $contents);
 }
