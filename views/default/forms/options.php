@@ -46,7 +46,6 @@ $sort_bar = elgg_view('input/select', array(
     'name' => 'sort',
     'options_values' => $arr,
 ));
-// TODO: default user setting
 
 $tags = elgg_echo('options:tags');
 $tags_bar = elgg_view('input/text', array(
@@ -55,7 +54,6 @@ $tags_bar = elgg_view('input/text', array(
     'placeholder' => elgg_echo('options:tags:placeholder'),
 ));
 
-//  TODO:STOPWOORDEN(de het een)
 $user = elgg_echo('options:user');
 $user_bar = elgg_view('input/text', array(
     'name' => 'user',

@@ -3,6 +3,7 @@
  * More solr(advanced search) plugin settings
  */
 
+elgg_load_js('admin_settings');
 /** Get stopwords and synonyms file */
 
 // arbitrary file on the filestore
@@ -12,6 +13,7 @@ $fileStp->setFilename('settings/stopword/list.txt');
 
 $contents = file_get_contents($fileStp->getFilenameOnFilestore());
 
+$contents = strtolower($contents);
 $stopWordList = explode(PHP_EOL, $contents);
 
 // arbitrary file on the filestore
@@ -21,6 +23,7 @@ $fileSyn->setFilename('settings/synonym/list.txt');
 
 $contents = file_get_contents($fileSyn->getFilenameOnFilestore());
 
+$contents = strtolower($contents);
 $synWordList = explode(PHP_EOL, $contents);
 
 $chatEntities = elgg_get_entities_from_relationship([
@@ -275,9 +278,9 @@ $resultsRel = elgg_view('input/text', array(
 //  Hidden pop-up options(for add/edit)
 //  synwords
 $synAdd = elgg_view('input/text', array(
-    'name' => 'params[synAdd]',
+    'name' => 'addSins[1]',
     'value' => $vars['entity']->synAdd == '' ? '' : $vars['entity']->synAdd,
-    'class' => 'elgg-input-thin',
+    'class' => 'elgg-input-thin listInputs',
     'placeholder' => $vars['entity']->synAdd ? $vars['entity']->synAdd : elgg_echo('options:synAdd:placeholder'),
 ));
 $synAddButt = elgg_view('input/button', array(
@@ -285,9 +288,10 @@ $synAddButt = elgg_view('input/button', array(
     'id' => 'syn-add'
 ));
 $synEdd = elgg_view('input/text', array(
-    'name' => 'params[synEdit]',
-    'value' => $vars['entity']->synEdit == '' ? 'display to edit value here' : $vars['entity']->synEdit,
-    'class' => 'elgg-input-thin',
+    'name' => 'eddSins[1]',
+    'value' => 'display to edit value here',
+    'id' => 'synEddInput',
+    'class' => 'elgg-input-thin listInputs',
     'placeholder' => $vars['entity']->synEdit ? $vars['entity']->synEdit : elgg_echo('options:synEdd:placeholder'),
 ));
 $synEddButt = elgg_view('input/button', array(
@@ -308,7 +312,8 @@ $stpAddButt = elgg_view('input/button', array(
 ));
 $stpEdd = elgg_view('input/text', array(
     'name' => 'params[stpEdit]',
-    'value' => $vars['entity']->stpEdit == '' ? 'display to edit value here' : $vars['entity']->stpEdit,
+    'value' => 'display to edit value here',
+    'id' => 'stpEddInput',
     'class' => 'elgg-input-thin',
     'placeholder' => $vars['entity']->stpEdit ? $vars['entity']->stpEdit : elgg_echo('options:stpEdd:placeholder'),
 ));
@@ -325,6 +330,14 @@ $stpBackButt = elgg_view('input/button', array(
 $synBackButt = elgg_view('input/button', array(
     'value' => elgg_echo('options:buttons:back'),
     'class' => 'syn-back'
+));
+$syn_AddAddButt = elgg_view('input/button', array(
+    'value' => elgg_echo('options:buttons:addField'),
+    'id' => 'syn-add-add'
+));
+$syn_AddEddButt = elgg_view('input/button', array(
+    'value' => elgg_echo('options:buttons:addField'),
+    'id' => 'syn-add-edd'
 ));
 
 //  Submit button
@@ -366,20 +379,13 @@ $newStop = elgg_view('output/url', [
 $addStop = elgg_view('output/url', [
     'href' => '#',
     'text' => 'Add',
-    'id' => 'stpAddWord',
-    'class' => 'hideStpTable'
+    'class' => 'hideStpTable stpAddWord'
 ]);
 $delStop = elgg_view('output/url', [
     'href' => '#',
     'text' => 'Delete',
-    'id' => 'stpDelWord'
+    'class' => 'stpDelWord'
 ]);
-$delStop = elgg_view("output/url",
-    array(	'href' => $vars['url'] . "action/more_solr/word_handler?type=stopword&method=delete&comment_guid=",
-        'text' => elgg_echo('Delete'),
-        'confirm' => elgg_echo('deleteconfirm'),
-        'id' => 'stpDelWord'
-    ));
 //  Syn options
 $newSyn = elgg_view('output/url', [
     'href' => '#',
@@ -390,13 +396,12 @@ $newSyn = elgg_view('output/url', [
 $addSyn = elgg_view('output/url', [
     'href' => '#',
     'text' => 'Add',
-    'id' => 'synAddWord',
-    'class' => 'hideSynTable'
+    'class' => 'hideSynTable synAddWord'
 ]);
 $delSyn = elgg_view('output/url', [
     'href' => '#',
     'text' => 'Delete',
-    'id' => 'synDelWord'
+    'class' => 'synDelWord'
 ]);
 
 //  Lists of words tables
@@ -404,6 +409,10 @@ $stopTable = '<div class="popup-content">
                 <table id="stopwordTable" class="scrollTable">
                     <th><h2>stopwords</h2></th>
                     <th>'.$newStop.'</th>';
+//  Sort array alphabetically
+sort($stopWordList);
+//  Remove empty strings from array
+$stopWordList = array_filter($stopWordList, function($value) { return $value !== ''; });
 foreach($stopWordList as $word){
     $stopTable .= ' <tr>
                         <td>'.$word.'</td>
@@ -427,6 +436,10 @@ $synTable = '<div class="popup-content">
                 <table id="synwordTable" class="scrollTable">
                     <th><h2>Synonyms</h2></th>
                     <th>'.$newSyn.'</th>';
+//  Sort array alphabetically
+sort($synWordList);
+//  Remove empty strings from array
+$synWordList = array_filter($synWordList, function($value) { return $value !== ''; });
 foreach($synWordList as $word){
     $synTable .= '  <tr>
                         <td>'.$word.'</td>
@@ -435,14 +448,18 @@ foreach($synWordList as $word){
 }
 $synTable .= '  </table>
                     <div id="newSyn" class="hidden">
-                        <h2>Add a new synonym</h2><br>
-                        '.$synAdd.'<br>
-                        '.$synAddButt.$synBackButt.'
+                        <h2>Add a new synonym</h2><p id="addcounter">1 / 5</p>
+                        <div id="addInputList">
+                            '.$synAdd.'<br>
+                        </div>
+                        '.$synAddButt.$synBackButt.$syn_AddAddButt.'
                     </div>
                     <div id="addSyn" class="hidden">
-                        <h2>Edit a synonym</h2><br>
-                        '.$synEdd.'<br>
-                        '.$synEddButt.$synBackButt.'
+                        <h2>Edit a synonym</h2><p id="eddcounter">1 / 5</p>
+                        <div id="eddInputList">
+                            '.$synEdd.'<br>
+                        </div>
+                        '.$synEddButt.$synBackButt.$syn_AddEddButt.'
                     </div>
               </div>';
 
@@ -590,91 +607,3 @@ __HTML;
 
 echo $settings;
 ?>
-
-
-<script type="text/javascript">
-    //  TODO: For some reason I'm still stacking javascript here, put it in some other file some other time
-
-    //  Get the tables
-    var hideStpThem = document.getElementById("stopwordTable");
-    var hideSynThem = document.getElementById("synwordTable");
-
-    //  Input forms to add/change words
-    var newStop = document.getElementById("newStop");
-    var addStop = document.getElementById("addStop");
-    var newSyn = document.getElementById("newSyn");
-    var addSyn = document.getElementById("addSyn");
-
-    //  Buttons to open input forms to add/change words
-    var stpPhoto = document.getElementsByClassName("hideStpTable");
-    var synPhoto = document.getElementsByClassName("hideSynTable");
-
-    //  Add/edit buttons
-    var synAdd = document.getElementById("syn-add");
-    var synEdd = document.getElementById("syn-edit");
-    var stpAdd = document.getElementById("stp-add");
-    var stpEdd = document.getElementById("stp-edit");
-
-    //  Back buttons
-    var backStp = document.getElementsByClassName("stp-back");
-    var backSyn = document.getElementsByClassName("syn-back");
-
-    //  Show Edit || new of Synonyms || Stopwords
-    for (var i=0; i < stpPhoto.length; i++) {
-        stpPhoto[i].onclick = function(){
-            hideStpThem.style.display = 'none';
-            switch(this.innerHTML){
-                case 'New word':
-                    newStop.style.display = 'block';
-                    break;
-                case 'Add':
-                    addStop.style.display = 'block';
-                    break;
-            }
-        }
-    }
-    for (i=0; i < synPhoto.length; i++) {
-        synPhoto[i].onclick = function(){
-            hideSynThem.style.display = 'none';
-            switch(this.innerHTML){
-                case 'New word':
-                    newSyn.style.display = 'block';
-                    break;
-                case 'Add':
-                    addSyn.style.display = 'block';
-                    break;
-            }
-        }
-    }
-
-    //  Back buttons for syn/stp add/edit
-    for (i=0; i < backStp.length; i++) {
-        backStp[i].onclick = function () {
-            hideStpThem.style.display = 'block';
-            newStop.style.display = 'none';
-            addStop.style.display = 'none';
-        };
-    }
-    for (i=0; i < backSyn.length; i++) {
-        backSyn[i].onclick = function () {
-            hideSynThem.style.display = 'block';
-            newSyn.style.display = 'none';
-            addSyn.style.display = 'none';
-        };
-    }
-    //  Add/edit calls
-    //  Synonyms
-    synAdd.onclick = function () {
-        window.location.replace("../../action/word_handler?type=synonym&method=add&guid=");
-    };
-    synEdd.onclick = function () {
-        window.location.replace("action/word_handler?type=synonym&method=edd&guid=");
-    };
-    //  Stopwords
-    stpAdd.onclick = function () {
-        window.location.replace("action/word_handler?type=stopword&method=add&guid=");
-    };
-    stpEdd.onclick = function () {
-        window.location.replace("action/word_handler?type=stopword&method=edd&guid=");
-    };
-</script>

@@ -13,32 +13,6 @@
  */
 
 $params = get_input('params');
-$params['syn_file'] = $_FILES['synFile']['name'];
-$params['stp_file'] = $_FILES['stpFile']['name'];
-
-$fileSyn = new ElggFile();
-$fileSyn->owner_guid = 7777;
-$fileSyn->setFilename('settings/synonym/list.txt');
-$fileSyn->open('write');
-$contents = file_get_contents($_FILES['synFile']['tmp_name']);
-if($contents != null){
-    $fileStp->write($contents);
-}
-$fileSyn->close();
-
-// to uprade this file to an entity
-$fileSyn->subtype = 'file';
-$fileSyn->save();
-
-$fileStp = new ElggFile();
-$fileStp->owner_guid = 7777;
-$fileStp->setFilename('settings/stopword/list.txt');
-$fileStp->open('write');
-$contents = file_get_contents($_FILES['stpFile']['tmp_name']);
-if($contents != ''){
-    $fileStp->write($contents);
-}
-$fileStp->close();
 
 // to uprade this file to an entity
 $fileStp->subtype = 'file';
