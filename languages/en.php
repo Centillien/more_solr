@@ -85,11 +85,12 @@ return array(
     /**
      *      Buttons
      */
-    'options:buttons:synonym' => "Add synonyms",
-    'options:buttons:stopword' => "Add stopwords",
+    'options:buttons:synonym' => "Manage synonyms",
+    'options:buttons:stopword' => "Manage stopwords",
     'options:buttons:stpAdd' => "Add stopword",
     'options:buttons:stpEdd' => "Edit stopword",
     'options:buttons:synAdd' => "Add synonyms",
     'options:buttons:synEdd' => "Edit synonyms",
     'options:buttons:back' => "Back",
+    'options:buttons:addField' => "add field",
 );

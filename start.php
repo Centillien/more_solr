@@ -22,13 +22,14 @@ function more_solr_init()
     elgg_extend_view('js/elgg', 'jquery.dataTables.min.js');
 
     $action_url = elgg_get_plugins_path() . "more_solr/actions/";
-    elgg_register_action("more_solr/word_handler", "{$action_url}word_handler.php");
+    elgg_register_action("word_handler", "{$action_url}word_handler.php");
     elgg_register_action("options", "{$action_url}options.php");
     elgg_register_action('more_solr/settings/save', dirname(__FILE__) . '/actions/plugin_settings.php', 'admin');
 
     elgg_register_page_handler('more_solr', 'more_page_handler');
 
     elgg_register_js('jsStyle', elgg_get_simplecache_url('css/admin/more_solr_style.js'));
+    elgg_register_js('admin_settings', elgg_get_simplecache_url('/admin_settings.js'));
 }
 
 function more_page_handler($page) {

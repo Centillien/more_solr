@@ -87,5 +87,6 @@ return array(
     'options:buttons:stpEdd' => "Stopwoord veranderen",
     'options:buttons:synAdd' => "Synoniem toevoegen",
     'options:buttons:synEdd' => "Synoniem veranderen",
-    'options:buttons:back' => "Back",
+    'options:buttons:back' => "Terug",
+    'options:buttons:addField' => "nieuw veld",
 );
