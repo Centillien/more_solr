@@ -479,7 +479,7 @@ $relevancyTitle = elgg_echo('options:relevancy:title');
 $relevancyInfo = elgg_echo('options:relevancy:info');
 $optionsTitle = elgg_echo('options:title');
 
-elgg_extend_view('css/admin', 'css/admin/more_solr');
+elgg_extend_view('css/admin', 'css/admin/advanced_search');
 
 $settings = <<<__HTML
     <h1>$optionsTitle</h1>
