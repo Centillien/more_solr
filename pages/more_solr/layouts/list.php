@@ -157,39 +157,39 @@ $andArr = [];
 $orArr = [];
 $notArr = [];
 function ResultsToShow (&$search, &$result, $date) {
-    $dateReturn     = false;
-    $titleReturn    = false;
-    $userReturn     = false;
-    $descReturn     = false;
-    $synReturn      = false;
-    $boolReturn     = false;
     if(boolean($search, $result)){
-        $boolReturn = true;
+        return true;
     }
 
-    $str = substr($date, 5);
-    $dated = substr($search['date'], 5);
-    if($dated == $str){
-        $dateReturn = true;
-    } elseif($dated != "") {
-        $dateReturn = false;
+    $str = substr($date, 2);
+
+    if($search['date'] == $str){
+        return true;
     }
     $searchList = explode(" ", $search['search']);
 
-    $stopwords = getStops();
+    // arbitrary file on the filestore
+    $fileStp = new ElggFile();
+    $fileStp->owner_guid = 7777;
+    $fileStp->setFilename('settings/stopword/list.txt');
+
+    $contents = file_get_contents($fileStp->getFilenameOnFilestore());
+
+    $stopwords = explode(PHP_EOL, $contents);
 
     $filterSearch = array_diff($searchList, $stopwords);
+
     foreach($filterSearch as $word){
-       if(stripos($result->description, $word) !== false ||
-           stripos($result->title, $word) !== false){
-           $titleReturn = true;
-           $descReturn = true;
+       if(stripos($result->title, $word) !== false){
+           return true;
        }
     }
 
-    if(stripos($result->owner_guid, $search['users']) !== false)
+    if( stripos($result->description, $search['search']) !== false ||
+        stripos($result->owner_guid, $search['users']) !== false        //  User Search
+    )
     {
-        $userReturn = true;
+        return true;
     }
 
     //  Synonym search
@@ -204,17 +204,13 @@ function ResultsToShow (&$search, &$result, $date) {
                 stripos($result->description, $synonym) !== false
             )
             {
-                $synReturn = true;
+                return true;
             }
         }
     }
-
-    //  Every return has been set into a var in preparation for relevancy system
-    if($dateReturn || $titleReturn || $userReturn || $descReturn || $descReturn || $synReturn || $boolReturn){
-        return true;
-    }
     return false;
 }
+
 // Boolean search refers to the AND/NOT/OR tags in the tags search box
 function boolean(&$search, &$result) {
     // Collect all boolean values and split
