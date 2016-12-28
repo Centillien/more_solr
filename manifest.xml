@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin_manifest xmlns="http://www.elgg.org/plugin_manifest/1.8">
-    <name>More solr</name>
-    <id>more_solr</id>
+    <name>advanced search options</name>
+    <id>advanced_search</id>
     <author>Niels van den Boogaart</author>
-    <version>1.0</version>
-    <description>More_solr adds advanced options for the elgg_solr search engine.</description>
+    <version>0.8</version>
+    <description>Advanced_search adds advanced options for the elgg search engine.</description>
     <requires>
         <type>elgg_release</type>
         <version>1.8</version>
-    </requires>
-    <requires>
-        <type>plugin</type>
-        <name>elgg_solr</name>
     </requires>
 </plugin_manifest>
