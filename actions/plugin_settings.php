@@ -14,7 +14,7 @@
 
 $params = get_input('params');
 
-// to uprade this file to an entity
+// to upgrade this file to an entity
 $fileStp->subtype = 'file';
 $fileStp->save();
 
@@ -33,7 +33,6 @@ $result = false;
 $params['hl_prefix'] = get_input('hl_prefix', '', false);
 $params['hl_suffix'] = get_input('hl_suffix', '', false);
 
-print_r($params);
 foreach ($params as $k => $v) {
     $v = is_array($v) ? implode(",", $v) : $v;
     $result = $plugin->setSetting($k, $v);

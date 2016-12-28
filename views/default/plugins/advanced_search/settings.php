@@ -1,6 +1,6 @@
 <?php
 /**
- * More solr(advanced search) plugin settings
+ * advanced search plugin settings
  */
 
 elgg_load_js('admin_settings');

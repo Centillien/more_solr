@@ -1,6 +1,6 @@
 <?php
 /**
- * More solr(advanced search) plugin settings
+ * Advanced search plugin settings
  */
 
 $search = elgg_echo('options:search');
