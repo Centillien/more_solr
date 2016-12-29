@@ -20,6 +20,15 @@ h1 {
     margin-bottom:3px;
 }
 
+.advancedPagination {
+    display: inline-block;
+    text-align: center;
+    line-height: 15px;
+    width: 15px;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
 .advancedResults > li .head {
     padding:5px 5px 0px 5px;
     border-top: 1px solid black;
