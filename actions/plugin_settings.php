@@ -14,10 +14,10 @@
 
 $params = get_input('params');
 
-// to upgrade this file to an entity
+/* to upgrade this file to an entity
 $fileStp->subtype = 'file';
 $fileStp->save();
-
+*/
 $plugin_id = get_input('plugin_id');
 $plugin = elgg_get_plugin_from_id($plugin_id);
 

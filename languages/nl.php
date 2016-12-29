@@ -114,5 +114,12 @@ return array(
     'stopword:edit' => 'Stopwoord veranderen',
     'synonyms:title' => 'Synoniemen',
     'synonym:new' => 'Nieuw synoniem toevoegen',
-    'synonym:edit' => 'Verander een synoniem'
+    'synonym:edit' => 'Verander een synoniem',
+
+    /*
+     * Date settings
+     */
+    'options:day' => "Dag zoeken",
+    'options:month' => "Maand zoeken",
+    'options:year' => "Jaar zoeken",
 );
