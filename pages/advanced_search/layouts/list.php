@@ -20,7 +20,8 @@ $search =  array('search' => $_GET['search'],
             'users' => $_GET['user'],
             'results' => $_GET['results'],
             'sort' => $_GET['sort'],
-            'date' => $_GET['date']);
+            'date' => $_GET['date'],
+            'dateSets' => $_GET['dateSets']);
 
 $countResults = 0;
 switch($search['sort']){
@@ -102,10 +103,12 @@ $content .= '<ul class="elgg-list advancedResults">';
         $description = strip_tags($description);
 
         // view
-        if(ResultsToShow($search, $result, $d_m_y) && $countResults <= $search['results']){
+        $int = $search['results'] - 1;
+        //  && $countResults <= $int |||||||||add this to the if for limited results
+        if(ResultsToShow($search, $result, $d_m_y)){
             $countResults++;
             $content .=  "
-            <li class='advancedItem'>
+            <li class='advancedItem ".overResults($countResults, $search['results'])."'>
                 <a href='/".$subtype."/view/".$guid."'>
                     <div class='head'>
                             <h4>".$result->title."</h4>
@@ -128,10 +131,14 @@ $content .= '<ul class="elgg-list advancedResults">';
                     </div>  
                 </a>
             </li>";
-        } else {
-
         }
     }
+$pages = ceil($countResults / $search['results']);
+$content .= "<div>";
+for($i=0;$i<$pages;$i++){
+    $content .= "<a href='#' class='advancedPage'><div class='advancedPagination'>".($i + 1)."</div></a>";
+}
+$content .= "</div>";
 $content .= "
     <div id='info'>some text here</div>
     <div id='noItems'><h3>".elgg_echo('search:results:none')."</h3></div>
@@ -148,6 +155,15 @@ echo elgg_view_page($title, $body);
 
 elgg_require_js('resultHandler');
 
+/*
+ * $count counts amount of results
+ */
+function overResults ($count, $resAm) {
+    //  Gain ability to set a range of viewables
+    if($count > $resAm){
+        return 'hidden';
+    }
+}
 
 /*
  *  $search contains search query
@@ -166,14 +182,40 @@ function ResultsToShow (&$search, &$result, $date) {
     if(boolean($search, $result)){
         $boolReturn = true;
     }
-
-    $str = substr($date, 5);
-    $dated = substr($search['date'], 5);
-    if($dated == $str){
+    $dateEn = false;
+    switch($search['dateSets']){
+        case '111' :    //  Full date
+            $str = substr($date, 0, 10);
+            $dated = substr($search['date'], 0, 10);
+            break;
+        case '110' :    //  No year
+            $str = substr($date, 5, 10);
+            $dated = substr($search['date'], 5, 10);
+            break;
+        case '101' :    //  No month
+            $str = substr($date, 0, 4);
+            $str .= substr($date, 7, 10);
+            $dated = substr($search['date'], 0, 4);
+            $dated .= substr($search['date'], 7, 10);
+            break;
+        case '100' :    //  Only day
+            $str = substr($date, 8, 10);
+            $dated = substr($search['date'], 8, 10);
+            break;
+        case '011' :    //  No day
+            $str = substr($date, 0, 7);
+            $dated = substr($search['date'], 0, 7);
+            break;
+        case '000' :    //  Disable date
+            $dateEn = true;
+            break;
+    }
+    if($dated == $str && !$dateEn){
         $dateReturn = true;
-    } elseif($dated != "") {
+    } else {
         $dateReturn = false;
     }
+
     $searchList = explode(" ", $search['search']);
 
     $stopwords = getStops();
@@ -210,8 +252,10 @@ function ResultsToShow (&$search, &$result, $date) {
     }
 
     //  Every return has been set into a var in preparation for relevancy system
-    if($dateReturn || $titleReturn || $userReturn || $descReturn || $descReturn || $synReturn || $boolReturn){
-        return true;
+    if($dateReturn){
+        if($titleReturn || $userReturn || $descReturn || $descReturn || $synReturn || $boolReturn){
+            return true;
+        }
     }
     return false;
 }

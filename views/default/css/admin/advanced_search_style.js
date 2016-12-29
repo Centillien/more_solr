@@ -48,3 +48,6 @@ $( "#openDateMenu" ).click(function ( event ) {
         $( "tr.dateSets" ).addClass('hidden');
     }
 });
+$( ".advancedPage" ).click(function ( event ) {
+    console.log(this.textContent);
+});
