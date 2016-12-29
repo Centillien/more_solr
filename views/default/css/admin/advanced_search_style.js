@@ -38,3 +38,13 @@ var users = JSON.parse($( ".hiddenUsers").val());
 $("#userAuto").autocomplete({
     source: users
 });
+var count = 0;
+$( "#openDateMenu" ).click(function ( event ) {
+    if(count == 0){
+        count++;
+        $( "tr.dateSets" ).removeClass('hidden');
+    } else {
+        count = 0;
+        $( "tr.dateSets" ).addClass('hidden');
+    }
+});

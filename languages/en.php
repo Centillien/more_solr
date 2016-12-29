@@ -119,5 +119,12 @@ return array(
     'stopword:edit' => 'Edit a stopword',
     'synonyms:title' => 'Synonyms',
     'synonym:new' => 'Add a new synonym',
-    'synonym:edit' => 'Edit a synonym'
+    'synonym:edit' => 'Edit a synonym',
+
+    /*
+     * Date settings
+     */
+    'options:day' => "Search day",
+    'options:month' => "Search month",
+    'options:year' => "Search year",
 );
