@@ -58,6 +58,7 @@ $sort = elgg_echo('options:sort');
 $sort_bar = elgg_view('input/select', array(
     'name' => 'sort',
     'id' => 'sortDrop',
+    'value' => $search['sort'],
     'options_values' => array(
         'timeno' => elgg_echo('option:timeno'), // Time new - old
         'timeon' => elgg_echo('option:timeon'), // Time old - new
