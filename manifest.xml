@@ -5,6 +5,7 @@
     <author>Niels van den Boogaart</author>
     <version>0.8</version>
     <description>Advanced_search adds advanced options for the elgg search engine.</description>
+    <license>GNU Public License version 2</license>
     <requires>
         <type>elgg_release</type>
         <version>1.8</version>
