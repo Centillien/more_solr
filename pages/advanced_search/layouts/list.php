@@ -97,7 +97,6 @@ $content .= '<ul class="elgg-list advancedResults">';
         $user = get_user($result->owner_guid);
         $username = $user->username;
         $name = $user->name;
-        $name = substr($name,0,10).'...';
 
         $description = $result->description;
         $description = strip_tags($description);
@@ -127,7 +126,8 @@ $content .= '<ul class="elgg-list advancedResults">';
                             ".elgg_echo('search:results:latest').":".$timeCreated."
                         </div>";
                 }
-                $content .= "         
+                $content .= "  
+                        <div class='info'>\"Owner name\"</div>       
                     </div>  
                 </a>
             </li>";
@@ -140,7 +140,6 @@ for($i=0;$i<$pages;$i++){
 }
 $content .= "</div>";
 $content .= "
-    <div id='info'>some text here</div>
     <div id='noItems'><h3>".elgg_echo('search:results:none')."</h3></div>
 </ul>
 </div>";

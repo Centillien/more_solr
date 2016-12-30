@@ -72,9 +72,10 @@ h1 {
 .advancedResults .one{
     min-width:15%;
     max-width:15%;
-    overflow:hidden;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     float:left;
-
 }
 
 .advancedResults .two{
@@ -91,7 +92,7 @@ h1 {
     float:left;
 }
 
-.advancedResults #info {
+.advancedResults .info {
     padding:5px;
     border: 1px solid black;
     border-radius: 4px;
