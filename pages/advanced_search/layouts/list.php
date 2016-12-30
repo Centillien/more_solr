@@ -108,7 +108,7 @@ $content .= '<ul class="elgg-list advancedResults">';
         if(ResultsToShow($search, $result, $d_m_y)){
             $countResults++;
             $content .=  "
-            <li class='advancedItem ".overResults($countResults, $search['results'])."'>
+            <li class='advancedItem".overResults($countResults, $search['results'])."' id='".$countResults."'>
                 <a href='/".$subtype."/view/".$guid."'>
                     <div class='head'>
                             <h4>".$result->title."</h4>
@@ -161,7 +161,7 @@ elgg_require_js('resultHandler');
 function overResults ($count, $resAm) {
     //  Gain ability to set a range of viewables
     if($count > $resAm){
-        return 'hidden';
+        return ' hidden';
     }
 }
 
