@@ -83,12 +83,8 @@ $content .= '<ul class="elgg-list advancedResults">';
         $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
         // If is older than a day, display date instead
         if($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1){
-            $timeUpdated = "
-                <script>
-                    var date = new Date(".$result->time_updated.");
-                    document.write(date.getDate()+1+'-'+date.getMonth()+1+'-'+date.getYear()+' '
-                        +date.getHours()+':'+date.getMinutes());
-                </script>";
+            $timeUpdated = gmdate("Y-m-d H:i:s", $result->time_created);
+            $d_m_y = gmdate("Y-m-d", $result->time_created);
         }
 
         $subtype = $result->getSubtype();
@@ -119,14 +115,13 @@ $content .= '<ul class="elgg-list advancedResults">';
                         <div class='one'>".$name."</div>
                         <div class='two'>
                             ".elgg_echo('search:results:created').":".$time."
-                        </div>";
-                if($timeCreated != $time){
-                    $content .= "
-                        <div class='four'>
-                            ".elgg_echo('search:results:latest').":".$timeCreated."
-                        </div>";
+                        </div>
+                        <div class='four'>";
+                if($timeUpdated != $time){
+                    $content .= elgg_echo('search:results:latest').":".$timeUpdated;
                 }
                 $content .= "  
+                        </div>
                         <div class='info'>\"Owner name\"</div>       
                     </div>  
                 </a>
