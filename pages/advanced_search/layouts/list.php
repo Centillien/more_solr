@@ -58,6 +58,7 @@ $sort = elgg_echo('options:sort');
 $sort_bar = elgg_view('input/select', array(
     'name' => 'sort',
     'id' => 'sortDrop',
+    'value' => $search['sort'],
     'options_values' => array(
         'timeno' => elgg_echo('option:timeno'), // Time new - old
         'timeon' => elgg_echo('option:timeon'), // Time old - new
@@ -68,7 +69,7 @@ $sort_bar = elgg_view('input/select', array(
 
 // navigation/pagination can add pagination to page
 $content = "<h1 class='sortOptions'>$title</h1><div class='sortOptions'>$sort $sort_bar</div><div id='advancedResults'>";
-$content .= '<ul class="elgg-list advancedResults">';
+$content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults">';
     foreach ($results as $result) {
         $d_m_y = '';
         $time = elgg_get_friendly_time($result->time_created);
@@ -128,15 +129,15 @@ $content .= '<ul class="elgg-list advancedResults">';
             </li>";
         }
     }
+$content .= "
+    <div id='noItems'><h3>".elgg_echo('search:results:none')."</h3></div>
+</ul>";
 $pages = ceil($countResults / $search['results']);
-$content .= "<div>";
+$content .= "<div id='paginationFoot'>";
 for($i=0;$i<$pages;$i++){
     $content .= "<a href='#' class='advancedPage'><div class='advancedPagination'>".($i + 1)."</div></a>";
 }
-$content .= "</div>";
-$content .= "
-    <div id='noItems'><h3>".elgg_echo('search:results:none')."</h3></div>
-</ul>
+$content .= "</div>
 </div>";
 $params = array(
     'content' => $content,

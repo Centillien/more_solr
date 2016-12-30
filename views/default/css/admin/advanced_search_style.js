@@ -10,6 +10,11 @@ $( "div.head" ).hover(function () {
     $( this ).css("backgroundColor", "#cecece");
 });
 
+var firstDivContent = document.getElementById('paginationFoot');
+var secondDivContent = document.getElementById('paginationHead');
+
+secondDivContent.innerHTML = firstDivContent.innerHTML;
+
 $( "div.foot" ).hover(function ( event ) {
     var popup = event.currentTarget.childNodes[7];
     popup.style.top = event.clientY+'px';
@@ -23,7 +28,6 @@ $( "div.foot" ).hover(function ( event ) {
 
 // Renew page upon sort change
 var sort = $( "#sortDrop" );
-sort.val(' '); // Makes the Sort on option value empty so you can change back too
 sort.change(function () {
     var changeto = $( "#sortDrop" ).val();
     var url = window.location.toString();
@@ -48,6 +52,7 @@ $( "#openDateMenu" ).click(function () {
         $( "tr.dateSets" ).addClass('hidden');
     }
 });
+
 $( ".advancedPage" ).click(function () {
     pagination(this.textContent);
 });
