@@ -39,7 +39,7 @@ $("#userAuto").autocomplete({
     source: users
 });
 var count = 0;
-$( "#openDateMenu" ).click(function ( event ) {
+$( "#openDateMenu" ).click(function () {
     if(count == 0){
         count++;
         $( "tr.dateSets" ).removeClass('hidden');
@@ -48,6 +48,38 @@ $( "#openDateMenu" ).click(function ( event ) {
         $( "tr.dateSets" ).addClass('hidden');
     }
 });
-$( ".advancedPage" ).click(function ( event ) {
-    console.log(this.textContent);
+$( ".advancedPage" ).click(function () {
+    pagination(this.textContent);
 });
+
+//  Make functions to add/remove hidden classes depending on their id
+
+function pagination (page){
+    var maxpp = 10;
+
+    var i;
+    var pageItems;
+    var item;
+
+    //  Removes old items
+    for(i=0;i<10;i++){
+        var htmlCollection = document.getElementsByClassName("advancedItem");
+        var items = Array.prototype.slice.call( htmlCollection );
+        items.forEach(function (e) {
+            if(e.classList == "advancedItem"){
+                e.classList = "advancedItem hidden";
+            }
+        });
+    }
+
+    //  Adds new items
+    for(i=0;i<10;i++){
+        pageItems = i + 1 + ((page - 1) * maxpp);
+        item = [document.getElementById(pageItems.toString())];
+        item.forEach(function (e) {
+            if(e != null) {
+                e.classList = "advancedItem";
+            }
+        });
+    }
+}
