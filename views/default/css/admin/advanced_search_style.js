@@ -10,6 +10,11 @@ $( "div.head" ).hover(function () {
     $( this ).css("backgroundColor", "#cecece");
 });
 
+var firstDivContent = document.getElementById('paginationFoot');
+var secondDivContent = document.getElementById('paginationHead');
+
+secondDivContent.innerHTML = firstDivContent.innerHTML;
+
 $( "div.foot" ).hover(function ( event ) {
     var popup = event.currentTarget.childNodes[7];
     popup.style.top = event.clientY+'px';
@@ -47,6 +52,7 @@ $( "#openDateMenu" ).click(function () {
         $( "tr.dateSets" ).addClass('hidden');
     }
 });
+
 $( ".advancedPage" ).click(function () {
     pagination(this.textContent);
 });

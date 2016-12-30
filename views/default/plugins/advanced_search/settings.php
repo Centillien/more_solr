@@ -558,7 +558,7 @@ $settings = <<<__HTML
     <td>$results_enable</td>
     <td>$results_amount <br> $resultsAmountHelp</td>
   </tr>
-</table>
+</table><!--
 $formSubmit
 
     <h1>$relevancyTitle</h1>
@@ -596,7 +596,7 @@ $formSubmit
     <td><label>$results</label></td>
     <td>$resultsRel <br></td>
   </tr>
-</table>
+</table>-->
 
 <div class='popup-body'>
 </div>
