@@ -27,8 +27,6 @@ sort.val(' '); // Makes the Sort on option value empty so you can change back to
 sort.change(function () {
     var changeto = $( "#sortDrop" ).val();
     var url = window.location.toString();
-    console.log(url);
-    console.log(changeto);
     window.location = url.replace(/sort=(.|\n)*?&/g, 'sort='+ changeto +'&');
 });
 

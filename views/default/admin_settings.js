@@ -95,7 +95,6 @@ for (i=0; i < backSyn.length; i++) {
         for (var i = 0; i < myControls.length; i++) {
             Array.prototype.forEach.call(elements, function (item, index, arr) {
                 document.getElementById('eddInputList').removeChild(arr[index]);
-                console.log(index);
                 counterEd = 1;
             });
         }
