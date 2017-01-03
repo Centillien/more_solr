@@ -65,12 +65,20 @@ $user_bar = elgg_view('input/text', array(
     'placeholder' => elgg_echo('options:user:placeholder'),
 ));
 
-$date = elgg_echo('options:date');
+$date = elgg_echo('options:date:from');
 $date_bar = elgg_view('input/date', array(
     'name' => 'date',
     'id' => 'date',
     'class' => 'elgg-input-thin',
-    'placeholder' => elgg_echo('options:date:placeholder'),
+    'placeholder' => elgg_echo('options:date:from:placeholder'),
+));
+
+$dateTo = elgg_echo('options:date:to');
+$date_barTo = elgg_view('input/date', array(
+    'name' => 'dateTo',
+    'id' => 'dateTo',
+    'class' => 'elgg-input-thin',
+    'placeholder' => elgg_echo('options:date:to:placeholder'),
 ));
 
 $pizza  = elgg_get_plugin_setting('res_am', 'advanced_search');
@@ -79,7 +87,7 @@ $arr = [$pizza - 30, $pizza - 10, $pizza, $pizza + 10, $pizza + 30];
 $farr = array_filter($arr, function ($x) { return $x > 0; });
 foreach($farr as $f){
     print_r($types['object'][$f]);
-    $carr["$f"] = elgg_echo($f);
+    $carr["$f"] = elgg_echo(''.$f);
 }
 $results = elgg_echo('options:results');
 $results_bar = elgg_view('input/select', array(
@@ -183,6 +191,10 @@ if($setting != 'no') {
       <tr>
         <td><label>$date</label></td>
         <td>$date_bar</td>
+      </tr>
+      <tr>
+        <td><label>$dateTo</label></td>
+        <td>$date_barTo</td>
       </tr>";
 }
 $setting = elgg_get_plugin_setting('res_en', 'advanced_search');

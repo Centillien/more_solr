@@ -48,7 +48,8 @@ return array(
     'options:user:admin' => "administrators",
     'options:user:admin:help' => "Laat gebruikers administrators vinden via de zoekopdracht",
 
-    'options:date' => "Datum",
+    'options:date:from' => "Datum vanaf",
+    'options:date:to' => "Datum tot",
     'options:date:day' => "Dag",
     'options:date:month' => "Maand",
     'options:date:year' => "Jaar",
@@ -69,7 +70,8 @@ return array(
     'options:search:placeholder' => "Zoeken",
     'options:tags:placeholder' => "Termen",
     'options:user:placeholder' => "Gebruiker",
-    'options:date:placeholder' => "Datum",
+    'options:date:from:placeholder' => "Datum vanaf",
+    'options:date:to:placeholder' => "Datum tot",
 
     /**
      *  Resultpage

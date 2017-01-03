@@ -20,7 +20,8 @@ $search =  array('search' => $_GET['search'],
             'users' => $_GET['user'],
             'results' => $_GET['results'],
             'sort' => $_GET['sort'],
-            'date' => $_GET['date']);
+            'date' => $_GET['date'],
+            'dateTo' => $_GET['dateTo']);
 
 $countResults = 0;
 switch($search['sort']){
@@ -47,6 +48,9 @@ $params = array(
     'limit' => 0,
     'pagination' => true,
 );
+
+$userResults = "";
+
 if ($search['category'] != 'all') {
     $params['subtype'] = $search['category'];
 } else {
@@ -245,6 +249,7 @@ $orArr = [];
 $notArr = [];
 function ResultsToShow (&$search, &$result, $date, $type) {
     $titleReturn    = false;
+
     $userReturn     = true;
     $dateReturn     = true;
 
@@ -267,8 +272,30 @@ function ResultsToShow (&$search, &$result, $date, $type) {
         $titleReturn = true;
     }
 
-    if($search['date'] != "" && $date != $search['date']){
-        $dateReturn = false;
+    $dater = date('Y-m-d', strtotime($date));
+    $startDate = $search['date'];
+    $endDate = $search['dateTo'];
+
+    if($startDate && $endDate){                             //  If both
+        if (($dater >= $startDate) && ($dater <= $endDate)) {
+            $dateReturn = true;
+        } else {
+            $dateReturn = false;
+        }
+    } elseif ($startDate) {                                 //  If only start
+        if($dater >= $startDate){
+            $dateReturn = true;
+        } else {
+            $dateReturn = false;
+        }
+    } elseif ($endDate) {                                   //  If only end
+        if($dater <= $endDate){
+            $dateReturn = true;
+        } else {
+            $dateReturn = false;
+        }
+    } else {                                                //  If neither
+        $dateReturn = true;
     }
 
     if($search['search'] != ""){

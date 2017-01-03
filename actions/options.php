@@ -7,6 +7,7 @@ $tags = get_input('tags');
 $user = get_input('user');
 $results = get_input('results');
 $date = get_input('date');
+$dateTo = get_input('dateTo');
 
 forward(elgg_get_site_url() . "advanced_search/list" .
     "?search=" . $search .
@@ -16,5 +17,6 @@ forward(elgg_get_site_url() . "advanced_search/list" .
     "&tags=" . $tags .
     "&user=" . $user .
     "&results=" . $results .
-    "&date=" . $date
+    "&date=" . $date .
+    "&dateTo=" . $dateTo
 );
