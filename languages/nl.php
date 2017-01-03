@@ -122,4 +122,6 @@ return array(
     'options:day' => "Dag zoeken",
     'options:month' => "Maand zoeken",
     'options:year' => "Jaar zoeken",
+
+    'no:about' => "Geen 'over mij' gevonden."
 );

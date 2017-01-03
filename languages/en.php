@@ -127,4 +127,6 @@ return array(
     'options:day' => "Search day",
     'options:month' => "Search month",
     'options:year' => "Search year",
+
+    'no:about' => "No 'about me' found."
 );

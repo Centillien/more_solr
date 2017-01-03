@@ -26,10 +26,10 @@ $search =  array('search' => $_GET['search'],
 $countResults = 0;
 switch($search['sort']){
     case 'timeon':
-            $sort = 'time_created ASC';
+            $sort = $userSort = 'time_created ASC';
         break;
     case 'timeno':
-            $sort = 'time_created DESC';
+            $sort = $userSort = 'time_created DESC';
         break;
     case 'abcaz':
             $sort = 'title ASC';
@@ -38,7 +38,7 @@ switch($search['sort']){
             $sort = 'title DESC';
         break;
     default:
-            $sort = 'time_created DESC';
+            $sort = $userSort = 'time_created DESC';
         break;
 }
 $params = array(
@@ -55,9 +55,9 @@ $results = elgg_get_entities($params);
 
 $userResults = elgg_get_entities(array(
         'types' => 'user',
+        'order_by' => $userSort,
         'limit' => 0,)
 );
-
 $sort = elgg_echo('options:sort');
 $sort_bar = elgg_view('input/select', array(
     'name' => 'sort',
@@ -74,6 +74,78 @@ $sort_bar = elgg_view('input/select', array(
 // navigation/pagination can add pagination to page
 $content = "<h1 class='sortOptions'>$title</h1><div class='sortOptions'>$sort $sort_bar</div><div id='advancedResults'>";
 $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults">';
+
+    foreach ($userResults as $result) {
+    $d_m_y = '';
+    $time = elgg_get_friendly_time($result->time_created);
+    $timeArr = preg_split("/[\s]+/", $time);
+    // If is older than a day, display date instead
+    if ($timeArr[1] == 'days' && $timeArr[0] > 1) {
+        $time = gmdate("Y-m-d H:i:s", $result->time_created);
+        $d_m_y = gmdate("Y-m-d", $result->time_created);
+    }
+
+    $timeUpdated = elgg_get_friendly_time($result->last_login);
+    $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
+    // If is older than a day, display date instead
+    if ($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1) {
+        $timeUpdated = gmdate("Y-m-d H:i:s", $result->last_login);
+        $d_m_y = gmdate("Y-m-d", $result->last_login);
+    }
+
+    $username = $result->username;
+    $name = $result->name;
+
+    // view
+    $int = $search['results'] - 1;
+
+    if (ResultsToShow($search, $result, $d_m_y, 'user')) {
+        $userIcon = elgg_view_entity_icon($result, 'medium');
+        $biography = elgg_view('output/longtext', array('value' => $result->description ? $result->description : elgg_echo('no:about'), 'class' => 'mtn'));
+        $countResults++;
+        $content .= "
+            <li class='advancedItem" . overResults($countResults, $search['results']) . "' id='" . $countResults . "'>
+                <a href='/profile/" . $username . "'>
+                    <div class='head'>
+                            <h4>" . $result->name . "</h4>
+                            <table>
+                                <tr>
+                                    <td>
+                                        ".$userIcon."<br>
+                                        <div class='userStatus'>
+                                            Language: " . $result->language . "<br> 
+                                            admin: ".$result->admin."<br> 
+                                            banned: ".$result->banned."
+                                        </div>
+                                    </td>
+                                    <td width:100%;>
+                                        <div class='biography'>
+                                        E-mail: " . $result->email . "<br> <br> 
+                                            ".$biography."
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                    </div>
+                </a>
+                <a href='/profile/" . $username . "'>
+                    <div class='foot'>
+                        <div class='one'>" . $name . "</div>
+                        <div class='two'>
+                            " . elgg_echo('search:results:created') . ":" . $time . "
+                        </div>
+                        <div class='four'>";
+        if ($timeUpdated != $time && $result->last_login != 0) {
+            $content .= elgg_echo('search:results:latest') . ":" . $timeUpdated;
+        }
+        $content .= "  
+                        </div>
+                        <div class='info'>\"Owner name\"</div>       
+                    </div>  
+                </a>
+            </li>";
+    }
+}
     foreach ($results as $result) {
         $d_m_y = '';
         $time = elgg_get_friendly_time($result->time_created);
@@ -130,77 +202,6 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
                         </div>
                         <div class='info'>\"Owner name\"</div>       
                     </div>
-                </a>
-            </li>";
-        }
-    }
-    foreach ($userResults as $result) {
-        $d_m_y = '';
-        $time = elgg_get_friendly_time($result->time_created);
-        $timeArr = preg_split("/[\s]+/", $time);
-        // If is older than a day, display date instead
-        if ($timeArr[1] == 'days' && $timeArr[0] > 1) {
-            $time = gmdate("Y-m-d H:i:s", $result->time_created);
-            $d_m_y = gmdate("Y-m-d", $result->time_created);
-        }
-
-        $timeUpdated = elgg_get_friendly_time($result->last_login);
-        $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
-        // If is older than a day, display date instead
-        if ($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1) {
-            $timeUpdated = gmdate("Y-m-d H:i:s", $result->last_login);
-            $d_m_y = gmdate("Y-m-d", $result->last_login);
-        }
-
-        $username = $result->username;
-        $name = $result->name;
-
-        // view
-        $int = $search['results'] - 1;
-
-        if (ResultsToShow($search, $result, $d_m_y, 'user')) {
-            $userIcon = elgg_view_entity_icon($result, 'medium');
-            $biography = elgg_view('output/longtext', array('value' => $result->description, 'class' => 'mtn'));
-            $countResults++;
-            $content .= "
-            <li class='advancedItem" . overResults($countResults, $search['results']) . "' id='" . $countResults . "'>
-                <a href='/profile/" . $username . "'>
-                    <div class='head'>
-                            <h4>" . $result->name . "</h4>
-                            <table>
-                                <tr>
-                                    <td>
-                                        ".$userIcon."
-                                    </td>
-                                    <td width:100%;>
-                                        <div class='biography'>
-                                        E-mail: " . $result->email . "<br> <br> 
-                                            ".$biography."
-                                        </div>
-                                        <div class='userStatus'>
-                                            Language: " . $result->language . "<br> 
-                                            admin: ".$result->admin."<br> 
-                                            banned: ".$result->banned."
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                    </div>
-                </a>
-                <a href='/profile/" . $username . "'>
-                    <div class='foot'>
-                        <div class='one'>" . $name . "</div>
-                        <div class='two'>
-                            " . elgg_echo('search:results:created') . ":" . $time . "
-                        </div>
-                        <div class='four'>";
-            if ($timeUpdated != $time && $result->last_login != 0) {
-                $content .= elgg_echo('search:results:latest') . ":" . $timeUpdated;
-            }
-            $content .= "  
-                        </div>
-                        <div class='info'>\"Owner name\"</div>       
-                    </div>  
                 </a>
             </li>";
         }
