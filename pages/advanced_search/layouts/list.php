@@ -23,7 +23,6 @@ $search =  array('search' => $_GET['search'],
             'date' => $_GET['date'],
             'dateTo' => $_GET['dateTo']);
 
-$countResults = 0;
 switch($search['sort']){
     case 'timeon':
             $sort = $userSort = 'time_created ASC';
@@ -36,6 +35,9 @@ switch($search['sort']){
         break;
     case 'abcza':
             $sort = 'title DESC';
+        break;
+    case 'popularity':
+            $sorter = 'popularity';
         break;
     default:
             $sort = $userSort = 'time_created DESC';
@@ -62,22 +64,26 @@ if ($search['category'] != 'all') {
 }
 $results = elgg_get_entities($params);
 
+$arr = [];
+$pizza  = elgg_get_plugin_setting('sort_list', 'advanced_search');
+$pieces = explode(",", $pizza);
+foreach($pieces as $piece){
+    print_r($types['object'][$piece]);
+    $arr["$piece"] = elgg_echo('option:'.$piece);
+}
 $sort = elgg_echo('options:sort');
 $sort_bar = elgg_view('input/select', array(
     'name' => 'sort',
     'id' => 'sortDrop',
     'value' => $search['sort'],
-    'options_values' => array(
-        'timeno' => elgg_echo('option:timeno'), // Time new - old
-        'timeon' => elgg_echo('option:timeon'), // Time old - new
-        'abcaz' => elgg_echo('option:abcaz'),   // Alphabet A - Z
-        'abcza' => elgg_echo('option:abcza'),   // Alphabet Z - A
-    ),
+    'options_values' => $arr,
 ));
 
 // navigation/pagination can add pagination to page
 $content = "<h1 class='sortOptions'>$title</h1><div class='sortOptions'>$sort $sort_bar</div><div id='advancedResults'>";
 $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults">';
+
+    $resultsArray[] = "";
 
     foreach ($userResults as $result) {
     $d_m_y = '';
@@ -104,11 +110,22 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
     $int = $search['results'] - 1;
 
     if (ResultsToShow($search, $result, $d_m_y, 'user')) {
+        $friendsCount = 0;
+
+        $options = array(
+            'relationship' => 'friend',
+            'relationship_guid' => $user_guid,
+            'inverse_relationship' => FALSE,
+            'type' => 'user',
+            'full_view' => FALSE
+        );
+        $friendsCount = count(elgg_get_entities_from_relationship($options));
+
+
         $userIcon = elgg_view_entity_icon($result, 'medium');
         $biography = elgg_view('output/longtext', array('value' => $result->description ? $result->description : elgg_echo('no:about'), 'class' => 'mtn'));
-        $countResults++;
-        $content .= "
-            <li class='advancedItem" . overResults($countResults, $search['results']) . "' id='" . $countResults . "'>
+
+        $item = "
                 <a href='/profile/" . $username . "'>
                     <div class='head'>
                             <h4>" . $result->name . "</h4>
@@ -118,8 +135,9 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
                                         ".$userIcon."<br>
                                         <div class='userStatus'>
                                             ".elgg_echo('results:language').": " . $result->language . "<br> 
-                                            admin: ".$result->admin."<br> 
-                                            banned: ".$result->banned."
+                                            Admin: ".$result->admin."<br> 
+                                            Friends: ".$friendsCount."<br> 
+                                            Banned: ".$result->banned."
                                         </div>
                                     </td>
                                     <td width:100%;>
@@ -140,14 +158,15 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
                         </div>
                         <div class='four'>";
         if ($timeUpdated != $time && $result->last_login != 0) {
-            $content .= elgg_echo('search:results:latest:login') . ":" . $timeUpdated;
+            $item .= elgg_echo('search:results:latest:login') . ":" . $timeUpdated;
         }
-        $content .= "  
+        $item .= "  
                         </div>
                         <div class='info'>\"Owner name\"</div>       
                     </div>  
-                </a>
-            </li>";
+                </a>";
+        $arr = array($item, $friendsCount);
+        $resultsArray[] = $arr;
     }
 }
     foreach ($results as $result) {
@@ -178,17 +197,27 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
         $description = $result->description;
         $description = strip_tags($description);
 
+        //  Get number of replies
+        $num_replies = elgg_get_entities(array(
+            'type' => 'object',
+            'subtype' => 'discussion_reply',
+            'container_guid' => $result->guid,
+            'count' => true,
+            'distinct' => false,
+        ));
+        $displaySubtype = $subtype;
+        if($subtype == 'discussion'){
+            $displaySubtype = $subtype . "<br> Replies: " . $num_replies;
+        }
         // view
         $int = $search['results'] - 1;
         //  && $countResults <= $int |||||||||add this to the if for limited results
         if(ResultsToShow($search, $result, $d_m_y, 'object')){
-            $countResults++;
-            $content .=  "
-            <li class='advancedItem".overResults($countResults, $search['results'])."' id='".$countResults."'>
+            $item =  "
                 <a href='/".$subtype."/view/".$guid."'>
                     <div class='head'>
                             <h4>".$result->title."</h4>
-                            <div class='pull-right' style='margin-top:-20px'>".$subtype."</div>
+                            <div class='pull-right'>".$displaySubtype."</div>
                             <div class='desc'><p>".$description."</p></div>
                     </div>
                 </a>
@@ -200,16 +229,38 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
                         </div>
                         <div class='four'>";
                 if($timeUpdated != $time){
-                    $content .= elgg_echo('search:results:latest').":".$timeUpdated;
+                    $item .= elgg_echo('search:results:latest').":".$timeUpdated;
                 }
-                $content .= "  
+            $item .= "  
                         </div>
                         <div class='info'>\"Owner name\"</div>       
                     </div>
-                </a>
-            </li>";
+                </a>";
+            $arr = array($item, $num_replies);
+            $resultsArray[] = $arr;
         }
     }
+
+    function pop($a, $b)
+    {
+        if ($a[1] == $b[1]) {
+            return 0;
+        }
+        return ($a[1] > $b[1]) ? -1 : 1;
+    }
+    //  Createfilterquery
+    if($sorter == 'popularity'){
+        usort($resultsArray, "pop");
+    }
+
+    for($i=0;$i<count($resultsArray);$i++){
+        $contentA = "<li class='advancedItem".overResults($i, $search['results'])."' id='".$i."'>";
+        $contentA .= $resultsArray[$i][0];
+        $contentA .= "</li>";
+
+        $content .= $contentA;
+    }
+
 $content .= "
     <div id='noItems'><h3>".elgg_echo('search:results:none')."</h3></div>
 </ul>";

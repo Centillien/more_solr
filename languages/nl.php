@@ -36,6 +36,7 @@ return array(
     'option:timeno' => "Tijd, nieuw - oud",
     'option:abcaz' => "Alfabet, A - Z",
     'option:abcza' => "Alfabet, Z - A",
+    'option:popularity' => "Populariteit",
 
     'options:tags' => "Zoekwoorden",
     'options:tags:list' => "Lijst van boolean opties",

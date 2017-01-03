@@ -36,6 +36,7 @@ return array(
     'option:timeno' => "Time new - old",
     'option:abcaz' => "Alphabet A - Z",
     'option:abcza' => "Alphabet Z - A",
+    'option:popularity' => "Popularity",
 
     'options:tags' => "Tags",
     'options:tags:list' => "List of boolean options",
