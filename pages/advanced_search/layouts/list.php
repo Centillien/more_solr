@@ -53,6 +53,11 @@ if ($search['category'] != 'all') {
 }
 $results = elgg_get_entities($params);
 
+$userResults = elgg_get_entities(array(
+        'types' => 'user',
+        'limit' => 0,)
+);
+
 $sort = elgg_echo('options:sort');
 $sort_bar = elgg_view('input/select', array(
     'name' => 'sort',
@@ -83,8 +88,8 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
         $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
         // If is older than a day, display date instead
         if($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1){
-            $timeUpdated = gmdate("Y-m-d H:i:s", $result->time_created);
-            $d_m_y = gmdate("Y-m-d", $result->time_created);
+            $timeUpdated = gmdate("Y-m-d H:i:s", $result->time_updated);
+            $d_m_y = gmdate("Y-m-d", $result->time_updated);
         }
 
         $subtype = $result->getSubtype();
@@ -100,7 +105,7 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
         // view
         $int = $search['results'] - 1;
         //  && $countResults <= $int |||||||||add this to the if for limited results
-        if(ResultsToShow($search, $result, $d_m_y)){
+        if(ResultsToShow($search, $result, $d_m_y, 'object')){
             $countResults++;
             $content .=  "
             <li class='advancedItem".overResults($countResults, $search['results'])."' id='".$countResults."'>
@@ -122,6 +127,78 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
                     $content .= elgg_echo('search:results:latest').":".$timeUpdated;
                 }
                 $content .= "  
+                        </div>
+                        <div class='info'>\"Owner name\"</div>       
+                    </div>
+                </a>
+            </li>";
+        }
+    }
+    foreach ($userResults as $result) {
+        $d_m_y = '';
+        $time = elgg_get_friendly_time($result->time_created);
+        $timeArr = preg_split("/[\s]+/", $time);
+        // If is older than a day, display date instead
+        if ($timeArr[1] == 'days' && $timeArr[0] > 1) {
+            $time = gmdate("Y-m-d H:i:s", $result->time_created);
+            $d_m_y = gmdate("Y-m-d", $result->time_created);
+        }
+
+        $timeUpdated = elgg_get_friendly_time($result->last_login);
+        $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
+        // If is older than a day, display date instead
+        if ($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1) {
+            $timeUpdated = gmdate("Y-m-d H:i:s", $result->last_login);
+            $d_m_y = gmdate("Y-m-d", $result->last_login);
+        }
+
+        $username = $result->username;
+        $name = $result->name;
+
+        // view
+        $int = $search['results'] - 1;
+
+        if (ResultsToShow($search, $result, $d_m_y, 'user')) {
+            echo '<pre>'; print_r($result); echo '</pre>';
+            $userIcon = elgg_view_entity_icon($result, 'medium');
+            $biography = elgg_view('output/longtext', array('value' => $result->description, 'class' => 'mtn'));
+            $countResults++;
+            $content .= "
+            <li class='advancedItem" . overResults($countResults, $search['results']) . "' id='" . $countResults . "'>
+                <a href='/profile/" . $username . "'>
+                    <div class='head'>
+                            <h4>" . $result->name . "</h4>
+                            <table>
+                                <tr>
+                                    <td>
+                                        ".$userIcon."
+                                    </td>
+                                    <td width:100%;>
+                                        <div class='biography'>
+                                        E-mail: " . $result->email . "<br> <br> 
+                                            ".$biography."
+                                        </div>
+                                        <div class='userStatus'>
+                                            Language: " . $result->language . "<br> 
+                                            admin: ".$result->admin."<br> 
+                                            banned: ".$result->banned."
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                    </div>
+                </a>
+                <a href='/profile/" . $username . "'>
+                    <div class='foot'>
+                        <div class='one'>" . $name . "</div>
+                        <div class='two'>
+                            " . elgg_echo('search:results:created') . ":" . $time . "
+                        </div>
+                        <div class='four'>";
+            if ($timeUpdated != $time && $result->last_login != 0) {
+                $content .= elgg_echo('search:results:latest') . ":" . $timeUpdated;
+            }
+            $content .= "  
                         </div>
                         <div class='info'>\"Owner name\"</div>       
                     </div>  
@@ -166,64 +243,68 @@ function overResults ($count, $resAm) {
 $andArr = [];
 $orArr = [];
 $notArr = [];
-function ResultsToShow (&$search, &$result, $date) {
+function ResultsToShow (&$search, &$result, $date, $type) {
     $titleReturn    = false;
     $userReturn     = true;
     $dateReturn     = true;
 
-    $textToSearch = $result->title . " " . $result->description;
+    if($type == 'object'){
+        $textToSearch = $result->title . " " . $result->description;
 
-    if(boolean($search, $result)){
-        $titleReturn = true;
-    }
-
-    if($search['date'] != "" && $date != $search['date']){
-        $dateReturn = false;
-    }
-
-    if($search['search'] != ""){
-        $searchList = explode(" ", $search['search']);
-        $stopwords = getStops();
-
-        $filterSearch = array_diff($searchList, $stopwords);
-        $i = array_intersect($filterSearch, explode(" ", preg_replace("/[^A-Za-z0-9' -]/", "", $textToSearch)));
-
-        if(count($i) == count($filterSearch)){
+        if(boolean($search, $result)){
             $titleReturn = true;
         }
-    }
-    if($search['users'] != ""){
-        $userIdArr = explode(":", $search['users']);
-        $size = count($userIdArr) - 1;
 
-        if($result->owner_guid != $userIdArr[$size])
-        {
-            $userReturn = false;
+        if($search['date'] != "" && $date != $search['date']){
+            $dateReturn = false;
         }
-    }
 
-    //  Synonym search
-    if($search['synonym'] == 'yes'){
-        $searchList = explode(" ", $search['search']);
-        $synonyms = "";
-        foreach($searchList as $i) {
-            $synonyms .= synonymSearch($i);
-        }
-        $synonyms = explode(",", $synonyms);
-        $synonyms = array_diff($synonyms, [$search['search']]);
+        if($search['search'] != ""){
+            $searchList = explode(" ", $search['search']);
+            $stopwords = getStops();
 
-        foreach ($synonyms as $synonym){
-            if(stripos($textToSearch, $synonym) !== false){
+            $filterSearch = array_diff($searchList, $stopwords);
+            $i = array_intersect($filterSearch, explode(" ", preg_replace("/[^A-Za-z0-9' -]/", "", $textToSearch)));
+
+            if(count($i) == count($filterSearch)){
                 $titleReturn = true;
             }
         }
-    }
+        if($search['users'] != ""){
+            $userIdArr = explode(":", $search['users']);
+            $size = count($userIdArr) - 1;
 
-    //  Every return has been set into a var in preparation for relevancy system
-    if($userReturn && $titleReturn && $dateReturn){
+            if($result->owner_guid != $userIdArr[$size])
+            {
+                $userReturn = false;
+            }
+        }
+
+        //  Synonym search
+        if($search['synonym'] == 'yes'){
+            $searchList = explode(" ", $search['search']);
+            $synonyms = "";
+            foreach($searchList as $i) {
+                $synonyms .= synonymSearch($i);
+            }
+            $synonyms = explode(",", $synonyms);
+            $synonyms = array_diff($synonyms, [$search['search']]);
+
+            foreach ($synonyms as $synonym){
+                if(stripos($textToSearch, $synonym) !== false){
+                    $titleReturn = true;
+                }
+            }
+        }
+
+        //  Every return has been set into a var in preparation for relevancy system
+        if($userReturn && $titleReturn && $dateReturn){
+            return true;
+        } else {
+            return false;
+        }
+    } elseif ($type == 'user'){
         return true;
-    } else {
-        return false;
     }
 }
 // Boolean search refers to the AND/NOT/OR tags in the tags search box
