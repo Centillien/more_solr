@@ -159,7 +159,6 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
         $int = $search['results'] - 1;
 
         if (ResultsToShow($search, $result, $d_m_y, 'user')) {
-            echo '<pre>'; print_r($result); echo '</pre>';
             $userIcon = elgg_view_entity_icon($result, 'medium');
             $biography = elgg_view('output/longtext', array('value' => $result->description, 'class' => 'mtn'));
             $countResults++;
@@ -248,67 +247,76 @@ function ResultsToShow (&$search, &$result, $date, $type) {
     $userReturn     = true;
     $dateReturn     = true;
 
-    if($type == 'object'){
-        $textToSearch = $result->title . " " . $result->description;
+    $search = array_map('strtolower', $search);
 
-        if(boolean($search, $result)){
+    if($type == 'object') {
+        $textToSearch = $result->title . " " . $result->description;
+        $textToSearch = strtolower($textToSearch);
+        $userGuid = $result->owner_guid;
+    } elseif($type == 'user'){
+        $textToSearch = $result->description . " " . $result->name . " " . $result->email;
+        $textToSearch = strtolower($textToSearch);
+        $userGuid = $result->guid;
+    } else {
+        $textToSearch = "";
+        $userGuid = "";
+    }
+
+    if(boolean($search, $textToSearch)){
+        $titleReturn = true;
+    }
+
+    if($search['date'] != "" && $date != $search['date']){
+        $dateReturn = false;
+    }
+
+    if($search['search'] != ""){
+        $searchList = explode(" ", $search['search']);
+        $stopwords = getStops();
+
+        $filterSearch = array_diff($searchList, $stopwords);
+        $i = array_intersect($filterSearch, explode(" ", preg_replace("/[^A-Za-z0-9' -]/", "", $textToSearch)));
+
+        if(count($i) == count($filterSearch)){
             $titleReturn = true;
         }
+    }
+    if($search['users'] != ""){
+        $userIdArr = explode(":", $search['users']);
+        $size = count($userIdArr) - 1;
 
-        if($search['date'] != "" && $date != $search['date']){
-            $dateReturn = false;
+        if($userGuid != $userIdArr[$size])
+        {
+            $userReturn = false;
         }
+    }
 
-        if($search['search'] != ""){
-            $searchList = explode(" ", $search['search']);
-            $stopwords = getStops();
+    //  Synonym search
+    if($search['synonym'] == 'yes'){
+        $searchList = explode(" ", $search['search']);
+        $synonyms = "";
+        foreach($searchList as $i) {
+            $synonyms .= synonymSearch($i);
+        }
+        $synonyms = explode(",", $synonyms);
+        $synonyms = array_diff($synonyms, [$search['search']]);
 
-            $filterSearch = array_diff($searchList, $stopwords);
-            $i = array_intersect($filterSearch, explode(" ", preg_replace("/[^A-Za-z0-9' -]/", "", $textToSearch)));
-
-            if(count($i) == count($filterSearch)){
+        foreach ($synonyms as $synonym){
+            if(stripos($textToSearch, $synonym) !== false){
                 $titleReturn = true;
             }
         }
-        if($search['users'] != ""){
-            $userIdArr = explode(":", $search['users']);
-            $size = count($userIdArr) - 1;
+    }
 
-            if($result->owner_guid != $userIdArr[$size])
-            {
-                $userReturn = false;
-            }
-        }
-
-        //  Synonym search
-        if($search['synonym'] == 'yes'){
-            $searchList = explode(" ", $search['search']);
-            $synonyms = "";
-            foreach($searchList as $i) {
-                $synonyms .= synonymSearch($i);
-            }
-            $synonyms = explode(",", $synonyms);
-            $synonyms = array_diff($synonyms, [$search['search']]);
-
-            foreach ($synonyms as $synonym){
-                if(stripos($textToSearch, $synonym) !== false){
-                    $titleReturn = true;
-                }
-            }
-        }
-
-        //  Every return has been set into a var in preparation for relevancy system
-        if($userReturn && $titleReturn && $dateReturn){
-            return true;
-        } else {
-            return false;
-        }
-    } elseif ($type == 'user'){
+    //  Every return has been set into a var in preparation for relevancy system
+    if($userReturn && $titleReturn && $dateReturn){
         return true;
+    } else {
+        return false;
     }
 }
 // Boolean search refers to the AND/NOT/OR tags in the tags search box
-function boolean(&$search, &$result) {
+function boolean(&$search, $textToSearch) {
     // Collect all boolean values and split
     $allArr = preg_split("/(?= AND)|(?= OR)|(?= NOT)/", $search['tags'], null, PREG_SPLIT_DELIM_CAPTURE);
 
@@ -327,7 +335,6 @@ function boolean(&$search, &$result) {
             array_push($andArr, $all);
         }
     }
-    $textToSearch = $result->title . " " . $result->description;
     //  First test AND(because the main is AND) Then test NOT(else it will show everything that is NOT)
     if(strposAnd($textToSearch, $andArr) !== false){
         if(count($notArr) != null){

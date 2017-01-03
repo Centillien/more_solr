@@ -143,13 +143,12 @@ h1 {
 }
 
 .biography {
+    width: 80%;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 80%;
-    display: inline-block;
 }
 .userStatus{
     min-width:100px;
