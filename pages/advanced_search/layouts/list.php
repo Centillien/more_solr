@@ -41,7 +41,6 @@ switch($search['sort']){
             $sort = 'time_created DESC';
         break;
 }
-// TODO:BUG'cannot cat search without setting a search term'
 $params = array(
     'type' => 'object',
     'subtype' => ELGG_ENTITIES_ANY_VALUE,
@@ -108,6 +107,7 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
                 <a href='/".$subtype."/view/".$guid."'>
                     <div class='head'>
                             <h4>".$result->title."</h4>
+                            <div class='pull-right' style='margin-top:-20px'>".$subtype."</div>
                             <div class='desc'><p>".$description."</p></div>
                     </div>
                 </a>
@@ -154,7 +154,6 @@ elgg_require_js('resultHandler');
  * $count counts amount of results
  */
 function overResults ($count, $resAm) {
-    //  Gain ability to set a range of viewables
     if($count > $resAm){
         return ' hidden';
     }
@@ -168,91 +167,64 @@ $andArr = [];
 $orArr = [];
 $notArr = [];
 function ResultsToShow (&$search, &$result, $date) {
-    $dateReturn     = false;
     $titleReturn    = false;
-    $userReturn     = false;
-    $descReturn     = false;
-    $synReturn      = false;
-    $boolReturn     = false;
+    $userReturn     = true;
+    $dateReturn     = true;
+
+    $textToSearch = $result->title . " " . $result->description;
+
     if(boolean($search, $result)){
-        $boolReturn = true;
+        $titleReturn = true;
     }
-    $dateEn = false;
-    switch($search['dateSets']){
-        case '111' :    //  Full date
-            $str = substr($date, 0, 10);
-            $dated = substr($search['date'], 0, 10);
-            break;
-        case '110' :    //  No year
-            $str = substr($date, 5, 10);
-            $dated = substr($search['date'], 5, 10);
-            break;
-        case '101' :    //  No month
-            $str = substr($date, 0, 4);
-            $str .= substr($date, 7, 10);
-            $dated = substr($search['date'], 0, 4);
-            $dated .= substr($search['date'], 7, 10);
-            break;
-        case '100' :    //  Only day
-            $str = substr($date, 8, 10);
-            $dated = substr($search['date'], 8, 10);
-            break;
-        case '011' :    //  No day
-            $str = substr($date, 0, 7);
-            $dated = substr($search['date'], 0, 7);
-            break;
-        case '000' :    //  Disable date
-            $dateEn = true;
-            break;
-    }
-    if($dated == $str && !$dateEn){
-        $dateReturn = true;
-    } else {
+
+    if($search['date'] != "" && $date != $search['date']){
         $dateReturn = false;
     }
 
-    $searchList = explode(" ", $search['search']);
+    if($search['search'] != ""){
+        $searchList = explode(" ", $search['search']);
+        $stopwords = getStops();
 
-    $stopwords = getStops();
+        $filterSearch = array_diff($searchList, $stopwords);
+        $i = array_intersect($filterSearch, explode(" ", preg_replace("/[^A-Za-z0-9' -]/", "", $textToSearch)));
 
-    $filterSearch = array_diff($searchList, $stopwords);
-    foreach($filterSearch as $word){
-       if(stripos($result->description, $word) !== false ||
-           stripos($result->title, $word) !== false){
-           $titleReturn = true;
-           $descReturn = true;
-       }
+        if(count($i) == count($filterSearch)){
+            $titleReturn = true;
+        }
     }
+    if($search['users'] != ""){
+        $userIdArr = explode(":", $search['users']);
+        $size = count($userIdArr) - 1;
 
-    if(stripos($result->owner_guid, $search['users']) !== false)
-    {
-        $userReturn = true;
+        if($result->owner_guid != $userIdArr[$size])
+        {
+            $userReturn = false;
+        }
     }
 
     //  Synonym search
     if($search['synonym'] == 'yes'){
-        $synonyms = synonymSearch($search['search']);
-
+        $searchList = explode(" ", $search['search']);
+        $synonyms = "";
+        foreach($searchList as $i) {
+            $synonyms .= synonymSearch($i);
+        }
         $synonyms = explode(",", $synonyms);
         $synonyms = array_diff($synonyms, [$search['search']]);
 
         foreach ($synonyms as $synonym){
-            if( stripos($result->title, $synonym) !== false ||
-                stripos($result->description, $synonym) !== false
-            )
-            {
-                $synReturn = true;
+            if(stripos($textToSearch, $synonym) !== false){
+                $titleReturn = true;
             }
         }
     }
 
     //  Every return has been set into a var in preparation for relevancy system
-    if($dateReturn){
-        if($titleReturn || $userReturn || $descReturn || $descReturn || $synReturn || $boolReturn){
-            return true;
-        }
+    if($userReturn && $titleReturn && $dateReturn){
+        return true;
+    } else {
+        return false;
     }
-    return false;
 }
 // Boolean search refers to the AND/NOT/OR tags in the tags search box
 function boolean(&$search, &$result) {
@@ -274,16 +246,15 @@ function boolean(&$search, &$result) {
             array_push($andArr, $all);
         }
     }
-
+    $textToSearch = $result->title . " " . $result->description;
     //  First test AND(because the main is AND) Then test NOT(else it will show everything that is NOT)
-    if(strposAnd($result->title, $andArr) !== false ||
-        strposAnd($result->description, $andArr) !== false){
-
+    if(strposAnd($textToSearch, $andArr) !== false){
         if(count($notArr) != null){
             foreach($notArr as $nots){  // Revenge of the nöts(nuts)
-                if(stripos($result->title, $nots) == false &&
-                    stripos($result->description, $nots) == false){
+                if(stripos($textToSearch, $nots) == false){
                     return true;
+                } else {
+                    return false;
                 }
             }
         } else {
@@ -293,9 +264,7 @@ function boolean(&$search, &$result) {
 
     //  Test OR seperately because everything containing OR should be displayed.
     if(count($orArr) != null) {
-        if (strposOr($result->title, $orArr) !== false ||
-            strposOr($result->description, $orArr) !== false
-        ) {
+        if (strposOr($textToSearch, $orArr) !== false) {
             return true;
         }
     }
