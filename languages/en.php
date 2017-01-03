@@ -36,6 +36,7 @@ return array(
     'option:timeno' => "Time new - old",
     'option:abcaz' => "Alphabet A - Z",
     'option:abcza' => "Alphabet Z - A",
+    'option:popularity' => "Popularity",
 
     'options:tags' => "Tags",
     'options:tags:list' => "List of boolean options",
@@ -48,7 +49,8 @@ return array(
     'options:user:admin' => "administrators",
     'options:user:admin:help' => "Allows admins to be found while searching",
 
-    'options:date' => "Date",
+    'options:date:from' => "Date from",
+    'options:date:to' => "Date to",
     'options:date:day' => "Day",
     'options:date:month' => "Month",
     'options:date:year' => "Year",
@@ -69,7 +71,8 @@ return array(
     'options:search:placeholder' => "Search",
     'options:tags:placeholder' => "tags",
     'options:user:placeholder' => "User",
-    'options:date:placeholder' => "Date",
+    'options:date:from:placeholder' => "Date from",
+    'options:date:to:placeholder' => "Date to",
     'options:stpAdd:placeholder' => 'New word to add to list',
     'options:stpEdd:placeholder' => 'Placeholder should be old word',
     'options:synAdd:placeholder' => 'New word to add to list',
@@ -82,6 +85,7 @@ return array(
     'search:results:title' => "Search results",
     'search:results:created' => "Date created",
     'search:results:latest' => "latest change",
+    'search:results:latest:login' => "Latest login",
     'search:results:none' => "No items found",
 
     /**
@@ -127,4 +131,10 @@ return array(
     'options:day' => "Search day",
     'options:month' => "Search month",
     'options:year' => "Search year",
+
+    'no:about' => "No 'about me' found.",
+
+    'form:error:fields' => 'Either the \'search\' or \'tags\' field is required.',
+
+    'results:language' => 'Language',
 );

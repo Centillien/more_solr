@@ -43,7 +43,8 @@ $search_attrs = elgg_format_attributes(array(
 ));
 
 $popup_content = elgg_view_form('options', array(
-    'enctype' => 'multipart/form-data'
+    'enctype' => 'multipart/form-data',
+    'id' => 'searchForm'
 ));
 
 $popup = elgg_format_element('div', [

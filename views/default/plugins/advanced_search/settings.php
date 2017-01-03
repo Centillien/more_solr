@@ -114,6 +114,7 @@ $vars['entity']->sort_list ? $sortListValue = explode(",",$vars['entity']->sort_
 $sort_list = elgg_view('input/select', array(
     'name' => 'params[sort_list]',
     'options_values' => array(
+        'popularity' => elgg_echo('option:popularity'),   // Aantal vrienden, aantal replies
         'timeon' => elgg_echo('option:timeon'), // Time old - new
         'timeno' => elgg_echo('option:timeno'), // Time new - old
         'abcaz' => elgg_echo('option:abcaz'),   // Alphabet A - Z
@@ -126,6 +127,7 @@ $sortListHelp = elgg_echo('options:sort:list:help');
 $sort_default = elgg_view('input/select', array(
     'name' => 'params[sort_def]',
     'options_values' => array(
+        'popularity' => elgg_echo('option:popularity'),   // Aantal vrienden, aantal replies
         'timeon' => elgg_echo('option:timeon'), // Time old - new
         'timeno' => elgg_echo('option:timeno'), // Time new - old
         'abcaz' => elgg_echo('option:abcaz'),   // Alphabet A - Z
@@ -541,17 +543,6 @@ $settings = <<<__HTML
   <tr>
     <td><label>$date</label></td>
     <td>$date_enable</td>
-    <td>
-        <table>
-            <tr>
-                <td><label>$dateDay</label></td>
-                <td>$dateDay_en $dateDayHelp</td>
-                <td><label>$dateMonth</label></td>
-                <td>$dateMonth_enable $dateMonthHelp</td>
-                <td><label>$dateYear</label></td>
-                <td>$dateYear_enable $dateYearHelp</td>
-            </tr>
-        </table>
   </tr>
   <tr>
     <td><label>$results</label></td>

@@ -2,11 +2,12 @@
 /**
  * Advanced search plugin settings
  */
+elgg_load_js('jsStyle');
 
 $search = elgg_echo('options:search');
 $search_bar = elgg_view('input/text', array(
     'name' => 'search',
-    'class' => 'elgg-input-thin',
+    'class' => 'elgg-input-thin requiredFields',
     'placeholder' => elgg_echo('options:search:placeholder'),
 ));
 // render placeholder separately so it will double-encode if needed
@@ -52,7 +53,7 @@ $sort_bar = elgg_view('input/select', array(
 $tags = elgg_echo('options:tags');
 $tags_bar = elgg_view('input/text', array(
     'name' => 'tags',
-    'class' => 'elgg-input-thin',
+    'class' => 'elgg-input-thin requiredFields',
     'placeholder' => elgg_echo('options:tags:placeholder'),
 ));
 
@@ -64,46 +65,20 @@ $user_bar = elgg_view('input/text', array(
     'placeholder' => elgg_echo('options:user:placeholder'),
 ));
 
-$date = elgg_echo('options:date');
+$date = elgg_echo('options:date:from');
 $date_bar = elgg_view('input/date', array(
     'name' => 'date',
     'id' => 'date',
     'class' => 'elgg-input-thin',
-    'placeholder' => elgg_echo('options:date:placeholder'),
+    'placeholder' => elgg_echo('options:date:from:placeholder'),
 ));
 
-$dateLink = elgg_view('output/url', [
-    'href' => '#',
-    'text' => 'Show/hide date settings',
-    'id' => 'openDateMenu'
-]);
-
-$day = elgg_echo('options:day');
-$day_bar = elgg_view('input/select', array(
-    'name' => 'dataRam[day]',
-    'value' => 'no',
-    'options_values' => array(
-        'yes' => elgg_echo('option:yes'),
-        'no' => elgg_echo('option:no'),
-    ),
-));
-$month = elgg_echo('options:month');
-$month_bar = elgg_view('input/select', array(
-    'name' => 'dataRam[month]',
-    'value' => 'no',
-    'options_values' => array(
-        'yes' => elgg_echo('option:yes'),
-        'no' => elgg_echo('option:no'),
-    ),
-));
-$year = elgg_echo('options:year');
-$year_bar = elgg_view('input/select', array(
-    'name' => 'dataRam[year]',
-    'value' => 'no',
-    'options_values' => array(
-        'yes' => elgg_echo('option:yes'),
-        'no' => elgg_echo('option:no'),
-    ),
+$dateTo = elgg_echo('options:date:to');
+$date_barTo = elgg_view('input/date', array(
+    'name' => 'dateTo',
+    'id' => 'dateTo',
+    'class' => 'elgg-input-thin',
+    'placeholder' => elgg_echo('options:date:to:placeholder'),
 ));
 
 $pizza  = elgg_get_plugin_setting('res_am', 'advanced_search');
@@ -112,7 +87,7 @@ $arr = [$pizza - 30, $pizza - 10, $pizza, $pizza + 10, $pizza + 30];
 $farr = array_filter($arr, function ($x) { return $x > 0; });
 foreach($farr as $f){
     print_r($types['object'][$f]);
-    $carr["$f"] = elgg_echo($f);
+    $carr["$f"] = elgg_echo(''.$f);
 }
 $results = elgg_echo('options:results');
 $results_bar = elgg_view('input/select', array(
@@ -152,7 +127,9 @@ $kappa_bar = elgg_view('input/text', array(
     'value' => $json,
 ));
 
-$submit = elgg_view('input/submit', array('value' => elgg_echo('search:go')));
+$submit = elgg_view('input/submit', array(
+    'value' => elgg_echo('search:go')
+));
 $optionsTitle = elgg_echo('options:title');
 $settings = "
 <div class='popup-body'>
@@ -216,35 +193,9 @@ if($setting != 'no') {
         <td>$date_bar</td>
       </tr>
       <tr>
-        <td>$dateLink</td>
+        <td><label>$dateTo</label></td>
+        <td>$date_barTo</td>
       </tr>";
-}
-$settingDay = elgg_get_plugin_setting('day_en', 'advanced_search');
-$settingMonth = elgg_get_plugin_setting('mon_en', 'advanced_search');
-$settingYear = elgg_get_plugin_setting('year_en', 'advanced_search');
-if($settingDay || $settingMonth || $settingYear){
-    //  Use the div as a dropdown list link
-    if($settingDay != 'no') {
-        $settings .= "
-          <tr class='hidden dateSets'>
-            <td><label>$day</label></td>
-            <td>$day_bar</td>
-          </tr>";
-    }
-    if($settingMonth != 'no') {
-        $settings .= "
-          <tr class='hidden dateSets'>
-            <td><label>$month</label></td>
-            <td>$month_bar</td>
-          </tr>";
-    }
-    if($settingYear != 'no') {
-        $settings .= "
-          <tr class='hidden dateSets'>
-            <td><label>$year</label></td>
-            <td>$year_bar</td>
-          </tr>";
-    }
 }
 $setting = elgg_get_plugin_setting('res_en', 'advanced_search');
 if($setting != 'no') {
