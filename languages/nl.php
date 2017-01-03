@@ -36,6 +36,7 @@ return array(
     'option:timeno' => "Tijd, nieuw - oud",
     'option:abcaz' => "Alfabet, A - Z",
     'option:abcza' => "Alfabet, Z - A",
+    'option:popularity' => "Populariteit",
 
     'options:tags' => "Zoekwoorden",
     'options:tags:list' => "Lijst van boolean opties",
@@ -48,7 +49,8 @@ return array(
     'options:user:admin' => "administrators",
     'options:user:admin:help' => "Laat gebruikers administrators vinden via de zoekopdracht",
 
-    'options:date' => "Datum",
+    'options:date:from' => "Datum vanaf",
+    'options:date:to' => "Datum tot",
     'options:date:day' => "Dag",
     'options:date:month' => "Maand",
     'options:date:year' => "Jaar",
@@ -69,7 +71,8 @@ return array(
     'options:search:placeholder' => "Zoeken",
     'options:tags:placeholder' => "Termen",
     'options:user:placeholder' => "Gebruiker",
-    'options:date:placeholder' => "Datum",
+    'options:date:from:placeholder' => "Datum vanaf",
+    'options:date:to:placeholder' => "Datum tot",
 
     /**
      *  Resultpage
@@ -78,6 +81,7 @@ return array(
     'search:results:title' => "Zoek resultaten",
     'search:results:created' => "Gemaakt op",
     'search:results:latest' => "Bijgewerkt op",
+    'search:results:latest:login' => "Laatst aangemeld op",
     'search:results:none' => "Geen resultaten gevonden",
 
     /**
@@ -122,4 +126,10 @@ return array(
     'options:day' => "Dag zoeken",
     'options:month' => "Maand zoeken",
     'options:year' => "Jaar zoeken",
+
+    'no:about' => "Geen 'over mij' gevonden.",
+
+    'form:error:fields' => 'Vul het \'zoeken\' of \'zoekwoorden\' veld in.',
+
+    'results:language' => 'Taal',
 );

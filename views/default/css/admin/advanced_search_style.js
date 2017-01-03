@@ -1,9 +1,28 @@
 /**
  * Created by niels on 9/11/16.
  */
+var submit = document.getElementById('searchForm');
+var popup = document.getElementById('popup-module');
+var reqFields = document.getElementsByClassName('requiredFields');
+var spotter = 0;
+
+submit.onsubmit = function() {
+    for(var i=0; i<reqFields.length;i++){
+        if(reqFields[i].value){
+            spotter = 1
+        }
+    }
+    if(spotter == 1) {
+        submit.submit();
+    } else {
+        popup.className = "elgg-module-popup hidden elgg-state-highlight";
+        popup.style.display = 'none';
+        elgg.register_error(elgg.echo('form:error:fields'));
+        return false;
+    }
+};
 
 // style
-var popUser = document.getElementsByClassName('info');
 $( "div.head" ).hover(function () {
     $( this ).css("backgroundColor", "#d7d7d7");
 }, function () {
@@ -12,8 +31,9 @@ $( "div.head" ).hover(function () {
 
 var firstDivContent = document.getElementById('paginationFoot');
 var secondDivContent = document.getElementById('paginationHead');
-
-secondDivContent.innerHTML = firstDivContent.innerHTML;
+if(firstDivContent && secondDivContent) {
+    secondDivContent.innerHTML = firstDivContent.innerHTML;
+}
 
 $( "div.foot" ).hover(function ( event ) {
     var popup = event.currentTarget.childNodes[7];
@@ -43,15 +63,6 @@ $("#userAuto").autocomplete({
     source: users
 });
 var count = 0;
-$( "#openDateMenu" ).click(function () {
-    if(count == 0){
-        count++;
-        $( "tr.dateSets" ).removeClass('hidden');
-    } else {
-        count = 0;
-        $( "tr.dateSets" ).addClass('hidden');
-    }
-});
 
 $( ".advancedPage" ).click(function () {
     pagination(this.textContent);
@@ -117,6 +128,3 @@ function findClass(element, className) {
     recurse(element, className, false);
     return foundElement;
 }
-
-
-
