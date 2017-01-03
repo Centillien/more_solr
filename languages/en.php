@@ -82,6 +82,7 @@ return array(
     'search:results:title' => "Search results",
     'search:results:created' => "Date created",
     'search:results:latest' => "latest change",
+    'search:results:latest:login' => "Latest login",
     'search:results:none' => "No items found",
 
     /**
@@ -128,5 +129,9 @@ return array(
     'options:month' => "Search month",
     'options:year' => "Search year",
 
-    'no:about' => "No 'about me' found."
+    'no:about' => "No 'about me' found.",
+
+    'form:error:fields' => 'Either the \'search\' or \'tags\' field is required.',
+
+    'results:language' => 'Language',
 );

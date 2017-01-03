@@ -541,17 +541,6 @@ $settings = <<<__HTML
   <tr>
     <td><label>$date</label></td>
     <td>$date_enable</td>
-    <td>
-        <table>
-            <tr>
-                <td><label>$dateDay</label></td>
-                <td>$dateDay_en $dateDayHelp</td>
-                <td><label>$dateMonth</label></td>
-                <td>$dateMonth_enable $dateMonthHelp</td>
-                <td><label>$dateYear</label></td>
-                <td>$dateYear_enable $dateYearHelp</td>
-            </tr>
-        </table>
   </tr>
   <tr>
     <td><label>$results</label></td>

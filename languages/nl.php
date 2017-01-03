@@ -78,6 +78,7 @@ return array(
     'search:results:title' => "Zoek resultaten",
     'search:results:created' => "Gemaakt op",
     'search:results:latest' => "Bijgewerkt op",
+    'search:results:latest:login' => "Laatst aangemeld op",
     'search:results:none' => "Geen resultaten gevonden",
 
     /**
@@ -123,5 +124,9 @@ return array(
     'options:month' => "Maand zoeken",
     'options:year' => "Jaar zoeken",
 
-    'no:about' => "Geen 'over mij' gevonden."
+    'no:about' => "Geen 'over mij' gevonden.",
+
+    'form:error:fields' => 'Vul het \'zoeken\' of \'zoekwoorden\' veld in.',
+
+    'results:language' => 'Taal',
 );

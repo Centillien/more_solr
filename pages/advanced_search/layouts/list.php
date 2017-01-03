@@ -20,8 +20,7 @@ $search =  array('search' => $_GET['search'],
             'users' => $_GET['user'],
             'results' => $_GET['results'],
             'sort' => $_GET['sort'],
-            'date' => $_GET['date'],
-            'dateSets' => $_GET['dateSets']);
+            'date' => $_GET['date']);
 
 $countResults = 0;
 switch($search['sort']){
@@ -50,14 +49,15 @@ $params = array(
 );
 if ($search['category'] != 'all') {
     $params['subtype'] = $search['category'];
+} else {
+    $userResults = elgg_get_entities(array(
+            'types' => 'user',
+            'order_by' => $userSort,
+            'limit' => 0,)
+    );
 }
 $results = elgg_get_entities($params);
 
-$userResults = elgg_get_entities(array(
-        'types' => 'user',
-        'order_by' => $userSort,
-        'limit' => 0,)
-);
 $sort = elgg_echo('options:sort');
 $sort_bar = elgg_view('input/select', array(
     'name' => 'sort',
@@ -113,7 +113,7 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
                                     <td>
                                         ".$userIcon."<br>
                                         <div class='userStatus'>
-                                            Language: " . $result->language . "<br> 
+                                            ".elgg_echo('results:language').": " . $result->language . "<br> 
                                             admin: ".$result->admin."<br> 
                                             banned: ".$result->banned."
                                         </div>
@@ -136,7 +136,7 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
                         </div>
                         <div class='four'>";
         if ($timeUpdated != $time && $result->last_login != 0) {
-            $content .= elgg_echo('search:results:latest') . ":" . $timeUpdated;
+            $content .= elgg_echo('search:results:latest:login') . ":" . $timeUpdated;
         }
         $content .= "  
                         </div>
