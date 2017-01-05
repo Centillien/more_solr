@@ -129,7 +129,7 @@ return array(
 
     'no:about' => "Geen 'over mij' gevonden.",
 
-    'form:error:fields' => 'Vul het \'zoeken\' of \'zoekwoorden\' veld in.',
+    'form:error:fields' => 'Vul het \'zoeken\' veld in.',
 
     'results:language' => 'Taal',
 );

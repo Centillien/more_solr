@@ -43,7 +43,7 @@ function more_page_handler($page) {
     $page_type = $page[0];
     switch ($page_type) {
         default:
-            include "$pages/layouts/list.php";
+            include "$pages/layouts/list_solr.php";
             break;
     }
     return true;

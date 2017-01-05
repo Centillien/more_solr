@@ -53,7 +53,7 @@ $sort_bar = elgg_view('input/select', array(
 $tags = elgg_echo('options:tags');
 $tags_bar = elgg_view('input/text', array(
     'name' => 'tags',
-    'class' => 'elgg-input-thin requiredFields',
+    'class' => 'elgg-input-thin',
     'placeholder' => elgg_echo('options:tags:placeholder'),
 ));
 
@@ -96,6 +96,17 @@ $results_bar = elgg_view('input/select', array(
 ));
 
 $userArray = [];
+//  Start of retrieving results
+//
+$client = elgg_solr_get_client();
+
+//  Get a select query instance
+$query = $client->createQuery($client::QUERY_SELECT);
+$query->setStart(0)->setRows(7000);
+$query->createFilterQuery('type')->setQuery('type:user');
+// This executes the query and returns the result
+$userResults = $client->select($query);
+/*
 $userResults = elgg_get_entities(array(
         'types' => 'user',
         'limit' => 0,)
@@ -105,19 +116,19 @@ $userResults = elgg_get_entities(array(
 $admin_guids = elgg_get_admins(array(
     'limit' => 0,
     'callback' => function ($row) { return $row->guid; }, // no overhead of entity creation
-));
+));*/
 
 foreach($userResults as $v){
-    $president  = elgg_get_plugin_setting('usAd_en', 'advanced_search');
+    /*$president  = elgg_get_plugin_setting('usAd_en', 'advanced_search');
     if($president == 'no'){
         if(!in_array($v->guid,$admin_guids))
         {
             array_push($userArray, $v->name.":".$v->guid);
         }
     }
-    else {
-        array_push($userArray, $v->name.":".$v->guid);
-    }
+    else {*/
+        array_push($userArray, $v->name.":".$v->id);
+    //}
 }
 
 $json = json_encode(utf8ize($userArray), JSON_UNESCAPED_UNICODE);

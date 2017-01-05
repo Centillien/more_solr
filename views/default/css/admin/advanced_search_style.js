@@ -104,7 +104,9 @@ var htmlCollection = document.getElementsByClassName("advancedItem");
 var items = Array.prototype.slice.call( htmlCollection );
 items.forEach(function (e) {
     var child = findClass(e, "one");
-    findClass(e, "info").textContent = child.textContent;
+    if(child){
+        findClass(e, "info").textContent = child.textContent;
+    }
 });
 
 function findClass(element, className) {

@@ -134,7 +134,7 @@ return array(
 
     'no:about' => "No 'about me' found.",
 
-    'form:error:fields' => 'Either the \'search\' or \'tags\' field is required.',
+    'form:error:fields' => 'The \'search\' field is required.',
 
     'results:language' => 'Language',
 );

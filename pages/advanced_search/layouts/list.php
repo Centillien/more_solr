@@ -2,7 +2,6 @@
 elgg_load_js('jsStyle');
 
 $title = elgg_echo('search:results:title');
-
 // arbitrary file on the filestore
 $fileSyn = new ElggFile();
 $fileSyn->owner_guid = 7777;
@@ -56,12 +55,14 @@ $userResults = "";
 if ($search['category'] != 'all') {
     $params['subtype'] = $search['category'];
 } else {
+    //  TODO: limiting this more can prevent waiting issues with bigger bases
     $userResults = elgg_get_entities(array(
             'types' => 'user',
             'order_by' => $userSort,
             'limit' => 0,)
     );
 }
+//  TODO: limiting this more can prevent waiting issues with bigger bases
 $results = elgg_get_entities($params);
 
 $arr = [];
@@ -248,7 +249,6 @@ $content .= '<div id="paginationHead"></div><ul class="elgg-list advancedResults
         }
         return ($a[1] > $b[1]) ? -1 : 1;
     }
-    //  Createfilterquery
     if($sorter == 'popularity'){
         usort($resultsArray, "pop");
     }
