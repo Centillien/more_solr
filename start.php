@@ -23,7 +23,9 @@ function advanced_search_init()
 
     $action_url = elgg_get_plugins_path() . "advanced_search/actions/";
     elgg_register_action("word_handler", "{$action_url}word_handler.php");
+
     elgg_register_action("options", "{$action_url}options.php");
+
     elgg_register_action('advanced_search/settings/save', dirname(__FILE__) . '/actions/plugin_settings.php', 'admin');
 
     elgg_register_page_handler('advanced_search', 'more_page_handler');
@@ -43,7 +45,7 @@ function more_page_handler($page) {
     $page_type = $page[0];
     switch ($page_type) {
         default:
-            include "$pages/layouts/list.php";
+                include "$pages/layouts/list_solr.php";
             break;
     }
     return true;

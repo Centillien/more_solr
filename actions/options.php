@@ -18,5 +18,6 @@ forward(elgg_get_site_url() . "advanced_search/list" .
     "&user=" . $user .
     "&results=" . $results .
     "&date=" . $date .
-    "&dateTo=" . $dateTo
+    "&dateTo=" . $dateTo.
+    "&page=1"
 );

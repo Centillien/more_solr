@@ -37,6 +37,7 @@ return array(
     'option:abcaz' => "Alphabet A - Z",
     'option:abcza' => "Alphabet Z - A",
     'option:popularity' => "Popularity",
+    'option:relevancy' => "Relevancy",
 
     'options:tags' => "Tags",
     'options:tags:list' => "List of boolean options",
@@ -128,13 +129,15 @@ return array(
     /*
      * Date settings
      */
+    'options:date' => "Date search",
     'options:day' => "Search day",
     'options:month' => "Search month",
     'options:year' => "Search year",
 
     'no:about' => "No 'about me' found.",
+    'no:description' => "No description found",
 
-    'form:error:fields' => 'Either the \'search\' or \'tags\' field is required.',
+    'form:error:fields' => 'The \'search\' field is required.',
 
     'results:language' => 'Language',
 );
