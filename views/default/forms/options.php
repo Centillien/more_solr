@@ -7,6 +7,7 @@ elgg_load_js('jsStyle');
 $search = elgg_echo('options:search');
 $search_bar = elgg_view('input/text', array(
     'name' => 'search',
+    'value' => $_GET['search'] ? $_GET['search'] : '',
     'class' => 'elgg-input-thin requiredFields',
     'placeholder' => elgg_echo('options:search:placeholder'),
 ));
@@ -16,6 +17,7 @@ $placeholder = htmlspecialchars(elgg_echo('search'), ENT_QUOTES, 'UTF-8');
 $synonym = elgg_echo('options:synonym');
 $syn_bar = elgg_view('input/select', array(
     'name' => 'synonym',
+    'value' => $_GET['synonym'] ? $_GET['synonym'] : '',
     'options_values' => array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
@@ -32,6 +34,7 @@ foreach($pieces as $piece){
 $category = elgg_echo('options:category');
 $cat_bar = elgg_view('input/select', array(
     'name' => 'category',
+    'value' => $_GET['category'] ? $_GET['category'] : '',
     'options_values' => $arr,
 ));
 
@@ -46,13 +49,14 @@ foreach($pieces as $piece){
 $sort = elgg_echo('options:sort');
 $sort_bar = elgg_view('input/select', array(
     'name' => 'sort',
-    'value' => $default,
+    'value' => $_GET['sort'] ? $_GET['sort'] : $default,
     'options_values' => $arr,
 ));
 
 $tags = elgg_echo('options:tags');
 $tags_bar = elgg_view('input/text', array(
     'name' => 'tags',
+    'value' => $_GET['tags'] ? $_GET['tags'] : '',
     'class' => 'elgg-input-thin',
     'placeholder' => elgg_echo('options:tags:placeholder'),
 ));
@@ -61,6 +65,7 @@ $user = elgg_echo('options:user');
 $user_bar = elgg_view('input/text', array(
     'name' => 'user',
     'id' => 'userAuto',
+    'value' => $_GET['user'] ? $_GET['user'] : '',
     'class' => 'elgg-input-thin',
     'placeholder' => elgg_echo('options:user:placeholder'),
 ));
@@ -69,6 +74,7 @@ $date = elgg_echo('options:date:from');
 $date_bar = elgg_view('input/date', array(
     'name' => 'date',
     'id' => 'date',
+    'value' => $_GET['date'] ? $_GET['date'] : '',
     'class' => 'elgg-input-thin',
     'placeholder' => elgg_echo('options:date:from:placeholder'),
 ));
@@ -77,6 +83,7 @@ $dateTo = elgg_echo('options:date:to');
 $date_barTo = elgg_view('input/date', array(
     'name' => 'dateTo',
     'id' => 'dateTo',
+    'value' => $_GET['dateTo'] ? $_GET['dateTo'] : '',
     'class' => 'elgg-input-thin',
     'placeholder' => elgg_echo('options:date:to:placeholder'),
 ));
@@ -92,21 +99,15 @@ foreach($farr as $f){
 $results = elgg_echo('options:results');
 $results_bar = elgg_view('input/select', array(
     'name' => 'results',
+    'value' => $_GET['results'] ? $_GET['results'] : '',
     'options_values' => $carr,
 ));
 
-$userArray = [];
-//  Start of retrieving results
-//
-$client = elgg_solr_get_client();
-
-//  Get a select query instance
-$query = $client->createQuery($client::QUERY_SELECT);
-$query->setStart(0)->setRows(7000);
-$query->createFilterQuery('type')->setQuery('type:user');
-// This executes the query and returns the result
-$userResults = $client->select($query);
 /*
+ * Elgg way
+ */
+
+$userArray = [];
 $userResults = elgg_get_entities(array(
         'types' => 'user',
         'limit' => 0,)
@@ -116,20 +117,43 @@ $userResults = elgg_get_entities(array(
 $admin_guids = elgg_get_admins(array(
     'limit' => 0,
     'callback' => function ($row) { return $row->guid; }, // no overhead of entity creation
-));*/
+));
 
 foreach($userResults as $v){
-    /*$president  = elgg_get_plugin_setting('usAd_en', 'advanced_search');
+    $president  = elgg_get_plugin_setting('usAd_en', 'advanced_search');
     if($president == 'no'){
         if(!in_array($v->guid,$admin_guids))
         {
             array_push($userArray, $v->name.":".$v->guid);
         }
     }
-    else {*/
-        array_push($userArray, $v->name.":".$v->id);
-    //}
+    else {
+        array_push($userArray, $v->name.":".$v->guid);
+    }
 }
+
+/*
+ * Solr way
+ */
+
+
+$userArray = [];
+//  Start of retrieving results
+//
+$client = elgg_solr_get_client();
+
+//  Get a select query instance
+$query = $client->createQuery($client::QUERY_SELECT);
+$query->setStart(0)->setRows(3000);
+$query->createFilterQuery('type')->setQuery('type:user');
+// This executes the query and returns the result
+$userResults = $client->select($query);
+
+foreach($userResults as $v){
+    array_push($userArray, $v->name.":".$v->id);
+}
+
+
 
 $json = json_encode(utf8ize($userArray), JSON_UNESCAPED_UNICODE);
 $kappa_bar = elgg_view('input/text', array(

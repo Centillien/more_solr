@@ -37,6 +37,7 @@ return array(
     'option:abcaz' => "Alfabet, A - Z",
     'option:abcza' => "Alfabet, Z - A",
     'option:popularity' => "Populariteit",
+    'option:relevancy' => "Relevantie",
 
     'options:tags' => "Zoekwoorden",
     'options:tags:list' => "Lijst van boolean opties",
@@ -128,6 +129,7 @@ return array(
     'options:year' => "Jaar zoeken",
 
     'no:about' => "Geen 'over mij' gevonden.",
+    'no:description' => "Geen samenvatting gevonden.",
 
     'form:error:fields' => 'Vul het \'zoeken\' veld in.',
 

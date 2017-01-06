@@ -85,11 +85,27 @@ $category_enable = elgg_view('input/select', array(
 ));
 $vars['entity']->cat_list ? $catListValue = explode(",",$vars['entity']->cat_list) : $catListValue = elgg_echo('option:all');
 
+$client = elgg_solr_get_client();
+
+// get a select query instance
+$query = $client->createSelect();
+
+$facetSet = $query->getFacetSet();
+$facetSet->createFacetField('subtypes')->setField('subtype');
+
+$resultset = $client->select($query);
+
+$facet = $resultset->getFacetSet()->getFacet('subtypes');
+$types = ['group', 'user'];
+foreach ($facet as $value => $count) {
+    if($value){
+        $types[] .= $value;
+    }
+}
+
 $arr = [];
 $arr['all'] = elgg_echo('option:all');
-$types = get_registered_entity_types();
-foreach($types['object'] as $type){
-    print_r($types['object'][$type]);
+foreach($types as $type){
     $arr["$type"] = $type;
 }
 $category_list = elgg_view('input/select', array(
@@ -111,15 +127,27 @@ $sort_enable = elgg_view('input/select', array(
 ));
 $vars['entity']->sort_list ? $sortListValue = explode(",",$vars['entity']->sort_list) : $sortListValue = 'timeno';
 
+
+$setting = elgg_get_plugin_setting('search_en', 'advanced_search');
+if($setting != 'no') {
+    $sorter = array(
+        'popularity' => elgg_echo('option:popularity'),     // Aantal vrienden, aantal replies
+        'timeon' => elgg_echo('option:timeon'),             // Time old - new
+        'timeno' => elgg_echo('option:timeno'),             // Time new - old
+        'abcaz' => elgg_echo('option:abcaz'),               // Alphabet A - Z
+        'abcza' => elgg_echo('option:abcza'));              // Alphabet Z - A
+} else{
+    $sorter = array(
+        'popularity' => elgg_echo('option:popularity'),     // Aantal vrienden, aantal replies
+        'relevancy' => elgg_echo('option:relevancy'),       // Hoogste score(solr)
+        'timeon' => elgg_echo('option:timeon'),             // Time old - new
+        'timeno' => elgg_echo('option:timeno'),             // Time new - old
+        'abcaz' => elgg_echo('option:abcaz'),               // Alphabet A - Z
+        'abcza' => elgg_echo('option:abcza'));              // Alphabet Z - A
+}
 $sort_list = elgg_view('input/select', array(
     'name' => 'params[sort_list]',
-    'options_values' => array(
-        'popularity' => elgg_echo('option:popularity'),   // Aantal vrienden, aantal replies
-        'timeon' => elgg_echo('option:timeon'), // Time old - new
-        'timeno' => elgg_echo('option:timeno'), // Time new - old
-        'abcaz' => elgg_echo('option:abcaz'),   // Alphabet A - Z
-        'abcza' => elgg_echo('option:abcza'),   // Alphabet Z - A
-    ),
+    'options_values' => $sorter,
     'value' => $sortListValue,
     'multiple' => 'multiple',
 ));
