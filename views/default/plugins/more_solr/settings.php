@@ -32,16 +32,6 @@ $chatEntities = elgg_get_entities_from_relationship([
     'limit' => false
 ]);
 
-$search = elgg_echo('options:search');
-$search_enable = elgg_view('input/select', array(
-    'name' => 'params[search_en]',
-    'options_values' => array(
-        'yes' => elgg_echo('option:yes'),
-        'no' => elgg_echo('option:no'),
-    ),
-    'value' => $vars['entity']->search_en ? $vars['entity']->search_en : elgg_echo('option:no'),
-));
-
 $synonym = elgg_echo('options:synonym');
 $synonym_enable = elgg_view('input/select', array(
     'name' => 'params[syn_en]',
@@ -129,22 +119,15 @@ $vars['entity']->sort_list ? $sortListValue = explode(",",$vars['entity']->sort_
 
 
 $setting = elgg_get_plugin_setting('search_en', 'advanced_search');
-if($setting != 'no') {
-    $sorter = array(
-        'popularity' => elgg_echo('option:popularity'),     // Aantal vrienden, aantal replies
-        'timeon' => elgg_echo('option:timeon'),             // Time old - new
-        'timeno' => elgg_echo('option:timeno'),             // Time new - old
-        'abcaz' => elgg_echo('option:abcaz'),               // Alphabet A - Z
-        'abcza' => elgg_echo('option:abcza'));              // Alphabet Z - A
-} else{
-    $sorter = array(
-        'popularity' => elgg_echo('option:popularity'),     // Aantal vrienden, aantal replies
-        'relevancy' => elgg_echo('option:relevancy'),       // Hoogste score(solr)
-        'timeon' => elgg_echo('option:timeon'),             // Time old - new
-        'timeno' => elgg_echo('option:timeno'),             // Time new - old
-        'abcaz' => elgg_echo('option:abcaz'),               // Alphabet A - Z
-        'abcza' => elgg_echo('option:abcza'));              // Alphabet Z - A
-}
+
+$sorter = array(
+    //'popularity' => elgg_echo('option:popularity'),     // Aantal vrienden, aantal replies
+    'relevancy' => elgg_echo('option:relevancy'),       // Hoogste score(solr)
+    'timeon' => elgg_echo('option:timeon'),             // Time old - new
+    'timeno' => elgg_echo('option:timeno'),             // Time new - old
+    'abcaz' => elgg_echo('option:abcaz'),               // Alphabet A - Z
+    'abcza' => elgg_echo('option:abcza'));              // Alphabet Z - A
+
 $sort_list = elgg_view('input/select', array(
     'name' => 'params[sort_list]',
     'options_values' => $sorter,
@@ -154,13 +137,7 @@ $sort_list = elgg_view('input/select', array(
 $sortListHelp = elgg_echo('options:sort:list:help');
 $sort_default = elgg_view('input/select', array(
     'name' => 'params[sort_def]',
-    'options_values' => array(
-        'popularity' => elgg_echo('option:popularity'),   // Aantal vrienden, aantal replies
-        'timeon' => elgg_echo('option:timeon'), // Time old - new
-        'timeno' => elgg_echo('option:timeno'), // Time new - old
-        'abcaz' => elgg_echo('option:abcaz'),   // Alphabet A - Z
-        'abcza' => elgg_echo('option:abcza'),   // Alphabet Z - A
-    ),
+    'options_values' => $sorter,
     'value' => $vars['entity']->sort_def ? $vars['entity']->sort_def : 'timeno',
 ));
 $sortDefHelp = elgg_echo('options:sort:list:default:help');
@@ -521,10 +498,6 @@ $settings = <<<__HTML
      <th></th>
   </tr>
  </thead>
-  <tr>
-    <td><label>$search</label></td>
-    <td>$search_enable</td>
-  </tr>
   <tr>
     <td><label>$synonym</label></td>
     <td>$synonym_enable</td>

@@ -25,7 +25,7 @@ $syn_bar = elgg_view('input/select', array(
 ));
 
 $arr = [];
-$pizza  = elgg_get_plugin_setting('cat_list', 'advanced_search');
+$pizza  = elgg_get_plugin_setting('cat_list', 'more_solr');
 $pieces = explode(",", $pizza);
 foreach($pieces as $piece){
     print_r($types['object'][$piece]);
@@ -39,8 +39,8 @@ $cat_bar = elgg_view('input/select', array(
 ));
 
 $arr = [];
-$pizza  = elgg_get_plugin_setting('sort_list', 'advanced_search');
-$default  = elgg_get_plugin_setting('sort_def', 'advanced_search');
+$pizza  = elgg_get_plugin_setting('sort_list', 'more_solr');
+$default  = elgg_get_plugin_setting('sort_def', 'more_solr');
 $pieces = explode(",", $pizza);
 foreach($pieces as $piece){
     print_r($types['object'][$piece]);
@@ -88,7 +88,7 @@ $date_barTo = elgg_view('input/date', array(
     'placeholder' => elgg_echo('options:date:to:placeholder'),
 ));
 
-$pizza  = elgg_get_plugin_setting('res_am', 'advanced_search');
+$pizza  = elgg_get_plugin_setting('res_am', 'more_solr');
 $carr = [];
 $arr = [$pizza - 30, $pizza - 10, $pizza, $pizza + 10, $pizza + 30];
 $farr = array_filter($arr, function ($x) { return $x > 0; });
@@ -120,7 +120,7 @@ $admin_guids = elgg_get_admins(array(
 ));
 
 foreach($userResults as $v){
-    $president  = elgg_get_plugin_setting('usAd_en', 'advanced_search');
+    $president  = elgg_get_plugin_setting('usAd_en', 'more_solr');
     if($president == 'no'){
         if(!in_array($v->guid,$admin_guids))
         {
@@ -144,8 +144,9 @@ $client = elgg_solr_get_client();
 
 //  Get a select query instance
 $query = $client->createQuery($client::QUERY_SELECT);
-$query->setStart(0)->setRows(3000);
+$query->setStart(0)->setRows(8000);
 $query->createFilterQuery('type')->setQuery('type:user');
+$query->setFields(array('id','name'));
 // This executes the query and returns the result
 $userResults = $client->select($query);
 
@@ -180,7 +181,7 @@ $settings = "
         <td><label>$search</label></td>
         <td>$search_bar</td>
       </tr>";
-$setting = elgg_get_plugin_setting('syn_en', 'advanced_search');
+$setting = elgg_get_plugin_setting('syn_en', 'more_solr');
 if($setting != 'no'){
     $settings .= "
       <tr>
@@ -188,7 +189,7 @@ if($setting != 'no'){
         <td>$syn_bar</td>
       </tr>";
 }
-$setting = elgg_get_plugin_setting('cat_en', 'advanced_search');
+$setting = elgg_get_plugin_setting('cat_en', 'more_solr');
 if($setting != 'no'){
     $settings .= "
       <tr>
@@ -196,7 +197,7 @@ if($setting != 'no'){
         <td>$cat_bar</td>
       </tr>";
 }
-$setting = elgg_get_plugin_setting('sort_en', 'advanced_search');
+$setting = elgg_get_plugin_setting('sort_en', 'more_solr');
 if($setting != 'no'){
     $settings .= "
       <tr>
@@ -204,7 +205,7 @@ if($setting != 'no'){
         <td>$sort_bar</td>
       </tr>";
 }
-$setting = elgg_get_plugin_setting('tags_en', 'advanced_search');
+$setting = elgg_get_plugin_setting('tags_en', 'more_solr');
 if($setting != 'no'){
     $settings .= "
       <tr>
@@ -212,7 +213,7 @@ if($setting != 'no'){
         <td>$tags_bar</td>
       </tr>";
 }
-$setting = elgg_get_plugin_setting('user_en', 'advanced_search');
+$setting = elgg_get_plugin_setting('user_en', 'more_solr');
 if($setting != 'no'){
     $settings .= "
       <tr>
@@ -220,7 +221,7 @@ if($setting != 'no'){
         <td>$user_bar</td>
       </tr>";
 }
-$setting = elgg_get_plugin_setting('date_en', 'advanced_search');
+$setting = elgg_get_plugin_setting('date_en', 'more_solr');
 if($setting != 'no') {
     $settings .= "
       <tr>
@@ -232,7 +233,7 @@ if($setting != 'no') {
         <td>$date_barTo</td>
       </tr>";
 }
-$setting = elgg_get_plugin_setting('res_en', 'advanced_search');
+$setting = elgg_get_plugin_setting('res_en', 'more_solr');
 if($setting != 'no') {
     $settings .= "
       <tr>

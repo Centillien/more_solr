@@ -122,6 +122,22 @@ return array(
     'synonym:edit' => 'Verander een synoniem',
 
     /*
+     *      results type
+     */
+    'type:replies' => 'Reacties',
+    'type:discussion' => 'Discussie',
+    'type:image' => 'Afbeelding',
+    'type:file' => 'Bestand',
+    'type:page' => 'Pagina',
+    'type:wallpost' => 'Wall bericht',
+    'type:event' => 'Evenement',
+    'type:task' => 'Opdracht',
+    'type:faq' => 'FAQ',
+    'type:newsletter' => 'Nieuwsbrief',
+    'type:unknown' => 'Anders',
+    'type:pageNotFound' => 'Pagina kon niet geladen worden omdat deze niet beschikbaar is.',
+
+    /*
      * Date settings
      */
     'options:day' => "Dag zoeken",

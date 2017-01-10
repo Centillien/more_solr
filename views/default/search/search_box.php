@@ -19,7 +19,6 @@ if (isset($vars['class'])) {
     $class = "$class {$vars['class']}";
 }
 
-// @todo - create function for sanitization of strings for display in 1.8
 // encode <,>,&, quotes and characters above 127
 if (function_exists('mb_convert_encoding')) {
     $display_query = mb_convert_encoding($value, 'HTML-ENTITIES', 'UTF-8');

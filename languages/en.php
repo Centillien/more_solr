@@ -127,6 +127,22 @@ return array(
     'synonym:edit' => 'Edit a synonym',
 
     /*
+     *      results type
+     */
+    'type:replies' => 'Replies',
+    'type:discussion' => 'Discussion',
+    'type:image' => 'Image',
+    'type:file' => 'File',
+    'type:page' => 'Page',
+    'type:wallpost' => 'Wall post',
+    'type:event' => 'Event',
+    'type:task' => 'Task',
+    'type:faq' => 'FAQ',
+    'type:newsletter' => 'Newsletter',
+    'type:unknown' => 'Other',
+    'type:pageNotFound' => 'Page could not be opened because it is unavailable.',
+
+    /*
      * Date settings
      */
     'options:date' => "Date search",

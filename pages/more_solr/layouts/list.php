@@ -55,18 +55,16 @@ $userResults = "";
 if ($search['category'] != 'all') {
     $params['subtype'] = $search['category'];
 } else {
-    //  TODO: limiting this more can prevent waiting issues with bigger bases
     $userResults = elgg_get_entities(array(
             'types' => 'user',
             'order_by' => $userSort,
             'limit' => 0,)
     );
 }
-//  TODO: limiting this more can prevent waiting issues with bigger bases
 $results = elgg_get_entities($params);
 
 $arr = [];
-$pizza  = elgg_get_plugin_setting('sort_list', 'advanced_search');
+$pizza  = elgg_get_plugin_setting('sort_list', 'more_solr');
 $pieces = explode(",", $pizza);
 foreach($pieces as $piece){
     print_r($types['object'][$piece]);

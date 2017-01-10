@@ -62,15 +62,6 @@ $endRes = $search['page'] * $search['results'];
 $query->setStart($startRes)->setRows($endRes);
 $query->addSort($sort);
 
-//  Add limiter on types(object, user, group)/subtypes(discussion)
-if($search['category'] != 'all' && $search['category']){
-    if($search['category'] == 'user' || $search['category'] == 'group' ){
-        $query->createFilterQuery('type')->setQuery('type:'.$search['category']);
-    } else {
-        $query->createFilterQuery('subtype')->setQuery('subtype:'.$search['category']);
-    }
-}
-
 $multiQuery = null;
 
 //  Remove all stopwords from search query
@@ -97,7 +88,7 @@ if($search['dateTo']){
     $dateTo = "*";
 }
 
-$multiQuery = "((time_created:[".$dateFrom." TO ".$dateTo."])";
+$multiQuery = "((time_created:[".$dateFrom." TO ".$dateTo."]) AND ";
 
 $multiQuery .= "(";
 //  Create base search query
@@ -170,13 +161,24 @@ if($search['users']){
         $multiQuery .= " AND (owner_guid:" . $userIdArr[$size]." OR id:".$userIdArr[$size].")";
     }
 }
-$query->setFields(array('id','type','subtype', 'owner_guid', 'title', 'name', 'description', 'time_created', 'time_updated_i', 'groups_is', 'members_is', 'username', 'score'));
+
+//  Add limiter on types(object, user, group)/subtypes(discussion)
+if($search['category'] != 'all' && $search['category']){
+    if($search['category'] == 'user' || $search['category'] == 'group' ){
+        $multiQuery .= " AND (type:".$search['category'].")";
+        //$query->createFilterQuery('type')->setQuery('type:'.$search['category']);
+    } else {
+        $multiQuery .= " AND (subtype:".$search['category'].")";
+        //$query->createFilterQuery('subtype')->setQuery('subtype:'.$search['category']);
+    }
+}
+
+$query->setFields(array('id','type','subtype', 'owner_guid', 'container_guid', 'title', 'name', 'description', 'time_created', 'time_updated_i', 'groups_is', 'members_is', 'username', 'score'));
 
 $query->setQuery($multiQuery);
 
 // This executes the query and returns the result
 $resultset = $client->select($query);
-
 // Display the total number of documents found by solr
 $totalResults = $resultset->getNumFound();
 
@@ -184,6 +186,7 @@ $totalResults = $resultset->getNumFound();
 $i = 0;
 foreach ($resultset as $document) {
     $result['id'] = $document->id;
+    $result['container'] = $document->container_guid;
     $result['type'] = $document->type;
     $result['subtype'] = $document->subtype;
     if($result['type'] == 'user'){
@@ -207,11 +210,12 @@ foreach ($resultset as $document) {
 }
 $types = array_merge($types, $subtypes);
 $types = array_unique($types);
+
 //
 //  End of retrieving results
 
 $arr = [];
-$pizza  = elgg_get_plugin_setting('sort_list', 'advanced_search');
+$pizza  = elgg_get_plugin_setting('sort_list', 'more_solr');
 $pieces = explode(",", $pizza);
 foreach($pieces as $piece){
     $arr["$piece"] = elgg_echo('option:'.$piece);
@@ -267,7 +271,7 @@ foreach ($results as $result) {
         $biography = elgg_view('output/longtext', array('value' => $result['description'] ? $result['description'] : elgg_echo('no:about'), 'class' => 'mtn'));
 
         $item = "
-                <a href='/profile/" . $username . "'>
+                <a href='http://netcare.nl/profile/" . $username . "'>
                     <div class='head'>
                             <h4>" . $result['name'] . "</h4>
                             <table>
@@ -307,7 +311,7 @@ foreach ($results as $result) {
         $arr = array($item, $friendsCount + $result['groups'], $result['score']);
         $resultsArray[] = $arr;
     }
-    elseif ($result['type'] == 'object' && $result['subtype'] == 'discussion'){
+    elseif ($result['type'] == 'object' || $result['type'] == 'annotation'){
         $d_m_y = '';
         $time = elgg_get_friendly_time($result['time_created']);
         $timeArr = preg_split("/[\s]+/", $time);
@@ -316,59 +320,137 @@ foreach ($results as $result) {
             $time = gmdate("Y-m-d H:i:s", $result['time_created']);
             $d_m_y = gmdate("Y-m-d", $result['time_created']);
         }
-
-        $timeUpdated = elgg_get_friendly_time($result['time_updated_i']);
-        $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
-        // If is older than a day, display date instead
-        if($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1){
-            $timeUpdated = gmdate("Y-m-d H:i:s", $result['time_updated_i']);
-            $d_m_y = gmdate("Y-m-d", $result['time_updated_i']);
+        if($result['time_updated_i']){
+            $timeUpdated = elgg_get_friendly_time($result['time_updated_i']);
+            $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
+            // If is older than a day, display date instead
+            if($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1){
+                $timeUpdated = gmdate("Y-m-d H:i:s", $result['time_updated_i']);
+                $d_m_y = gmdate("Y-m-d", $result['time_updated_i']);
+            }
+        } else {
+            $timeUpdated = "";
         }
 
         $subtype = $result['subtype'];
         $guid = $result['id'];
 
-        $user = get_user($result['owner']);
-        $username = $user->username;
-        $name = $user->name;
+        $client = elgg_solr_get_client();
+        $query = $client->createQuery($client::QUERY_SELECT);
+
+        $query->setFields(array('username, name'));
+        $query->setQuery('id:'.$result['owner'].' AND type:user');
+
+        $resultset = $client->select($query);
+        foreach ($resultset as $document) {
+            $userResult['name'] = $document->name;
+            $userResult['username'] = $document->username;
+        }
+        $username = $userResult['username'];
+        $name = $userResult['name'];
 
         $description = $result['description'];
         $description = strip_tags($description);
 
-        //  Get number of replies TODO: from solr
-        $num_replies = elgg_get_entities(array(
-            'type' => 'object',
-            'subtype' => 'discussion_reply',
-            'container_guid' => $result['id'],
-            'count' => true,
-            'distinct' => false,
-        ));
-        //  GROUP LINK: groups/profile/149/sadface
+        $client = elgg_solr_get_client();
+        $query = $client->createQuery($client::QUERY_SELECT);
+
+        $query->setFields(array('score'));
+        $query->setQuery('(subtype:comment OR subtype:generic_comment) AND container_guid:'.$result['id']);
+
+        $resultset = $client->select($query);
+        foreach ($resultset as $document) {
+            $commentResults['score'] = $document->score;
+        }
+
+        $num_replies = count($commentResults);
 
         $displaySubtype = $subtype;
-        if($subtype == 'discussion'){
-            $displaySubtype = $subtype . "<br> Replies: " . $num_replies;
+        $base = 'http://netcare.nl';     //  TODO:   Remove before uploading to elgg
+        $url = $base;
+        $elementLink = "<a ";
+
+        //      TODO:   Supported categories list
+        switch($subtype){
+            case 'discussion': case 'groupforumtopic':
+                $displaySubtype = elgg_echo('type:discussion')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= "/discussion/view/".$guid;
+                break;
+            case 'comment': case 'generic_comment':
+                $container = $result['container'];
+                $url .= '/comment/view/'.$guid.'/'.$container;
+                break;
+            case 'album': case 'image':
+                $displaySubtype = elgg_echo('type:image')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= "/photos/".$subtype."/".$guid;
+                break;
+            case 'webdav_file':
+                $displaySubtype = elgg_echo('type:file')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= '/webdav/view/?container_guid=1&p='.$result['title'];
+                break;
+            case 'file':
+                $displaySubtype = elgg_echo('type:file')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= '/file/view/'.$result['id'];
+                break;
+            case 'page': case 'page_top':
+                $displaySubtype = elgg_echo('type:page')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= '/pages/view/'.$guid;
+                break;
+            case 'hjwall':
+                $displaySubtype = elgg_echo('type:wallpost')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+
+                $client = elgg_solr_get_client();
+                $query = $client->createQuery($client::QUERY_SELECT);
+
+                $query->setFields(array('username'));
+                $query->setQuery('id:'.$result['owner'].' AND type:user');
+
+                $resultset = $client->select($query);
+                foreach ($resultset as $document) {
+                    $usernameUrl = $document->username;
+                }
+
+                $url .= '/wall/owner/'.$usernameUrl.'/'.$guid;
+                break;
+            case 'event':
+                $displaySubtype = elgg_echo('type:event')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= '/events/event/view/'.$guid;
+                break;
+            case 'task_top': case 'task':
+                $displaySubtype = elgg_echo('type:task')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= '/tasks/view/'.$guid;
+                break;
+            case 'faq':
+                $displaySubtype = elgg_echo('type:faq')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= '/user_support/faq/'.$guid;
+                break;
+            default:
+                $displaySubtype = $subtype." <br> Replies: " . $num_replies;
+                $url .= "/".$subtype."/view/".$guid;
+                //$elementLink .= "class='resultItemLink' ";
+                break;
         }
+
         // view
         $int = $search['results'] - 1;
-        //  && $countResults <= $int |||||||||add this to the if for limited results
+
         $result['title'] ? $itemTitle = $result['title'] : $result['name'];
-        $item =  "
-            <a href='/".$subtype."/view/".$guid."'>
+        //  TODO: change profile url before upload to elgg
+        $item =  $elementLink."href='".$url."'>
                 <div class='head'>
                         <h4>".$result['title']."</h4>
                         <div class='pull-right'>".$displaySubtype."</div>
                         <div class='desc'><p>".$description."</p></div>
                 </div>
             </a>
-            <a href='/profile/".$username."'>
+            <a href='".$base."/profile/".$username."'>
                 <div class='foot'>
                     <div class='one'>".$name."</div>
                     <div class='two'>
                         ".elgg_echo('search:results:created').":".$time."
                     </div>
                     <div class='four'>";
-        if($timeUpdated != $time){
+        if($timeUpdated && $timeUpdated != $time){
             $item .= elgg_echo('search:results:latest').":".$timeUpdated;
         }
         $item .= "  
@@ -399,71 +481,20 @@ foreach ($results as $result) {
 
         $subtype = $result['type'];
         $guid = $result['id'];
-        //  TODO: Get user from SOLR
-        $user = get_user($result['owner']);
-        $username = $user->username;
-        $name = $user->name;
 
-        if($result['description']){
-            $description = $result['description'];
-            $description = strip_tags($description);
-        } else {
-            $description = elgg_echo('no:description');
+        $client = elgg_solr_get_client();
+        $query = $client->createQuery($client::QUERY_SELECT);
+
+        $query->setFields(array('username, name'));
+        $query->setQuery('id:'.$result['owner'].' AND type:user');
+
+        $resultset = $client->select($query);
+        foreach ($resultset as $document) {
+            $userResult['name'] = $document->name;
+            $userResult['username'] = $document->username;
         }
-
-        //  TODO: Display amount of members for popularity sort
-
-        $result['title'] ? $itemTitle = $result['title'] : $result['name'];
-        $item =  "
-            <a href='/groups/profile/".$guid."/".$result['name']."'>
-                <div class='head'>
-                        <h4>".$result['name']."</h4>
-                        <div class='pull-right'>".$subtype."<br> Members: ".$result['members']."</div>
-                        <div class='desc'><p>".$description."</p></div>
-                </div>
-            </a>
-            <a href='/profile/".$username."'>
-                <div class='foot'>
-                    <div class='one'>".$name."</div>
-                    <div class='two'>
-                        ".elgg_echo('search:results:created').":".$time."
-                    </div>
-                    <div class='four'>";
-        if($timeUpdated != $time){
-            $item .= elgg_echo('search:results:latest').":".$timeUpdated;
-        }
-        $item .= "  
-                    </div>
-                    <div class='info'>\"Owner name\"</div>       
-                </div>
-            </a>";
-        $arr = array($item);
-        $resultsArray[] = $arr;
-    }
-    elseif ($result['subtype'] == 'comment') {
-        $d_m_y = '';
-        $time = elgg_get_friendly_time($result['time_created']);
-        $timeArr = preg_split("/[\s]+/", $time);
-        // If is older than a day, display date instead
-        if($timeArr[1] == 'days' && $timeArr[0] > 1){
-            $time = gmdate("Y-m-d H:i:s", $result['time_created']);
-            $d_m_y = gmdate("Y-m-d", $result['time_created']);
-        }
-
-        $timeUpdated = elgg_get_friendly_time($result['time_updated_i']);
-        $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
-        // If is older than a day, display date instead
-        if($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1){
-            $timeUpdated = gmdate("Y-m-d H:i:s", $result['time_updated_i']);
-            $d_m_y = gmdate("Y-m-d", $result['time_updated_i']);
-        }
-
-        $subtype = $result['subtype'];
-        $guid = $result['id'];
-        //  TODO: Get user from SOLR
-        $user = get_user($result['owner']);
-        $username = $user->username;
-        $name = $user->name;
+        $username = $userResult['username'];
+        $name = $userResult['name'];
 
         if($result['description']){
             $description = $result['description'];

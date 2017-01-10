@@ -79,6 +79,10 @@ $( ".advancedPage, .currentPage" ).click(function () {
     }
 });
 
+$( ".resultItemLink" ).click(function () {
+    elgg.register_error(elgg.echo('type:pageNotFound'));
+});
+
 var htmlCollection = document.getElementsByClassName("advancedItem");
 var items = Array.prototype.slice.call( htmlCollection );
 items.forEach(function (e) {
