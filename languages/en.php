@@ -39,7 +39,7 @@ return array(
     'option:popularity' => "Popularity",
     'option:relevancy' => "Relevancy",
 
-    'options:tags' => "Tags",
+    'options:tags' => "Boolean",
     'options:tags:list' => "List of boolean options",
     'options:tags:list:help' => "Hold ctrl to select multiple, select to turn on/off",
     'option:and' => "And",

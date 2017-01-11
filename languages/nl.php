@@ -39,7 +39,7 @@ return array(
     'option:popularity' => "Populariteit",
     'option:relevancy' => "Relevantie",
 
-    'options:tags' => "Zoekwoorden",
+    'options:tags' => "Boolean",
     'options:tags:list' => "Lijst van boolean opties",
     'options:tags:list:help' => "Houd ctrl in om meerdere te selecteren, selecteer om aan/uit te zetten.",
     'option:and' => "En",

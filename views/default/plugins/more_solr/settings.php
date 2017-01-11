@@ -162,6 +162,8 @@ $user_enable = elgg_view('input/select', array(
     ),
     'value' => $vars['entity']->user_en ? $vars['entity']->user_en : elgg_echo('option:no'),
 ));
+/*
+ *  Removed for incompatibility with elgg_solr
 $userAd = elgg_echo('options:user:admin');
 $userAd_enable = elgg_view('input/select', array(
     'name' => 'params[usAd_en]',
@@ -172,6 +174,7 @@ $userAd_enable = elgg_view('input/select', array(
     'value' => $vars['entity']->usAd_en ? $vars['entity']->usAd_en : elgg_echo('option:no'),
 ));
 $userAdHelp = elgg_echo('options:user:admin:help');
+*/
 
 $date = elgg_echo('options:date');
 $date_enable = elgg_view('input/select', array(

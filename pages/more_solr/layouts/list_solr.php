@@ -92,7 +92,7 @@ $multiQuery = "((time_created:[".$dateFrom." TO ".$dateTo."]) AND ";
 
 $multiQuery .= "(";
 //  Create base search query
-$multiQuery .= "title:*".$search['search'] . "* OR " . "name:*".$search['search'] . "* OR " . "description:*".$search['search']."*";
+$multiQuery .= "title:*".$search['search'] . "*^3.0 OR " . "name:*".$search['search'] . "*^2.8 OR " . "description:*".$search['search']."*^2.5";
 
 //  Search for all synonyms
 if($search['synonym'] == 'yes'){
@@ -106,7 +106,7 @@ if($search['synonym'] == 'yes'){
     foreach ($synonyms as $synonym){
         //  Add synonym queries
         if($synonym){
-            $multiQuery .= " OR title:*".$synonym . "* OR " . "name:*".$synonym . "* OR " . "description:*".$synonym."*";
+            $multiQuery .= " OR title:*".$synonym . "*^2.0 OR " . "name:*".$synonym . "*^1.8 OR " . "description:*".$synonym."*^1.5";
         }
     }
 }
@@ -166,10 +166,8 @@ if($search['users']){
 if($search['category'] != 'all' && $search['category']){
     if($search['category'] == 'user' || $search['category'] == 'group' ){
         $multiQuery .= " AND (type:".$search['category'].")";
-        //$query->createFilterQuery('type')->setQuery('type:'.$search['category']);
     } else {
         $multiQuery .= " AND (subtype:".$search['category'].")";
-        //$query->createFilterQuery('subtype')->setQuery('subtype:'.$search['category']);
     }
 }
 
@@ -271,7 +269,7 @@ foreach ($results as $result) {
         $biography = elgg_view('output/longtext', array('value' => $result['description'] ? $result['description'] : elgg_echo('no:about'), 'class' => 'mtn'));
 
         $item = "
-                <a href='http://netcare.nl/profile/" . $username . "'>
+                <a href='/profile/" . $username . "'>
                     <div class='head'>
                             <h4>" . $result['name'] . "</h4>
                             <table>
@@ -352,25 +350,11 @@ foreach ($results as $result) {
         $description = $result['description'];
         $description = strip_tags($description);
 
-        $client = elgg_solr_get_client();
-        $query = $client->createQuery($client::QUERY_SELECT);
-
-        $query->setFields(array('score'));
-        $query->setQuery('(subtype:comment OR subtype:generic_comment) AND container_guid:'.$result['id']);
-
-        $resultset = $client->select($query);
-        foreach ($resultset as $document) {
-            $commentResults['score'] = $document->score;
-        }
-
-        $num_replies = count($commentResults);
-
         $displaySubtype = $subtype;
-        $base = 'http://netcare.nl';     //  TODO:   Remove before uploading to elgg
+        $base = '';
         $url = $base;
         $elementLink = "<a ";
 
-        //      TODO:   Supported categories list
         switch($subtype){
             case 'discussion': case 'groupforumtopic':
                 $displaySubtype = elgg_echo('type:discussion')."<br> ".elgg_echo('type:replies').": " . $num_replies;
@@ -431,11 +415,25 @@ foreach ($results as $result) {
                 break;
         }
 
-        // view
-        $int = $search['results'] - 1;
+        if($result['type'] != 'annotation'){
+            $client = elgg_solr_get_client();
+            $query = $client->createQuery($client::QUERY_SELECT);
+
+            $query->setFields(array('score'));
+            $query->setQuery('(subtype:comment OR subtype:generic_comment) AND container_guid:'.$result['id']);
+
+            $resultset = $client->select($query);
+            $num_replies = 0;
+            foreach ($resultset as $document) {
+                $commentResults['score'] = $document->score;
+            }
+
+            $num_replies = count($commentResults);
+        } else {
+            $displaySubtype = $subtype;
+        }
 
         $result['title'] ? $itemTitle = $result['title'] : $result['name'];
-        //  TODO: change profile url before upload to elgg
         $item =  $elementLink."href='".$url."'>
                 <div class='head'>
                         <h4>".$result['title']."</h4>
@@ -507,7 +505,7 @@ foreach ($results as $result) {
         $num_members = 0;
         $group = get_entity($result['id']);
 
-        $base = 'http://netcare.nl';     //  TODO:   Remove before uploading to elgg
+        $base = '';
         $url = $base;
         $result['title'] ? $itemTitle = $result['title'] : $itemTitle = $result['name'];
         $item =  "
