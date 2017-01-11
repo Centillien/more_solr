@@ -162,3 +162,7 @@ h1 {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.subtype {
+    margin:10px;
+}

@@ -439,7 +439,7 @@ foreach ($results as $result) {
         $item =  $elementLink."href='".$url."'>
                 <div class='head'>
                         <h4>".$result['title']."</h4>
-                        <div class='pull-right'>".$displaySubtype."</div>
+                        <div class='pull-right subtype'>".$displaySubtype."</div>
                         <div class='desc'><p>".$description."</p></div>
                 </div>
             </a>
@@ -471,12 +471,14 @@ foreach ($results as $result) {
             $d_m_y = gmdate("Y-m-d", $result['time_created']);
         }
 
-        $timeUpdated = elgg_get_friendly_time($result['time_updated_i']);
-        $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
-        // If is older than a day, display date instead
-        if($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1){
-            $timeUpdated = gmdate("Y-m-d H:i:s", $result['time_updated_i']);
-            $d_m_y = gmdate("Y-m-d", $result['time_updated_i']);
+        if($result['time_updated_i']) {
+            $timeUpdated = elgg_get_friendly_time($result['time_updated_i']);
+            $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
+            // If is older than a day, display date instead
+            if ($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1) {
+                $timeUpdated = gmdate("Y-m-d H:i:s", $result['time_updated_i']);
+                $d_m_y = gmdate("Y-m-d", $result['time_updated_i']);
+            }
         }
 
         $subtype = $result['type'];
@@ -502,15 +504,17 @@ foreach ($results as $result) {
         } else {
             $description = elgg_echo('no:description');
         }
+        $num_members = 0;
+        $group = get_entity($result['id']);
 
-        //  TODO: Display amount of members for popularity sort
-
-        $result['title'] ? $itemTitle = $result['title'] : $result['name'];
+        $base = 'http://netcare.nl';     //  TODO:   Remove before uploading to elgg
+        $url = $base;
+        $result['title'] ? $itemTitle = $result['title'] : $itemTitle = $result['name'];
         $item =  "
-            <a href='/groups/profile/".$guid."/".$result['name']."'>
+            <a href='".$url."/groups/profile/".$guid."/".$result['name']."'>
                 <div class='head'>
-                        <h4>".$result['name']."</h4>
-                        <div class='pull-right'>".$subtype."<br> Members: ".$result['members']."</div>
+                        <h4>".$itemTitle."</h4>
+                        <div class='pull-right'>".$subtype."<br> Members: ".$num_members."</div>
                         <div class='desc'><p>".$description."</p></div>
                 </div>
             </a>
@@ -521,7 +525,7 @@ foreach ($results as $result) {
                         ".elgg_echo('search:results:created').":".$time."
                     </div>
                     <div class='four'>";
-        if($timeUpdated != $time){
+        if($timeUpdated && $timeUpdated != $time){
             $item .= elgg_echo('search:results:latest').":".$timeUpdated;
         }
         $item .= "  
