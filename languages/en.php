@@ -156,4 +156,19 @@ return array(
     'form:error:fields' => 'The \'search\' field is required.',
 
     'results:language' => 'Language',
+
+    /*
+     *  Category groups
+     */
+
+    'categories:title' => "Category groups",
+    'options:category:search' => "Add a category",
+    'options:category:search:placeholder' => "Select a category to add",
+    'options:category:group:name' => "Category group name",
+    'options:category:group:name:placeholder' => "Name of group",
+    'options:category:group:categories' => "Categories in group",
+    'options:category:group:categories:placeholder' => "List of categories in selected group will show up here",
+    'options:category:group:list' => "Category groups",
+    'option:save:category:Add' => "Add category to group",
+    'option:save:category:group' => "Save category group",
 );

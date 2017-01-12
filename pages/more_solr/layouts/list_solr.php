@@ -14,16 +14,16 @@ $contents = file_get_contents($fileSyn->getFilenameOnFilestore());
 $synonyms = explode(PHP_EOL, $contents);
 
 //  Get the search limiters from the url
-$search =  array('search' => $_GET['search'],   //X
-    'synonym' => $_GET['synonym'],              //X
-    'category' => $_GET['category'],            //X
-    'tags' => $_GET['tags'],                    //X
-    'users' => $_GET['user'],                   //X
-    'results' => $_GET['results'],              //X
-    'sort' => $_GET['sort'],                    //half          Add sort based on score
-    'date' => $_GET['date'],                    //X
-    'dateTo' => $_GET['dateTo'],                //X
-    'page' => $_GET['page']);                   //half(need pagination part)
+$search =  array('search' => $_GET['search'],
+    'synonym' => $_GET['synonym'],
+    'category' => $_GET['category'],
+    'tags' => $_GET['tags'],
+    'users' => $_GET['user'],
+    'results' => $_GET['results'],
+    'sort' => $_GET['sort'],
+    'date' => $_GET['date'],
+    'dateTo' => $_GET['dateTo'],
+    'page' => $_GET['page']);
 
 $search['search'] = strtolower($search['search']);
 $search['tags'] = strtolower($search['tags']);
@@ -309,156 +309,6 @@ foreach ($results as $result) {
         $arr = array($item, $friendsCount + $result['groups'], $result['score']);
         $resultsArray[] = $arr;
     }
-    elseif ($result['type'] == 'object' || $result['type'] == 'annotation'){
-        $d_m_y = '';
-        $time = elgg_get_friendly_time($result['time_created']);
-        $timeArr = preg_split("/[\s]+/", $time);
-        // If is older than a day, display date instead
-        if($timeArr[1] == 'days' && $timeArr[0] > 1){
-            $time = gmdate("Y-m-d H:i:s", $result['time_created']);
-            $d_m_y = gmdate("Y-m-d", $result['time_created']);
-        }
-        if($result['time_updated_i']){
-            $timeUpdated = elgg_get_friendly_time($result['time_updated_i']);
-            $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
-            // If is older than a day, display date instead
-            if($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1){
-                $timeUpdated = gmdate("Y-m-d H:i:s", $result['time_updated_i']);
-                $d_m_y = gmdate("Y-m-d", $result['time_updated_i']);
-            }
-        } else {
-            $timeUpdated = "";
-        }
-
-        $subtype = $result['subtype'];
-        $guid = $result['id'];
-
-        $client = elgg_solr_get_client();
-        $query = $client->createQuery($client::QUERY_SELECT);
-
-        $query->setFields(array('username, name'));
-        $query->setQuery('id:'.$result['owner'].' AND type:user');
-
-        $resultset = $client->select($query);
-        foreach ($resultset as $document) {
-            $userResult['name'] = $document->name;
-            $userResult['username'] = $document->username;
-        }
-        $username = $userResult['username'];
-        $name = $userResult['name'];
-
-        $description = $result['description'];
-        $description = strip_tags($description);
-
-        $displaySubtype = $subtype;
-        $base = '';
-        $url = $base;
-        $elementLink = "<a ";
-
-        switch($subtype){
-            case 'discussion': case 'groupforumtopic':
-                $displaySubtype = elgg_echo('type:discussion')."<br> ".elgg_echo('type:replies').": " . $num_replies;
-                $url .= "/discussion/view/".$guid;
-                break;
-            case 'comment': case 'generic_comment':
-                $container = $result['container'];
-                $url .= '/comment/view/'.$guid.'/'.$container;
-                break;
-            case 'album': case 'image':
-                $displaySubtype = elgg_echo('type:image')."<br> ".elgg_echo('type:replies').": " . $num_replies;
-                $url .= "/photos/".$subtype."/".$guid;
-                break;
-            case 'webdav_file':
-                $displaySubtype = elgg_echo('type:file')."<br> ".elgg_echo('type:replies').": " . $num_replies;
-                $url .= '/webdav/view/?container_guid=1&p='.$result['title'];
-                break;
-            case 'file':
-                $displaySubtype = elgg_echo('type:file')."<br> ".elgg_echo('type:replies').": " . $num_replies;
-                $url .= '/file/view/'.$result['id'];
-                break;
-            case 'page': case 'page_top':
-                $displaySubtype = elgg_echo('type:page')."<br> ".elgg_echo('type:replies').": " . $num_replies;
-                $url .= '/pages/view/'.$guid;
-                break;
-            case 'hjwall':
-                $displaySubtype = elgg_echo('type:wallpost')."<br> ".elgg_echo('type:replies').": " . $num_replies;
-
-                $client = elgg_solr_get_client();
-                $query = $client->createQuery($client::QUERY_SELECT);
-
-                $query->setFields(array('username'));
-                $query->setQuery('id:'.$result['owner'].' AND type:user');
-
-                $resultset = $client->select($query);
-                foreach ($resultset as $document) {
-                    $usernameUrl = $document->username;
-                }
-
-                $url .= '/wall/owner/'.$usernameUrl.'/'.$guid;
-                break;
-            case 'event':
-                $displaySubtype = elgg_echo('type:event')."<br> ".elgg_echo('type:replies').": " . $num_replies;
-                $url .= '/events/event/view/'.$guid;
-                break;
-            case 'task_top': case 'task':
-                $displaySubtype = elgg_echo('type:task')."<br> ".elgg_echo('type:replies').": " . $num_replies;
-                $url .= '/tasks/view/'.$guid;
-                break;
-            case 'faq':
-                $displaySubtype = elgg_echo('type:faq')."<br> ".elgg_echo('type:replies').": " . $num_replies;
-                $url .= '/user_support/faq/'.$guid;
-                break;
-            default:
-                $displaySubtype = $subtype." <br> Replies: " . $num_replies;
-                $url .= "/".$subtype."/view/".$guid;
-                //$elementLink .= "class='resultItemLink' ";
-                break;
-        }
-
-        if($result['type'] != 'annotation'){
-            $client = elgg_solr_get_client();
-            $query = $client->createQuery($client::QUERY_SELECT);
-
-            $query->setFields(array('score'));
-            $query->setQuery('(subtype:comment OR subtype:generic_comment) AND container_guid:'.$result['id']);
-
-            $resultset = $client->select($query);
-            $num_replies = 0;
-            foreach ($resultset as $document) {
-                $commentResults['score'] = $document->score;
-            }
-
-            $num_replies = count($commentResults);
-        } else {
-            $displaySubtype = $subtype;
-        }
-
-        $result['title'] ? $itemTitle = $result['title'] : $result['name'];
-        $item =  $elementLink."href='".$url."'>
-                <div class='head'>
-                        <h4>".$result['title']."</h4>
-                        <div class='pull-right subtype'>".$displaySubtype."</div>
-                        <div class='desc'><p>".$description."</p></div>
-                </div>
-            </a>
-            <a href='".$base."/profile/".$username."'>
-                <div class='foot'>
-                    <div class='one'>".$name."</div>
-                    <div class='two'>
-                        ".elgg_echo('search:results:created').":".$time."
-                    </div>
-                    <div class='four'>";
-        if($timeUpdated && $timeUpdated != $time){
-            $item .= elgg_echo('search:results:latest').":".$timeUpdated;
-        }
-        $item .= "  
-                    </div>
-                    <div class='info'>\"Owner name\"</div>       
-                </div>
-            </a>";
-        $arr = array($item);
-        $resultsArray[] = $arr;
-    }
     elseif ($result['type'] == 'group') {
         $d_m_y = '';
         $time = elgg_get_friendly_time($result['time_created']);
@@ -517,6 +367,156 @@ foreach ($results as $result) {
                 </div>
             </a>
             <a href='/profile/".$username."'>
+                <div class='foot'>
+                    <div class='one'>".$name."</div>
+                    <div class='two'>
+                        ".elgg_echo('search:results:created').":".$time."
+                    </div>
+                    <div class='four'>";
+        if($timeUpdated && $timeUpdated != $time){
+            $item .= elgg_echo('search:results:latest').":".$timeUpdated;
+        }
+        $item .= "  
+                    </div>
+                    <div class='info'>\"Owner name\"</div>       
+                </div>
+            </a>";
+        $arr = array($item);
+        $resultsArray[] = $arr;
+    }
+    else {
+        $d_m_y = '';
+        $time = elgg_get_friendly_time($result['time_created']);
+        $timeArr = preg_split("/[\s]+/", $time);
+        // If is older than a day, display date instead
+        if($timeArr[1] == 'days' && $timeArr[0] > 1){
+            $time = gmdate("Y-m-d H:i:s", $result['time_created']);
+            $d_m_y = gmdate("Y-m-d", $result['time_created']);
+        }
+        if($result['time_updated_i']){
+            $timeUpdated = elgg_get_friendly_time($result['time_updated_i']);
+            $timeUpdatedArr = preg_split("/[\s]+/", $timeUpdated);
+            // If is older than a day, display date instead
+            if($timeUpdatedArr[1] == 'days' && $timeUpdatedArr[0] > 1){
+                $timeUpdated = gmdate("Y-m-d H:i:s", $result['time_updated_i']);
+                $d_m_y = gmdate("Y-m-d", $result['time_updated_i']);
+            }
+        } else {
+            $timeUpdated = "";
+        }
+
+        $subtype = $result['subtype'];
+        $guid = $result['id'];
+
+        $client = elgg_solr_get_client();
+        $query = $client->createQuery($client::QUERY_SELECT);
+
+        $query->setFields(array('username, name'));
+        $query->setQuery('id:'.$result['owner'].' AND type:user');
+
+        $resultset = $client->select($query);
+        foreach ($resultset as $document) {
+            $userResult['name'] = $document->name;
+            $userResult['username'] = $document->username;
+        }
+        $username = $userResult['username'];
+        $name = $userResult['name'];
+
+        $description = $result['description'];
+        $description = strip_tags($description);
+
+        $displaySubtype = $subtype;
+        $base = '';
+        $url = $base;
+        $elementLink = "<a ";
+
+        switch($subtype){
+            case 'discussion': case 'groupforumtopic':
+            $displaySubtype = elgg_echo('type:discussion')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+            $url .= "/discussion/view/".$guid;
+            break;
+            case 'comment': case 'generic_comment':
+            $container = $result['container'];
+            $url .= '/comment/view/'.$guid.'/'.$container;
+            break;
+            case 'album': case 'image':
+            $displaySubtype = elgg_echo('type:image')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+            $url .= "/photos/".$subtype."/".$guid;
+            break;
+            case 'webdav_file':
+                $displaySubtype = elgg_echo('type:file')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= '/webdav/view/?container_guid=1&p='.$result['title'];
+                break;
+            case 'file':
+                $displaySubtype = elgg_echo('type:file')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= '/file/view/'.$result['id'];
+                break;
+            case 'page': case 'page_top':
+            $displaySubtype = elgg_echo('type:page')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+            $url .= '/pages/view/'.$guid;
+            break;
+            case 'hjwall':
+                $displaySubtype = elgg_echo('type:wallpost')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+
+                $client = elgg_solr_get_client();
+                $query = $client->createQuery($client::QUERY_SELECT);
+
+                $query->setFields(array('username'));
+                $query->setQuery('id:'.$result['owner'].' AND type:user');
+
+                $resultset = $client->select($query);
+                foreach ($resultset as $document) {
+                    $usernameUrl = $document->username;
+                }
+
+                $url .= '/wall/owner/'.$usernameUrl.'/'.$guid;
+                break;
+            case 'event':
+                $displaySubtype = elgg_echo('type:event')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= '/events/event/view/'.$guid;
+                break;
+            case 'task_top': case 'task':
+            $displaySubtype = elgg_echo('type:task')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+            $url .= '/tasks/view/'.$guid;
+            break;
+            case 'faq':
+                $displaySubtype = elgg_echo('type:faq')."<br> ".elgg_echo('type:replies').": " . $num_replies;
+                $url .= '/user_support/faq/'.$guid;
+                break;
+            default:
+                $displaySubtype = $subtype." <br> Replies: " . $num_replies;
+                $url .= "/".$subtype."/view/".$guid;
+                //$elementLink .= "class='resultItemLink' ";
+                break;
+        }
+
+        if($result['type'] != 'annotation'){
+            $client = elgg_solr_get_client();
+            $query = $client->createQuery($client::QUERY_SELECT);
+
+            $query->setFields(array('score'));
+            $query->setQuery('(subtype:comment OR subtype:generic_comment) AND container_guid:'.$result['id']);
+
+            $resultset = $client->select($query);
+            $num_replies = 0;
+            foreach ($resultset as $document) {
+                $commentResults['score'] = $document->score;
+            }
+
+            $num_replies = count($commentResults);
+        } else {
+            $displaySubtype = $subtype;
+        }
+
+        $result['title'] ? $itemTitle = $result['title'] : $result['name'];
+        $item =  $elementLink."href='".$url."'>
+                <div class='head'>
+                        <h4>".$result['title']."</h4>
+                        <div class='pull-right subtype'>".$displaySubtype."</div>
+                        <div class='desc'><p>".$description."</p></div>
+                </div>
+            </a>
+            <a href='".$base."/profile/".$username."'>
                 <div class='foot'>
                     <div class='one'>".$name."</div>
                     <div class='two'>
@@ -599,7 +599,7 @@ function overResults ($count, $resAm) {
 
 function synonymSearch ($search){
     $synonyms = getSyns();
-    $string = $search; // insert code here
+    $string = $search;
     $index = -1;
     for ($i=0;$i<count($synonyms);$i++) {
         if (strpos($synonyms[$i], $string) !== false) {
@@ -611,7 +611,6 @@ function synonymSearch ($search){
 }
 
 function getStops(){
-// arbitrary file on the filestore
     $fileStp = new ElggFile();
     $fileStp->owner_guid = 7777;
     $fileStp->setFilename('settings/stopword/list.txt');
@@ -622,7 +621,6 @@ function getStops(){
 }
 
 function getSyns(){
-// arbitrary file on the filestore
     $fileStp = new ElggFile();
     $fileStp->owner_guid = 7777;
     $fileStp->setFilename('settings/synonym/list.txt');

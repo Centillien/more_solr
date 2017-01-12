@@ -222,3 +222,58 @@ function eddField (counterEd, maxvalue) {
         document.getElementById('eddcounter').innerHTML = counterEd + " / " + maxvalue;
     }
 }
+
+/*
+    Category add function
+ */
+//  List of all categories found in elgg
+var categories = $( "#categories").val();
+categories = categories.split(' ');
+
+$("#categoryInput").autocomplete(
+    { source: categories}
+);
+
+$( "#addCate").click(addCate());
+
+$( "#categoriesDisplayList" ).change(function () {
+    $("#categoryInput").val($( "#categoriesDisplayList" ).val());
+    addCate();
+});
+
+$('#categoryInput').keypress(function (e) {
+    if (e.which == 13) {
+        e.preventDefault();
+        addCate();
+    }
+});
+
+$( "#saveGroupCate").click(function () {
+    var editThis = false;
+    if($("#groupName").val()){
+        var allGroups = $("#categoryGroups").val().split("[");
+        allGroups.forEach(function (data) {
+            array = data.split(",");
+            console.log(array[0]);
+            if(array[0] == $("#groupName").val()){
+                editThis = true;
+            } else {
+                editThis = false;
+            }
+        });
+        var array = [$("#groupName").val(), $("#groupsCategories").val().split(" ")];
+        if(editThis == true){
+            $("#categoryGroups").val().replace(/(\[.*?\])/gi , $("#categoryGroups").val() + "[" + array + "]")
+            elgg.system_message(elgg.echo('group:changed'));
+        } else {
+            $("#categoryGroups").val($("#categoryGroups").val() + "[" + array + "]");
+            elgg.system_message(elgg.echo('new:group:added'));
+        }
+    } else {
+        elgg.register_error(elgg.echo('groupname:empty'));
+    }
+});
+
+function addCate(){
+    $("#groupsCategories").val($("#categoryInput").val() + " " + $("#groupsCategories").val());
+}
