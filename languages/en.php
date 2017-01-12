@@ -167,6 +167,7 @@ return array(
     'options:category:group:name' => "Category group name",
     'options:category:group:name:placeholder' => "Name of group",
     'options:category:group:categories' => "Categories in group",
+    'options:category:group:categories:list' => "List of categories",
     'options:category:group:categories:placeholder' => "List of categories in selected group will show up here",
     'options:category:group:list' => "Category groups",
     'option:save:category:Add' => "Add category to group",

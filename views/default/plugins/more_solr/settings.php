@@ -68,7 +68,7 @@ $vars['entity']->cat_list ? $catListValue = explode(",",$vars['entity']->cat_lis
 
 //  Get the list of category groups
 $vars['entity']->category_groups ? $catListValue = explode("[",$vars['entity']->category_groups) : $catListValue = elgg_echo('option:all');
-$groupnamelist = ['all', 'group', 'user'];
+$groupnamelist = null;
 foreach ($catListValue as $value){
     $value = explode(",", $value);
     echo "<pre>"; print_r($value);echo "</pre>";
@@ -77,10 +77,11 @@ foreach ($catListValue as $value){
     }
 }
 
+$categoriesGroups = array_merge(['all', 'group', 'user'], $groupnamelist);
 $categories = ['all', 'user', 'group'];
 $category_list = elgg_view('input/select', array(
     'name' => 'params[cat_list]',
-    'options_values' => $groupnamelist,
+    'options_values' => $categoriesGroups,
     'value' => $catListValue,
     'multiple' => 'multiple',
 ));
