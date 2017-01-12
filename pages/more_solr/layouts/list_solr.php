@@ -352,7 +352,7 @@ foreach ($results as $result) {
         } else {
             $description = elgg_echo('no:description');
         }
-        $num_members = 0;
+        $num_members = 0;   //  TODO:   Get amount of members in group
         $group = get_entity($result['id']);
 
         $base = '';
@@ -362,7 +362,7 @@ foreach ($results as $result) {
             <a href='".$url."/groups/profile/".$guid."/".$result['name']."'>
                 <div class='head'>
                         <h4>".$itemTitle."</h4>
-                        <div class='pull-right'>".$subtype."<br> Members: ".$num_members."</div>
+                        <div class='pull-right'>".$subtype."</div>
                         <div class='desc'><p>".$description."</p></div>
                 </div>
             </a>
