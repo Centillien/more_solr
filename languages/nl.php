@@ -27,6 +27,7 @@ return array(
 
     'options:category' => "Categorie",
     'options:cat:list:help' => "Houd ctrl in om meerdere te selecteren, selecteer om aan/uit te zetten.",
+    'options:cat:list:help:warning' => "Note: categorieën van plugins kunnen problemen veroorzaken.",
 
     'options:sort' => "Sorteren op",
     'options:sort:list' => "Lijst met sorteer opties",

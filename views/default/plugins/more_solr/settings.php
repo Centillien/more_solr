@@ -105,6 +105,7 @@ $category_list = elgg_view('input/select', array(
     'multiple' => 'multiple',
 ));
 $catListHelp = elgg_echo('options:cat:list:help');
+$catListHelpWarning = elgg_echo('options:cat:list:help:warning');
 
 $sort = elgg_echo('options:sort');
 $sort_enable = elgg_view('input/select', array(
@@ -514,7 +515,7 @@ $settings = <<<__HTML
   <tr>
     <td><label>$category</label></td>
     <td>$category_enable</td>
-    <td>$category_list <br> $catListHelp</td>
+    <td>$category_list <br> $catListHelp <br> $catListHelpWarning</td>
   </tr>
   <tr>
     <td><label>$sort</label></td>

@@ -27,6 +27,7 @@ return array(
 
     'options:category' => "Category",
     'options:cat:list:help' => "Hold ctrl to select multiple, select to turn on/off",
+    'options:cat:list:help:warning' => "Note: Categories of plugins could be incompatible.",
 
     'options:sort' => "Sort on",
     'options:sort:list' => "List of sort options",
