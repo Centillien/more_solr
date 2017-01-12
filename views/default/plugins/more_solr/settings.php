@@ -32,6 +32,16 @@ $chatEntities = elgg_get_entities_from_relationship([
     'limit' => false
 ]);
 
+$adminOnly = elgg_echo('options:admin:only');
+$adminOnly_enable = elgg_view('input/select', array(
+    'name' => 'params[admin_only]',
+    'options_values' => array(
+        'yes' => elgg_echo('option:yes'),
+        'no' => elgg_echo('option:no'),
+    ),
+    'value' => $vars['entity']->admin_only ? $vars['entity']->admin_only : elgg_echo('option:no'),
+));
+
 $synonym = elgg_echo('options:synonym');
 $synonym_enable = elgg_view('input/select', array(
     'name' => 'params[syn_en]',
@@ -502,6 +512,10 @@ $settings = <<<__HTML
      <th></th>
   </tr>
  </thead>
+  <tr>
+    <td><label>$adminOnly</label></td>
+    <td>$adminOnly_enable</td>
+  </tr>
   <tr>
     <td><label>$synonym</label></td>
     <td>$synonym_enable</td>

@@ -19,6 +19,8 @@ return array(
 
     'options:search' => "Zoeken",
 
+    'options:admin:only' => "Admin only",
+
     'options:synonym' => "Synoniem zoeken",
     'options:synonym:help' => "Link naar lijst met synoniemen",
 
