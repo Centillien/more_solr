@@ -462,6 +462,24 @@ foreach ($results as $result) {
         $description = $result['description'];
         $description = strip_tags($description);
 
+        if($result['type'] != 'annotation'){
+            $client = elgg_solr_get_client();
+            $query = $client->createQuery($client::QUERY_SELECT);
+
+            $query->setFields(array('score'));
+            $query->setQuery('(subtype:comment OR subtype:generic_comment) AND container_guid:'.$result['id']);
+
+            $resultset = $client->select($query);
+            $num_replies = 0;
+            foreach ($resultset as $document) {
+                $commentResults['score'] = $document->score;
+            }
+
+            $num_replies = count($commentResults);
+        } else {
+            $displaySubtype = $subtype;
+        }
+
         $displaySubtype = $subtype;
         $base = '';
         $url = $base;
@@ -525,24 +543,6 @@ foreach ($results as $result) {
                 $url .= "/".$subtype."/view/".$guid;
                 //$elementLink .= "class='resultItemLink' ";
                 break;
-        }
-
-        if($result['type'] != 'annotation'){
-            $client = elgg_solr_get_client();
-            $query = $client->createQuery($client::QUERY_SELECT);
-
-            $query->setFields(array('score'));
-            $query->setQuery('(subtype:comment OR subtype:generic_comment) AND container_guid:'.$result['id']);
-
-            $resultset = $client->select($query);
-            $num_replies = 0;
-            foreach ($resultset as $document) {
-                $commentResults['score'] = $document->score;
-            }
-
-            $num_replies = count($commentResults);
-        } else {
-            $displaySubtype = $subtype;
         }
 
         $result['title'] ? $itemTitle = $result['title'] : $result['name'];

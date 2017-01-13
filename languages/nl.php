@@ -169,4 +169,8 @@ return array(
     'option:save:category:group' => "Categorie groep opslaan",
     'option:delete:category:group' => "Categorie groep verwijderen",
     'category:required:field' => "Groepsnaam en categorieën zijn verplichte velden.",
+    'category:group:saved' => "Groep is aangepast/opgeslagen.",
+    'category:group:delete' => "Groep is verwijdert.",
+    'option:clear:category' => "Clear categories",
+    'category:invalid:category' => "Ongeldige categorie opgegeven.",
 );

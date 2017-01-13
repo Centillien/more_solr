@@ -70,7 +70,6 @@ $vars['entity']->cat_list ? $catListValue = explode(",",$vars['entity']->cat_lis
 $vars['entity']->category_groups ? $groupListValue = explode("[",$vars['entity']->category_groups) : $groupListValue = elgg_echo('option:all');
 $groupnamelist = [];
 $catGroupsList = null;
-print_r($groupListValue);
 foreach ($groupListValue as $value){
     $value = explode(",", $value);
     if($value[0]){
@@ -485,6 +484,12 @@ $deleteCategoryGroup = elgg_view('input/button', array(
     'class' => 'elgg-button-submit elgg-button',
 ));
 
+$clearCategories = elgg_view('input/button', array(
+    'id' => 'clearCate',
+    'value' => elgg_echo('option:clear:category'),
+    'class' => 'elgg-button-submit elgg-button',
+));
+
 elgg_extend_view('css/admin', 'css/admin/advanced_search');
 $settings = <<<__HTML
     <h1>$optionsTitle</h1>
@@ -573,7 +578,7 @@ $categorieGroupHidden
     </tr>
     <tr>
         <td> $saveCategoryGroup </td>
-        <td> $deleteCategoryGroup </td>
+        <td> $deleteCategoryGroup $clearCategories</td>
     </tr>
 </table>
 __HTML;

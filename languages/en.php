@@ -175,4 +175,8 @@ return array(
     'option:save:category:group' => "Save category group",
     'option:delete:category:group' => "Delete category group",
     'category:required:field' => "Groupname and its categories are required.",
+    'category:group:saved' => "Group has been saved/edited.",
+    'category:group:delete' => "Group has been deleted.",
+    'option:clear:category' => "Clear categories",
+    'category:invalid:category' => "Invalid category in category field",
 );

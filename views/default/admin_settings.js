@@ -232,6 +232,9 @@ var groupname = $( "#groupName");
 var groups = $( "#groupsCategories");
 var categoryGroups = $( "#categoryGroups");
 categories = categories.split(' ');
+selectGroup();
+
+$( ".elgg-menu-longtext" ).attr("class", "hidden");
 
 $("#categoryInput").autocomplete(
     { source: categories}
@@ -239,7 +242,6 @@ $("#categoryInput").autocomplete(
 
 $( "#addCate").click(function () {
     //  Remove it first to prevent duplicates
-    removeCate();
     addCate();
 });
 $( "#removeCate").click(function () {
@@ -272,6 +274,7 @@ $( "#saveGroupCate").click(function () {
             }
         });
         $( "#categoryGroups" ).val(categoryGroups.val() + "[" + string + "]");
+        elgg.system_message(elgg.echo("category:group:saved"));
     } else {
         elgg.register_error(elgg.echo("category:required:field"));
     }
@@ -281,22 +284,28 @@ $( "#deleteGroupCate").click(function () {
     deleteGroup();
 });
 
+$( "#clearCate").click(function () {
+    $( "#groupsCategories" ).val("");
+});
+
 $( "#groupSelect" ).change(function () {
-    //  Select an existing group
-    $("#groupName").val($( "#groupSelect option:selected" ).text());
-
-    var replace = "(\\["+groupname.val()+")[,\\w+]+(\\])";
-    var re = new RegExp(replace,"g");
-    var string = categoryGroups.val().match(re);
-    string = string[0].replace("["+groupname.val()+",", "");
-    string = string.replace("]", "");
-    string = string.replace(/,/g, " ");
-
-    $( "#groupsCategories" ).val(string);
+    selectGroup();
 });
 
 function addCate(){
-    $("#groupsCategories").val($("#categoryInput").val() + " " + $("#groupsCategories").val());
+    var pass = false;
+    categories.forEach(function (data) {
+        if(data == $("#categoryInput").val()){
+            pass = true;
+        }
+    });
+
+    if(pass && $("#categoryInput").val() != ""){
+        removeCate();
+        $("#groupsCategories").val($("#categoryInput").val() + " " + $("#groupsCategories").val());
+    } else {
+        elgg.register_error(elgg.echo("category:invalid:category"));
+    }
 }
 
 function removeCate(){
@@ -310,4 +319,19 @@ function deleteGroup() {
     var re = new RegExp(replace,"g");
 
     $( "#categoryGroups" ).val(categoryGroups.val().replace(re, ""));
+    elgg.register_error(elgg.echo("category:group:delete"));
+}
+
+function selectGroup () {
+    //  Select an existing group
+    $("#groupName").val($( "#groupSelect option:selected" ).text());
+
+    var replace = "(\\["+groupname.val()+")[,\\w+]+(\\])";
+    var re = new RegExp(replace,"g");
+    var string = categoryGroups.val().match(re);
+    string = string[0].replace("["+groupname.val()+",", "");
+    string = string.replace("]", "");
+    string = string.replace(/,/g, " ");
+
+    $( "#groupsCategories" ).val(string);
 }
