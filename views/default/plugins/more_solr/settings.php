@@ -67,19 +67,44 @@ $category_enable = elgg_view('input/select', array(
 $vars['entity']->cat_list ? $catListValue = explode(",",$vars['entity']->cat_list) : $catListValue = elgg_echo('option:all');
 
 //  Get the list of category groups
-$vars['entity']->category_groups ? $groupListValue = explode("[",$vars['entity']->category_groups) : $groupListValue = elgg_echo('option:all');
-$groupnamelist = [];
-$catGroupsList = null;
-foreach ($groupListValue as $value){
-    $value = explode(",", $value);
-    if($value[0]){
-        $groupnamelist[] .= $value[0];
+
+//  Get all the different subtypes
+$client = elgg_solr_get_client();
+$query = $client->createSelect();
+
+$facetSet = $query->getFacetSet();
+$facetSet->createFacetField('subtypes')->setField('subtype');
+
+$resultset = $client->select($query);
+
+$facet = $resultset->getFacetSet()->getFacet('subtypes');
+$types = ['group', 'user'];
+foreach ($facet as $value => $count) {
+    if($value){
+        $types[] .= $value;
     }
-    $catGroupsList = $value;
+}
+
+$categories = [];
+$categories['all'] = elgg_echo('option:all');
+foreach($types as $type){
+    $categories["$type"] = $type;
+}
+
+if($vars['entity']->cate_en){
+    $vars['entity']->category_groups ? $groupListValue = explode("[",$vars['entity']->category_groups) : $groupListValue = elgg_echo('option:all');
+    $groupnamelist = [];
+    $catGroupsList = null;
+    foreach ($groupListValue as $value){
+        $value = explode(",", $value);
+        if($value[0]){
+            $groupnamelist[] .= $value[0];
+        }
+        $catGroupsList = $value;
+    }
 }
 
 $categoriesGroups = array_merge(['all', 'group', 'user'], $groupnamelist);
-$categories = ['all', 'user', 'group'];
 $category_list = elgg_view('input/select', array(
     'name' => 'params[cat_list]',
     'options_values' => $categoriesGroups,
@@ -375,37 +400,19 @@ $popupSyn = elgg_format_element('div', [
     'id' => 'popup-syn-open',
 ], $synTable);
 
-
-$relevancyTitle = elgg_echo('options:relevancy:title');
-$relevancyInfo = elgg_echo('options:relevancy:info');
 $optionsTitle = elgg_echo('options:title');
 $categoriesTitle = elgg_echo('categories:title');
 
-
-//  save button, select, text + add button, text, textarea
-
-//  Get all the different subtypes
-$client = elgg_solr_get_client();
-$query = $client->createSelect();
-
-$facetSet = $query->getFacetSet();
-$facetSet->createFacetField('subtypes')->setField('subtype');
-
-$resultset = $client->select($query);
-
-$facet = $resultset->getFacetSet()->getFacet('subtypes');
-$types = ['group', 'user'];
-foreach ($facet as $value => $count) {
-    if($value){
-        $types[] .= $value;
-    }
-}
-
-$categories = [];
-$categories['all'] = elgg_echo('option:all');
-foreach($types as $type){
-    $categories["$type"] = $type;
-}
+$cate = elgg_echo('options:category:groups:enable');
+$cate_enable = elgg_view('input/select', array(
+    'name' => 'params[cate_en]',
+    'options_values' => array(
+        'yes' => elgg_echo('option:yes'),
+        'no' => elgg_echo('option:no'),
+    ),
+    'value' => $vars['entity']->cate_en ? $vars['entity']->cate_en : elgg_echo('option:no'),
+));
+$cate_hint = elgg_echo('options:category:groups:enable:hint');
 
 //  Searchfield for categories  (add autofill from categories list)
 $categoriesHidden = elgg_view('input/text', array(
@@ -552,6 +559,14 @@ $formSubmit
 <table>
 $categoriesHidden
 $categorieGroupHidden
+    <tr>
+        <td> $cate </td>
+        <td> $cate_enable </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td> $cate_hint </td>
+    </tr>
     <tr>
         <td> $cateGroupListLabel </td>
         <td> $cateGroupList </td>

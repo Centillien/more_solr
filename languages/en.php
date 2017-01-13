@@ -179,4 +179,6 @@ return array(
     'category:group:delete' => "Group has been deleted.",
     'option:clear:category' => "Clear categories",
     'category:invalid:category' => "Invalid category in category field",
+    'options:category:groups:enable' => "Enable?",
+    'options:category:groups:enable:hint' => "When disabled, will show 'List of categories' instead of a list of the groups."
 );

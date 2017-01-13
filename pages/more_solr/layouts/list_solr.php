@@ -467,15 +467,12 @@ foreach ($results as $result) {
             $query = $client->createQuery($client::QUERY_SELECT);
 
             $query->setFields(array('score'));
-            $query->setQuery('(subtype:comment OR subtype:generic_comment) AND container_guid:'.$result['id']);
-
+            $query->setQuery('(subtype:comment) AND container_guid:'.$result['id']);
+            $query->setStart(0)->setRows(50);
             $resultset = $client->select($query);
             $num_replies = 0;
-            foreach ($resultset as $document) {
-                $commentResults['score'] = $document->score;
-            }
 
-            $num_replies = count($commentResults);
+            $num_replies = count($resultset);
         } else {
             $displaySubtype = $subtype;
         }

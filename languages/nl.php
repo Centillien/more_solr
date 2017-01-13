@@ -173,4 +173,6 @@ return array(
     'category:group:delete' => "Groep is verwijdert.",
     'option:clear:category' => "Clear categories",
     'category:invalid:category' => "Ongeldige categorie opgegeven.",
+    'options:category:groups:enable' => "Aanzetten?",
+    'options:category:groups:enable:hint' => "Als deze uit staat zal de 'Lijst met categorieën' weergeven worden."
 );
