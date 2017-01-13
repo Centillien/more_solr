@@ -161,9 +161,12 @@ return array(
     'options:category:group:name' => "Categorie groepsnaam",
     'options:category:group:name:placeholder' => "Naam van de categorie groep",
     'options:category:group:categories' => "Categorieën in de groep",
-    'options:category:group:categories:list' => "Lijst met categorieën",
+    'options:category:categories:list' => "Lijst met categorieën",
     'options:category:group:categories:placeholder' => "Lijst met categorieën in de groep word hier weergeven",
     'options:category:group:list' => "Categorie groepslijst",
     'option:save:category:Add' => "Categorie toevoegen aan groep",
+    'option:save:category:Remove' => "Categorie verwijderen van groep",
     'option:save:category:group' => "Categorie groep opslaan",
+    'option:delete:category:group' => "Categorie groep verwijderen",
+    'category:required:field' => "Groepsnaam en categorieën zijn verplichte velden.",
 );

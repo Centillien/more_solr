@@ -162,12 +162,49 @@ if($search['users']){
     }
 }
 
+$pizza  = elgg_get_plugin_setting('category_groups', 'more_solr');
+$pizza ? $groupListValue = explode("[",$pizza) : $groupListValue = elgg_echo('option:all');
+
+$groupnamelist = [];
+$catGroupList = [];
+foreach ($groupListValue as $value) {
+    $value = explode(",", $value);
+    if ($value[0]) {
+        $groupnamelist[] .= $value[0];
+    }
+    $catGroupList[] = $value;
+}
+$categoriesGroups = array_merge(['all', 'group', 'user'], $groupnamelist);
+
+$id = $search['category'];
 //  Add limiter on types(object, user, group)/subtypes(discussion)
-if($search['category'] != 'all' && $search['category']){
-    if($search['category'] == 'user' || $search['category'] == 'group' ){
-        $multiQuery .= " AND (type:".$search['category'].")";
+if($categoriesGroups[$id] != 'all' && $categoriesGroups[$id]){
+    if($categoriesGroups[$id] == 'user' || $categoriesGroups[$id] == 'group' ){
+        $multiQuery .= " AND (type:".$categoriesGroups[$id].")";
     } else {
-        $multiQuery .= " AND (subtype:".$search['category'].")";
+        foreach($catGroupList as $group){
+            if($group[0] == $categoriesGroups[$id]){
+                foreach($group as $category){
+                    if($category != $categoriesGroups[$id]){
+                        $category = str_replace("]", "", $category);
+                        $categoriesArray[] = $category;
+                    }
+                }
+            }
+        }
+
+        $multiQuery .= " AND (";
+        $count = 0;
+        foreach($categoriesArray as $word){
+            $multiQuery .= $count == 0 ? '' : " OR ";
+            if($word == 'user' || $word == 'group'){
+                $multiQuery .= "type:".$word;
+            } else {
+                $multiQuery .= "subtype:".$word;
+            }
+            $count++;
+        }
+        $multiQuery .= ")";
     }
 }
 

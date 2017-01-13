@@ -228,13 +228,23 @@ function eddField (counterEd, maxvalue) {
  */
 //  List of all categories found in elgg
 var categories = $( "#categories").val();
+var groupname = $( "#groupName");
+var groups = $( "#groupsCategories");
+var categoryGroups = $( "#categoryGroups");
 categories = categories.split(' ');
 
 $("#categoryInput").autocomplete(
     { source: categories}
 );
 
-$( "#addCate").click(addCate());
+$( "#addCate").click(function () {
+    //  Remove it first to prevent duplicates
+    removeCate();
+    addCate();
+});
+$( "#removeCate").click(function () {
+    removeCate();
+});
 
 $( "#categoriesDisplayList" ).change(function () {
     $("#categoryInput").val($( "#categoriesDisplayList" ).val());
@@ -249,31 +259,55 @@ $('#categoryInput').keypress(function (e) {
 });
 
 $( "#saveGroupCate").click(function () {
-    var editThis = false;
-    if($("#groupName").val()){
-        var allGroups = $("#categoryGroups").val().split("[");
-        allGroups.forEach(function (data) {
-            array = data.split(",");
-            console.log(array[0]);
-            if(array[0] == $("#groupName").val()){
-                editThis = true;
-            } else {
-                editThis = false;
+    if(groupname.val() && groups.val()){
+        //  Delete old version if already existed
+        deleteGroup();
+
+        //  Save function
+        var string = groupname.val();
+        var wordArray = groups.val().split(" ");
+        wordArray.forEach(function (data) {
+            if(data){
+                string += "," + data;
             }
         });
-        var array = [$("#groupName").val(), $("#groupsCategories").val().split(" ")];
-        if(editThis == true){
-            $("#categoryGroups").val().replace(/(\[.*?\])/gi , $("#categoryGroups").val() + "[" + array + "]")
-            elgg.system_message(elgg.echo('group:changed'));
-        } else {
-            $("#categoryGroups").val($("#categoryGroups").val() + "[" + array + "]");
-            elgg.system_message(elgg.echo('new:group:added'));
-        }
+        $( "#categoryGroups" ).val(categoryGroups.val() + "[" + string + "]");
     } else {
-        elgg.register_error(elgg.echo('groupname:empty'));
+        elgg.register_error(elgg.echo("category:required:field"));
     }
+});
+
+$( "#deleteGroupCate").click(function () {
+    deleteGroup();
+});
+
+$( "#groupSelect" ).change(function () {
+    //  Select an existing group
+    $("#groupName").val($( "#groupSelect option:selected" ).text());
+
+    var replace = "(\\["+groupname.val()+")[,\\w+]+(\\])";
+    var re = new RegExp(replace,"g");
+    var string = categoryGroups.val().match(re);
+    string = string[0].replace("["+groupname.val()+",", "");
+    string = string.replace("]", "");
+    string = string.replace(/,/g, " ");
+
+    $( "#groupsCategories" ).val(string);
 });
 
 function addCate(){
     $("#groupsCategories").val($("#categoryInput").val() + " " + $("#groupsCategories").val());
+}
+
+function removeCate(){
+    //  Remove the category from group
+    $( "#groupsCategories" ).val(groups.val().replace($("#categoryInput").val() + " ", ""));
+}
+
+function deleteGroup() {
+    //  Delete old version if already existed
+    var replace = "(\\["+groupname.val()+")[,\\w+]+(\\])";
+    var re = new RegExp(replace,"g");
+
+    $( "#categoryGroups" ).val(categoryGroups.val().replace(re, ""));
 }

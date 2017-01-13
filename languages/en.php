@@ -167,9 +167,12 @@ return array(
     'options:category:group:name' => "Category group name",
     'options:category:group:name:placeholder' => "Name of group",
     'options:category:group:categories' => "Categories in group",
-    'options:category:group:categories:list' => "List of categories",
+    'options:category:categories:list' => "List of categories",
     'options:category:group:categories:placeholder' => "List of categories in selected group will show up here",
     'options:category:group:list' => "Category groups",
     'option:save:category:Add' => "Add category to group",
+    'option:save:category:Remove' => "Remove category from group",
     'option:save:category:group' => "Save category group",
+    'option:delete:category:group' => "Delete category group",
+    'category:required:field' => "Groupname and its categories are required.",
 );

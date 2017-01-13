@@ -67,14 +67,16 @@ $category_enable = elgg_view('input/select', array(
 $vars['entity']->cat_list ? $catListValue = explode(",",$vars['entity']->cat_list) : $catListValue = elgg_echo('option:all');
 
 //  Get the list of category groups
-$vars['entity']->category_groups ? $catListValue = explode("[",$vars['entity']->category_groups) : $catListValue = elgg_echo('option:all');
-$groupnamelist = null;
-foreach ($catListValue as $value){
+$vars['entity']->category_groups ? $groupListValue = explode("[",$vars['entity']->category_groups) : $groupListValue = elgg_echo('option:all');
+$groupnamelist = [];
+$catGroupsList = null;
+print_r($groupListValue);
+foreach ($groupListValue as $value){
     $value = explode(",", $value);
-    echo "<pre>"; print_r($value);echo "</pre>";
     if($value[0]){
         $groupnamelist[] .= $value[0];
     }
+    $catGroupsList = $value;
 }
 
 $categoriesGroups = array_merge(['all', 'group', 'user'], $groupnamelist);
@@ -413,11 +415,13 @@ $categoriesHidden = elgg_view('input/text', array(
     'value' => $categories,
 ));
 
+$vars['entity']->category_groups ? $catListValue = $vars['entity']->category_groups : $catListValue = '';
 //  This is where the array of groups with their categories will be
 $categorieGroupHidden = elgg_view('input/text', array(
     'name' => 'params[category_groups]',
     'id' => 'categoryGroups',
     'class' => 'hidden',
+    'value' => $catListValue
 ));
 
 $cateSearchLabel = elgg_echo('options:category:search');
@@ -453,6 +457,7 @@ $categoriesDisplayList = elgg_view('input/select', array(
 
 $cateGroupListLabel = elgg_echo('options:category:group:list');
 $cateGroupList = elgg_view('input/select', array(
+    'id' => "groupSelect",
     'options_values' => $groupnamelist, //  Get the list of cat groups here
 ));
 
@@ -462,22 +467,23 @@ $cateSearchAdd = elgg_view('input/button', array(
     'class' => 'elgg-button-submit elgg-button',
 ));
 
+$cateSearchRemove = elgg_view('input/button', array(
+    'id' => 'removeCate',
+    'value' => elgg_echo('option:save:category:Remove'),
+    'class' => 'elgg-button-submit elgg-button',
+));
+
 $saveCategoryGroup = elgg_view('input/button', array(
     'id' => 'saveGroupCate',
     'value' => elgg_echo('option:save:category:group'),
     'class' => 'elgg-button-submit elgg-button',
 ));
 
-
-
-
-
-
-
-
-
-
-
+$deleteCategoryGroup = elgg_view('input/button', array(
+    'id' => 'deleteGroupCate',
+    'value' => elgg_echo('option:delete:category:group'),
+    'class' => 'elgg-button-submit elgg-button',
+));
 
 elgg_extend_view('css/admin', 'css/admin/advanced_search');
 $settings = <<<__HTML
@@ -555,7 +561,7 @@ $categorieGroupHidden
     </tr>
     <tr>
         <td></td>
-        <td> $cateSearchAdd </td>
+        <td> $cateSearchAdd $cateSearchRemove </td>
     </tr>
     <tr>
         <td> $cateGroupnameLabel </td>
@@ -567,6 +573,7 @@ $categorieGroupHidden
     </tr>
     <tr>
         <td> $saveCategoryGroup </td>
+        <td> $deleteCategoryGroup </td>
     </tr>
 </table>
 __HTML;
