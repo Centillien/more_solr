@@ -41,7 +41,7 @@ if($pizza != 'no'){
     $pieces = explode(",", $pizza);
     foreach($pieces as $piece){
         if ($piece) {
-            $groupnamelist[] .= elgg_echo('option => '.$piece);
+            $groupnamelist["$piece"] .= elgg_echo($piece);
         }
     }
 }
