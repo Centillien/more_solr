@@ -91,23 +91,21 @@ foreach($types as $type){
     $categories["$type"] = $type;
 }
 
-if($vars['entity']->cate_en){
-    $vars['entity']->category_groups ? $groupListValue = explode("[",$vars['entity']->category_groups) : $groupListValue = elgg_echo('option:all');
-    $groupnamelist = [];
-    $catGroupsList = null;
-    foreach ($groupListValue as $value){
-        $value = explode(",", $value);
-        if($value[0]){
-            $groupnamelist[] .= $value[0];
-        }
-        $catGroupsList = $value;
+$vars['entity']->category_groups ? $groupListValue = explode("[",$vars['entity']->category_groups) : $groupListValue = elgg_echo('option:all');
+$groupnamelist = [];
+$catGroupsList = null;
+foreach ($groupListValue as $value){
+    $value = explode(",", $value);
+    if($value[0]){
+        $groupnamelist[] .= $value[0];
     }
+    $catGroupsList = $value;
 }
 
 $categoriesGroups = array_merge(['all', 'group', 'user'], $groupnamelist);
 $category_list = elgg_view('input/select', array(
     'name' => 'params[cat_list]',
-    'options_values' => $categoriesGroups,
+    'options_values' => $vars['entity']->cate_en != 'no' ? $categoriesGroups : $categories,
     'value' => $catListValue,
     'multiple' => 'multiple',
 ));
