@@ -159,4 +159,29 @@ return array(
     'form:error:fields' => 'The \'search\' field is required.',
 
     'results:language' => 'Language',
+
+    /*
+     *  Category groups
+     */
+
+    'categories:title' => "Category groups",
+    'options:category:search' => "Add a category",
+    'options:category:search:placeholder' => "Select a category to add",
+    'options:category:group:name' => "Category group name",
+    'options:category:group:name:placeholder' => "Name of group",
+    'options:category:group:categories' => "Categories in group",
+    'options:category:categories:list' => "List of categories",
+    'options:category:group:categories:placeholder' => "List of categories in selected group will show up here",
+    'options:category:group:list' => "Category groups",
+    'option:save:category:Add' => "Add category to group",
+    'option:save:category:Remove' => "Remove category from group",
+    'option:save:category:group' => "Save category group",
+    'option:delete:category:group' => "Delete category group",
+    'category:required:field' => "Groupname and its categories are required.",
+    'category:group:saved' => "Group has been saved/edited.",
+    'category:group:delete' => "Group has been deleted.",
+    'option:clear:category' => "Clear categories",
+    'category:invalid:category' => "Invalid category in category field",
+    'options:category:groups:enable' => "Enable?",
+    'options:category:groups:enable:hint' => "When disabled, will show 'List of categories' instead of a list of the groups."
 );

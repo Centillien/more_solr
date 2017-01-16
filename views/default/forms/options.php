@@ -24,18 +24,33 @@ $syn_bar = elgg_view('input/select', array(
     ),
 ));
 
-$arr = [];
-$pizza  = elgg_get_plugin_setting('cat_list', 'more_solr');
-$pieces = explode(",", $pizza);
-foreach($pieces as $piece){
-    print_r($types['object'][$piece]);
-    $arr["$piece"] = elgg_echo($piece);
+$pizza  = elgg_get_plugin_setting('cate_en', 'more_solr');
+if($pizza != 'no'){
+    $pizza  = elgg_get_plugin_setting('category_groups', 'more_solr');
+    $pizza ? $groupListValue = explode("[",$pizza) : $groupListValue = elgg_echo('option:all');
+
+    $groupnamelist = ['all', 'group', 'user'];
+    foreach ($groupListValue as $value) {
+        $value = explode(",", $value);
+        if ($value[0]) {
+            $groupnamelist[] .= elgg_echo('option => '.$value[0]);
+        }
+    }
+} else {
+    $pizza  = elgg_get_plugin_setting('cat_list', 'more_solr');
+    $pieces = explode(",", $pizza);
+    foreach($pieces as $piece){
+        if ($piece) {
+            $groupnamelist["$piece"] .= elgg_echo($piece);
+        }
+    }
 }
+$categoriesGroups = $groupnamelist;
 $category = elgg_echo('options:category');
 $cat_bar = elgg_view('input/select', array(
     'name' => 'category',
     'value' => $_GET['category'] ? $_GET['category'] : '',
-    'options_values' => $arr,
+    'options_values' => $categoriesGroups,
 ));
 
 $arr = [];

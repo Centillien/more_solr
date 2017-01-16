@@ -162,14 +162,65 @@ if($search['users']){
     }
 }
 
-//  Add limiter on types(object, user, group)/subtypes(discussion)
-if($search['category'] != 'all' && $search['category']){
-    if($search['category'] == 'user' || $search['category'] == 'group' ){
-        $multiQuery .= " AND (type:".$search['category'].")";
-    } else {
-        $multiQuery .= " AND (subtype:".$search['category'].")";
+$pizza  = elgg_get_plugin_setting('cate_en', 'more_solr');
+if($pizza != 'no'){
+    $pizza  = elgg_get_plugin_setting('category_groups', 'more_solr');
+    $pizza ? $groupListValue = explode("[",$pizza) : $groupListValue = elgg_echo('option:all');
+
+    $groupnamelist = [];
+    $catGroupList = [];
+    foreach ($groupListValue as $value) {
+        $value = explode(",", $value);
+        if ($value[0]) {
+            $groupnamelist[] .= $value[0];
+        }
+        $catGroupList[] = $value;
+    }
+    $categoriesGroups = array_merge(['all', 'group', 'user'], $groupnamelist);
+
+    $id = $search['category'];
+    //  Add limiter on types(object, user, group)/subtypes(discussion)
+    if($categoriesGroups[$id] != 'all' && $categoriesGroups[$id]){
+        if($categoriesGroups[$id] == 'user' || $categoriesGroups[$id] == 'group' ){
+            $multiQuery .= " AND (type:".$categoriesGroups[$id].")";
+        } else {
+            foreach($catGroupList as $group){
+                if($group[0] == $categoriesGroups[$id]){
+                    foreach($group as $category){
+                        if($category != $categoriesGroups[$id]){
+                            $category = str_replace("]", "", $category);
+                            $categoriesArray[] = $category;
+                        }
+                    }
+                }
+            }
+
+            $multiQuery .= " AND (";
+            $count = 0;
+            foreach($categoriesArray as $word){
+                $multiQuery .= $count == 0 ? '' : " OR ";
+                if($word == 'user' || $word == 'group'){
+                    $multiQuery .= "type:".$word;
+                } else {
+                    $multiQuery .= "subtype:".$word;
+                }
+                $count++;
+            }
+            $multiQuery .= ")";
+        }
+    }
+} else {
+    //  Add limiter on types(object, user, group)/subtypes(discussion)
+    if($search['category'] != 'all' && $search['category']){
+        if($search['category'] == 'user' || $search['category'] == 'group' ){
+            $multiQuery .= " AND (type:".$search['category'].")";
+        } else {
+            $multiQuery .= " AND (subtype:".$search['category'].")";
+        }
     }
 }
+
+
 
 $query->setFields(array('id','type','subtype', 'owner_guid', 'container_guid', 'title', 'name', 'description', 'time_created', 'time_updated_i', 'groups_is', 'members_is', 'username', 'score'));
 
@@ -352,7 +403,7 @@ foreach ($results as $result) {
         } else {
             $description = elgg_echo('no:description');
         }
-        $num_members = 0;   //  TODO:   Get amount of members in group
+        $num_members = 0;
         $group = get_entity($result['id']);
 
         $base = '';
@@ -425,6 +476,21 @@ foreach ($results as $result) {
         $description = $result['description'];
         $description = strip_tags($description);
 
+        if($result['type'] != 'annotation'){
+            $client = elgg_solr_get_client();
+            $query = $client->createQuery($client::QUERY_SELECT);
+
+            $query->setFields(array('score'));
+            $query->setQuery('(subtype:comment) AND container_guid:'.$result['id']);
+            $query->setStart(0)->setRows(50);
+            $resultset = $client->select($query);
+            $num_replies = 0;
+
+            $num_replies = count($resultset);
+        } else {
+            $displaySubtype = $subtype;
+        }
+
         $displaySubtype = $subtype;
         $base = '';
         $url = $base;
@@ -488,24 +554,6 @@ foreach ($results as $result) {
                 $url .= "/".$subtype."/view/".$guid;
                 //$elementLink .= "class='resultItemLink' ";
                 break;
-        }
-
-        if($result['type'] != 'annotation'){
-            $client = elgg_solr_get_client();
-            $query = $client->createQuery($client::QUERY_SELECT);
-
-            $query->setFields(array('score'));
-            $query->setQuery('(subtype:comment OR subtype:generic_comment) AND container_guid:'.$result['id']);
-
-            $resultset = $client->select($query);
-            $num_replies = 0;
-            foreach ($resultset as $document) {
-                $commentResults['score'] = $document->score;
-            }
-
-            $num_replies = count($commentResults);
-        } else {
-            $displaySubtype = $subtype;
         }
 
         $result['title'] ? $itemTitle = $result['title'] : $result['name'];
