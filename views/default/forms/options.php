@@ -24,15 +24,20 @@ $syn_bar = elgg_view('input/select', array(
     ),
 ));
 
-$pizza  = elgg_get_plugin_setting('category_groups', 'more_solr');
-$pizza ? $groupListValue = explode("[",$pizza) : $groupListValue = elgg_echo('option:all');
+$pizza  = elgg_get_plugin_setting('cate_en', 'more_solr');
+if($pizza != 'no'){
+    $pizza  = elgg_get_plugin_setting('category_groups', 'more_solr');
+    $pizza ? $groupListValue = explode("[",$pizza) : $groupListValue = elgg_echo('option:all');
 
-$groupnamelist = [];
-foreach ($groupListValue as $value) {
-    $value = explode(",", $value);
-    if ($value[0]) {
-        $groupnamelist[] .= $value[0];
+    $groupnamelist = [];
+    foreach ($groupListValue as $value) {
+        $value = explode(",", $value);
+        if ($value[0]) {
+            $groupnamelist[] .= $value[0];
+        }
     }
+} else {
+
 }
 $categoriesGroups = array_merge(['all', 'group', 'user'], $groupnamelist);
 $category = elgg_echo('options:category');
