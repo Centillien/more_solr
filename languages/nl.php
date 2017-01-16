@@ -19,6 +19,8 @@ return array(
 
     'options:search' => "Zoeken",
 
+    'options:admin:only' => "Admin only",
+
     'options:synonym' => "Synoniem zoeken",
     'options:synonym:help' => "Link naar lijst met synoniemen",
 
@@ -27,6 +29,7 @@ return array(
 
     'options:category' => "Categorie",
     'options:cat:list:help' => "Houd ctrl in om meerdere te selecteren, selecteer om aan/uit te zetten.",
+    'options:cat:list:help:warning' => "Note: categorieën van plugins kunnen problemen veroorzaken.",
 
     'options:sort' => "Sorteren op",
     'options:sort:list' => "Lijst met sorteer opties",

@@ -8,13 +8,21 @@
     Author Email: n.vdboogaart@outlook.com
 */
 
-elgg_register_event_handler('init', 'system', 'more_solr_init');
+$setting = elgg_get_plugin_setting('admin_only', 'more_solr');
+if($setting != 'no'){
+    if(elgg_is_admin_logged_in()){
+        elgg_register_event_handler('init', 'system', 'more_solr_init');
+    }
+} else {
+    elgg_register_event_handler('init', 'system', 'more_solr_init');
+}
 
 /**
  *  Init more_solr plugin
  */
 function more_solr_init()
 {
+    $setting = elgg_get_plugin_setting('admin_only', 'more_solr');
     elgg_extend_view('css/admin', 'css/admin/more_solr_admin');
     elgg_extend_view('css/elgg', 'css/admin/more_solr_admin');
 

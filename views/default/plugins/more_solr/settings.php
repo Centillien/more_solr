@@ -32,6 +32,16 @@ $chatEntities = elgg_get_entities_from_relationship([
     'limit' => false
 ]);
 
+$adminOnly = elgg_echo('options:admin:only');
+$adminOnly_enable = elgg_view('input/select', array(
+    'name' => 'params[admin_only]',
+    'options_values' => array(
+        'yes' => elgg_echo('option:yes'),
+        'no' => elgg_echo('option:no'),
+    ),
+    'value' => $vars['entity']->admin_only ? $vars['entity']->admin_only : elgg_echo('option:no'),
+));
+
 //  Enable/disable synonyms
 $synonym = elgg_echo('options:synonym');
 $synonym_enable = elgg_view('input/select', array(
@@ -110,6 +120,7 @@ $category_list = elgg_view('input/select', array(
     'multiple' => 'multiple',
 ));
 $catListHelp = elgg_echo('options:cat:list:help');
+$catListHelpWarning = elgg_echo('options:cat:list:help:warning');
 
 //  Enable/disable sort
 $sort = elgg_echo('options:sort');
@@ -507,6 +518,10 @@ $settings = <<<__HTML
   </tr>
  </thead>
   <tr>
+    <td><label>$adminOnly</label></td>
+    <td>$adminOnly_enable</td>
+  </tr>
+  <tr>
     <td><label>$synonym</label></td>
     <td>$synonym_enable</td>
     <td>$popupSyn $synPopup</td>
@@ -519,7 +534,7 @@ $settings = <<<__HTML
   <tr>
     <td><label>$category</label></td>
     <td>$category_enable</td>
-    <td>$category_list <br> $catListHelp</td>
+    <td>$category_list <br> $catListHelp <br> $catListHelpWarning</td>
   </tr>
   <tr>
     <td><label>$sort</label></td>

@@ -115,7 +115,7 @@ $multiQuery .= ")";
 if($search['tags']){
     $firstLimiter = substr($search['tags'], 0, 3);      //  Check first 3 characters if user added an "and, or, not" at start of string
     if($firstLimiter == "and" || $firstLimiter == "or " || $firstLimiter == "not") {
-            $search['tags'] = $search['search'] . " " . $search['tags'];
+        $search['tags'] = $search['search'] . " " . $search['tags'];
     }
 
     // Collect all boolean values and split to define which limiter every word has, first word always has AND
@@ -413,7 +413,7 @@ foreach ($results as $result) {
             <a href='".$url."/groups/profile/".$guid."/".$result['name']."'>
                 <div class='head'>
                         <h4>".$itemTitle."</h4>
-                        <div class='pull-right'>".$subtype."<br> Members: ".$num_members."</div>
+                        <div class='pull-right'>".$subtype."</div>
                         <div class='desc'><p>".$description."</p></div>
                 </div>
             </a>
