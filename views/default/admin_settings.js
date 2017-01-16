@@ -244,6 +244,7 @@ $( "#addCate").click(function () {
     //  Remove it first to prevent duplicates
     addCate();
 });
+
 $( "#removeCate").click(function () {
     removeCate();
 });
