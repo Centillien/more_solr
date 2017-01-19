@@ -174,7 +174,7 @@ foreach($userResults as $v){
 $json = json_encode(utf8ize($userArray), JSON_UNESCAPED_UNICODE);
 $kappa_bar = elgg_view('input/text', array(
     'name' => 'getUsers',
-    'class' => 'hiddenUsers',
+    'class' => 'hidden',
     'value' => $json,
 ));
 
