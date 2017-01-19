@@ -13,6 +13,6 @@
     <requires>
         <type>plugin</type>
         <name>elgg_solr</name>
-        <version>2.1.0</version>
+        <version>1.10</version>
     </requires>
 </plugin_manifest>
