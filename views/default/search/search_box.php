@@ -51,11 +51,11 @@ if($setting != 'no'){
 
         $popup = elgg_format_element('div', [
             'class' => 'elgg-module-popup hidden',
-            'id' => 'popup-module',
+            'id' => 'popup-module-more-solr',
         ], $popup_content);
 
         $link = elgg_view('output/url', [
-            'href' => '#popup-module',
+            'href' => '#popup-module-more-solr',
             'text' => 'Advanced options',
             'rel' => 'popup',
             'class' => 'elgg-lightbox',
@@ -177,13 +177,13 @@ if($setting != 'no'){
 
     $popup = elgg_format_element('div', [
         'class' => 'elgg-module-popup hidden',
-        'id' => 'popup-module',
+        'id' => 'popup-module-more-solr',
     ], $popup_content);
 
     $link = elgg_view('output/url', [
-        'href' => '#popup-module',
+        'href' => '#popup-module-more-solr',
         'text' => 'Advanced options',
-        'rel' => 'popup',
+        'rel' => 'popup-more-solr',
         'class' => 'elgg-lightbox',
         'data-position' => json_encode([
             'my' => 'center bottom',
