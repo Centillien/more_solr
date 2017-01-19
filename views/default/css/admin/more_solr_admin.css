@@ -24,7 +24,19 @@ h1 {
     display: inline-block;
     text-align: center;
     line-height: 15px;
-    width: 15px;
+    padding:3px;
+    margin:1px;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+.currentPagination {
+    background-color:rgb(206, 206, 206);
+    display: inline-block;
+    text-align: center;
+    line-height: 15px;
+    padding:3px;
+    margin:1px 4px 1px 4px;
     border: 1px solid black;
     border-radius: 3px;
 }
@@ -149,4 +161,8 @@ h1 {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.subtype {
+    margin:10px;
 }

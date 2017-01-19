@@ -12,12 +12,19 @@ submit.onsubmit = function() {
             spotter = 1
         }
     }
-    if(spotter == 1) {
-        submit.submit();
-    } else {
+    if(spotter != 1) {
         popup.className = "elgg-module-popup hidden elgg-state-highlight";
         popup.style.display = 'none';
         elgg.register_error(elgg.echo('form:error:fields'));
+        return false;
+    }
+
+    console.log($( "#date" ).val() < $( "#dateTo" ).val());
+
+    if($( "#date" ).val() > $( "#dateTo" ).val()){
+        popup.className = "elgg-module-popup hidden elgg-state-highlight";
+        popup.style.display = 'none';
+        elgg.register_error(elgg.echo('form:error:date'));
         return false;
     }
 };
@@ -64,47 +71,32 @@ $("#userAuto").autocomplete({
 });
 var count = 0;
 
-$( ".advancedPage" ).click(function () {
-    pagination(this.textContent);
+$( ".advancedPage, .currentPage" ).click(function () {
+    var current = document.getElementById('currentPage');
+    if(this.textContent == '<'){
+        var prevPage = current.textContent - 1;
+        console.log(prevPage);
+        window.location.href = window.location.href.split("&page=")[0] + "&page=" + prevPage;
+    } else if (this.textContent == '>'){
+        var nextPage = parseInt(current.textContent, 10) + 1;
+        console.log(nextPage);
+        window.location.href = window.location.href.split("&page=")[0] + "&page=" + nextPage;
+    } else {
+        window.location.href = window.location.href.split("&page=")[0] + "&page=" + this.textContent;
+    }
 });
 
-//  Make functions to add/remove hidden classes depending on their id
-
-function pagination (page){
-    var maxpp = 10;
-
-    var i;
-    var pageItems;
-    var item;
-
-    //  Removes old items
-    for(i=0;i<10;i++){
-        var htmlCollection = document.getElementsByClassName("advancedItem");
-        var items = Array.prototype.slice.call( htmlCollection );
-        items.forEach(function (e) {
-            if(e.classList == "advancedItem"){
-                e.classList = "advancedItem hidden";
-            }
-        });
-    }
-
-    //  Adds new items
-    for(i=0;i<10;i++){
-        pageItems = i + 1 + ((page - 1) * maxpp);
-        item = [document.getElementById(pageItems.toString())];
-        item.forEach(function (e) {
-            if(e != null) {
-                e.classList = "advancedItem";
-            }
-        });
-    }
-}
+$( ".resultItemLink" ).click(function () {
+    elgg.register_error(elgg.echo('type:pageNotFound'));
+});
 
 var htmlCollection = document.getElementsByClassName("advancedItem");
 var items = Array.prototype.slice.call( htmlCollection );
 items.forEach(function (e) {
     var child = findClass(e, "one");
-    findClass(e, "info").textContent = child.textContent;
+    if(child){
+        findClass(e, "info").textContent = child.textContent;
+    }
 });
 
 function findClass(element, className) {
@@ -128,3 +120,4 @@ function findClass(element, className) {
     recurse(element, className, false);
     return foundElement;
 }
+

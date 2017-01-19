@@ -222,3 +222,117 @@ function eddField (counterEd, maxvalue) {
         document.getElementById('eddcounter').innerHTML = counterEd + " / " + maxvalue;
     }
 }
+
+/*
+    Category add function
+ */
+//  List of all categories found in elgg
+var categories = $( "#categories").val();
+var groupname = $( "#groupName");
+var groups = $( "#groupsCategories");
+var categoryGroups = $( "#categoryGroups");
+categories = categories.split(' ');
+selectGroup();
+
+$( ".elgg-menu-longtext" ).attr("class", "hidden");
+
+$("#categoryInput").autocomplete(
+    { source: categories}
+);
+
+$( "#addCate").click(function () {
+    //  Remove it first to prevent duplicates
+    addCate();
+});
+
+$( "#removeCate").click(function () {
+    removeCate();
+});
+
+$( "#categoriesDisplayList" ).change(function () {
+    $("#categoryInput").val($( "#categoriesDisplayList" ).val());
+    addCate();
+});
+
+$('#categoryInput').keypress(function (e) {
+    if (e.which == 13) {
+        e.preventDefault();
+        addCate();
+    }
+});
+
+$( "#saveGroupCate").click(function () {
+    if(groupname.val() && groups.val()){
+        //  Delete old version if already existed
+        deleteGroup();
+
+        //  Save function
+        var string = groupname.val();
+        var wordArray = groups.val().split(" ");
+        wordArray.forEach(function (data) {
+            if(data){
+                string += "," + data;
+            }
+        });
+        $( "#categoryGroups" ).val(categoryGroups.val() + "[" + string + "]");
+        elgg.system_message(elgg.echo("category:group:saved"));
+    } else {
+        elgg.register_error(elgg.echo("category:required:field"));
+    }
+});
+
+$( "#deleteGroupCate").click(function () {
+    deleteGroup();
+});
+
+$( "#clearCate").click(function () {
+    $( "#groupsCategories" ).val("");
+});
+
+$( "#groupSelect" ).change(function () {
+    selectGroup();
+});
+
+function addCate(){
+    var pass = false;
+    categories.forEach(function (data) {
+        if(data == $("#categoryInput").val()){
+            pass = true;
+        }
+    });
+
+    if(pass && $("#categoryInput").val() != ""){
+        removeCate();
+        $("#groupsCategories").val($("#categoryInput").val() + " " + $("#groupsCategories").val());
+    } else {
+        elgg.register_error(elgg.echo("category:invalid:category"));
+    }
+}
+
+function removeCate(){
+    //  Remove the category from group
+    $( "#groupsCategories" ).val(groups.val().replace($("#categoryInput").val() + " ", ""));
+}
+
+function deleteGroup() {
+    //  Delete old version if already existed
+    var replace = "(\\["+groupname.val()+")[,\\w+]+(\\])";
+    var re = new RegExp(replace,"g");
+
+    $( "#categoryGroups" ).val(categoryGroups.val().replace(re, ""));
+    elgg.register_error(elgg.echo("category:group:delete"));
+}
+
+function selectGroup () {
+    //  Select an existing group
+    $("#groupName").val($( "#groupSelect option:selected" ).text());
+
+    var replace = "(\\["+groupname.val()+")[,\\w+]+(\\])";
+    var re = new RegExp(replace,"g");
+    var string = categoryGroups.val().match(re);
+    string = string[0].replace("["+groupname.val()+",", "");
+    string = string.replace("]", "");
+    string = string.replace(/,/g, " ");
+
+    $( "#groupsCategories" ).val(string);
+}

@@ -9,7 +9,7 @@ $results = get_input('results');
 $date = get_input('date');
 $dateTo = get_input('dateTo');
 
-forward(elgg_get_site_url() . "advanced_search/list" .
+forward(elgg_get_site_url() . "more_solr/list_solr" .
     "?search=" . $search .
     "&synonym=" . $synonym .
     "&category=" . $category .
@@ -18,5 +18,6 @@ forward(elgg_get_site_url() . "advanced_search/list" .
     "&user=" . $user .
     "&results=" . $results .
     "&date=" . $date .
-    "&dateTo=" . $dateTo
+    "&dateTo=" . $dateTo.
+    "&page=1"
 );

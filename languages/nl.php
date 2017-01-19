@@ -19,6 +19,8 @@ return array(
 
     'options:search' => "Zoeken",
 
+    'options:admin:only' => "Admin only",
+
     'options:synonym' => "Synoniem zoeken",
     'options:synonym:help' => "Link naar lijst met synoniemen",
 
@@ -27,6 +29,7 @@ return array(
 
     'options:category' => "Categorie",
     'options:cat:list:help' => "Houd ctrl in om meerdere te selecteren, selecteer om aan/uit te zetten.",
+    'options:cat:list:help:warning' => "Note: categorieën van plugins kunnen problemen veroorzaken.",
 
     'options:sort' => "Sorteren op",
     'options:sort:list' => "Lijst met sorteer opties",
@@ -37,8 +40,9 @@ return array(
     'option:abcaz' => "Alfabet, A - Z",
     'option:abcza' => "Alfabet, Z - A",
     'option:popularity' => "Populariteit",
+    'option:relevancy' => "Relevantie",
 
-    'options:tags' => "Zoekwoorden",
+    'options:tags' => "Boolean",
     'options:tags:list' => "Lijst van boolean opties",
     'options:tags:list:help' => "Houd ctrl in om meerdere te selecteren, selecteer om aan/uit te zetten.",
     'option:and' => "En",
@@ -121,6 +125,22 @@ return array(
     'synonym:edit' => 'Verander een synoniem',
 
     /*
+     *      results type
+     */
+    'type:replies' => 'Reacties',
+    'type:discussion' => 'Discussie',
+    'type:image' => 'Afbeelding',
+    'type:file' => 'Bestand',
+    'type:page' => 'Pagina',
+    'type:wallpost' => 'Wall bericht',
+    'type:event' => 'Evenement',
+    'type:task' => 'Opdracht',
+    'type:faq' => 'FAQ',
+    'type:newsletter' => 'Nieuwsbrief',
+    'type:unknown' => 'Anders',
+    'type:pageNotFound' => 'Pagina kon niet geladen worden omdat deze niet beschikbaar is.',
+
+    /*
      * Date settings
      */
     'options:day' => "Dag zoeken",
@@ -128,8 +148,35 @@ return array(
     'options:year' => "Jaar zoeken",
 
     'no:about' => "Geen 'over mij' gevonden.",
+    'no:description' => "Geen samenvatting gevonden.",
 
-    'form:error:fields' => 'Vul het \'zoeken\' of \'zoekwoorden\' veld in.',
+    'form:error:fields' => 'Vul het \'zoeken\' veld in.',
+    'form:error:date' => 'Het datum vanaf veld kan niet nieuwer zijn dan het datum tot veld.',
 
     'results:language' => 'Taal',
+
+    /*
+     *  Category groups
+     */
+
+    'categories:title' => "Categorie groeperen",
+    'options:category:search' => "Voeg categorie toe",
+    'options:category:search:placeholder' => "Selecteer een categorie om toe te voegen",
+    'options:category:group:name' => "Categorie groepsnaam",
+    'options:category:group:name:placeholder' => "Naam van de categorie groep",
+    'options:category:group:categories' => "Categorieën in de groep",
+    'options:category:categories:list' => "Lijst met categorieën",
+    'options:category:group:categories:placeholder' => "Lijst met categorieën in de groep word hier weergeven",
+    'options:category:group:list' => "Categorie groepslijst",
+    'option:save:category:Add' => "Categorie toevoegen aan groep",
+    'option:save:category:Remove' => "Categorie verwijderen van groep",
+    'option:save:category:group' => "Categorie groep opslaan",
+    'option:delete:category:group' => "Categorie groep verwijderen",
+    'category:required:field' => "Groepsnaam en categorieën zijn verplichte velden.",
+    'category:group:saved' => "Groep is aangepast/opgeslagen.",
+    'category:group:delete' => "Groep is verwijdert.",
+    'option:clear:category' => "Clear categories",
+    'category:invalid:category' => "Ongeldige categorie opgegeven.",
+    'options:category:groups:enable' => "Aanzetten?",
+    'options:category:groups:enable:hint' => "Als deze uit staat zal de 'Lijst met categorieën' weergeven worden."
 );

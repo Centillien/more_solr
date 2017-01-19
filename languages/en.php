@@ -19,6 +19,8 @@ return array(
 
     'options:search' => "search",
 
+    'options:admin:only' => "Admin only",
+
     'options:synonym' => "Synonym search",
     'options:synonym:help' => "Link to list of synonyms",
 
@@ -27,6 +29,7 @@ return array(
 
     'options:category' => "Category",
     'options:cat:list:help' => "Hold ctrl to select multiple, select to turn on/off",
+    'options:cat:list:help:warning' => "Note: Categories of plugins could be incompatible.",
 
     'options:sort' => "Sort on",
     'options:sort:list' => "List of sort options",
@@ -37,8 +40,9 @@ return array(
     'option:abcaz' => "Alphabet A - Z",
     'option:abcza' => "Alphabet Z - A",
     'option:popularity' => "Popularity",
+    'option:relevancy' => "Relevancy",
 
-    'options:tags' => "Tags",
+    'options:tags' => "Boolean",
     'options:tags:list' => "List of boolean options",
     'options:tags:list:help' => "Hold ctrl to select multiple, select to turn on/off",
     'option:and' => "And",
@@ -126,15 +130,59 @@ return array(
     'synonym:edit' => 'Edit a synonym',
 
     /*
+     *      results type
+     */
+    'type:replies' => 'Replies',
+    'type:discussion' => 'Discussion',
+    'type:image' => 'Image',
+    'type:file' => 'File',
+    'type:page' => 'Page',
+    'type:wallpost' => 'Wall post',
+    'type:event' => 'Event',
+    'type:task' => 'Task',
+    'type:faq' => 'FAQ',
+    'type:newsletter' => 'Newsletter',
+    'type:unknown' => 'Other',
+    'type:pageNotFound' => 'Page could not be opened because it is unavailable.',
+
+    /*
      * Date settings
      */
+    'options:date' => "Date search",
     'options:day' => "Search day",
     'options:month' => "Search month",
     'options:year' => "Search year",
 
     'no:about' => "No 'about me' found.",
+    'no:description' => "No description found",
 
-    'form:error:fields' => 'Either the \'search\' or \'tags\' field is required.',
+    'form:error:fields' => 'The \'search\' field is required.',
+    'form:error:date' => 'The date from field can not be more recent than the date to field.',
 
     'results:language' => 'Language',
+
+    /*
+     *  Category groups
+     */
+
+    'categories:title' => "Category groups",
+    'options:category:search' => "Add a category",
+    'options:category:search:placeholder' => "Select a category to add",
+    'options:category:group:name' => "Category group name",
+    'options:category:group:name:placeholder' => "Name of group",
+    'options:category:group:categories' => "Categories in group",
+    'options:category:categories:list' => "List of categories",
+    'options:category:group:categories:placeholder' => "List of categories in selected group will show up here",
+    'options:category:group:list' => "Category groups",
+    'option:save:category:Add' => "Add category to group",
+    'option:save:category:Remove' => "Remove category from group",
+    'option:save:category:group' => "Save category group",
+    'option:delete:category:group' => "Delete category group",
+    'category:required:field' => "Groupname and its categories are required.",
+    'category:group:saved' => "Group has been saved/edited.",
+    'category:group:delete' => "Group has been deleted.",
+    'option:clear:category' => "Clear categories",
+    'category:invalid:category' => "Invalid category in category field",
+    'options:category:groups:enable' => "Enable?",
+    'options:category:groups:enable:hint' => "When disabled, will show 'List of categories' instead of a list of the groups."
 );

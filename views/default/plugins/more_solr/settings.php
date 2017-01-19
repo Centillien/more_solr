@@ -6,7 +6,7 @@
 elgg_load_js('admin_settings');
 /** Get stopwords and synonyms file */
 
-// arbitrary file on the filestore
+//  Get the list of stopwords
 $fileStp = new ElggFile();
 $fileStp->owner_guid = 7777;
 $fileStp->setFilename('settings/stopword/list.txt');
@@ -16,7 +16,7 @@ $contents = file_get_contents($fileStp->getFilenameOnFilestore());
 $contents = strtolower($contents);
 $stopWordList = explode(PHP_EOL, $contents);
 
-// arbitrary file on the filestore
+//  Get the list of synonyms
 $fileSyn = new ElggFile();
 $fileSyn->owner_guid = 7777;
 $fileSyn->setFilename('settings/synonym/list.txt');
@@ -32,16 +32,17 @@ $chatEntities = elgg_get_entities_from_relationship([
     'limit' => false
 ]);
 
-$search = elgg_echo('options:search');
-$search_enable = elgg_view('input/select', array(
-    'name' => 'params[search_en]',
+$adminOnly = elgg_echo('options:admin:only');
+$adminOnly_enable = elgg_view('input/select', array(
+    'name' => 'params[admin_only]',
     'options_values' => array(
         'yes' => elgg_echo('option:yes'),
         'no' => elgg_echo('option:no'),
     ),
-    'value' => $vars['entity']->search_en ? $vars['entity']->search_en : elgg_echo('option:no'),
+    'value' => $vars['entity']->admin_only ? $vars['entity']->admin_only : elgg_echo('option:no'),
 ));
 
+//  Enable/disable synonyms
 $synonym = elgg_echo('options:synonym');
 $synonym_enable = elgg_view('input/select', array(
     'name' => 'params[syn_en]',
@@ -51,13 +52,8 @@ $synonym_enable = elgg_view('input/select', array(
     ),
     'value' => $vars['entity']->syn_en ? $vars['entity']->syn_en : elgg_echo('option:no'),
 ));
-$synonym_link = elgg_view('input/file', array(
-    'name' => 'synFile',
-    'class' => 'elgg-input-thin',
-));
-$synLinkHelp = elgg_echo('options:synonym:help').". Uploaded file: ";
-$synLinkHelp .= $vars['entity']->syn_file ? $vars['entity']->syn_file : elgg_echo('no:file');
 
+//  Enable/disable stopwords
 $stopwords = elgg_echo('options:stop');
 $stopwords_enable = elgg_view('input/select', array(
     'name' => 'params[stp_en]',
@@ -67,13 +63,8 @@ $stopwords_enable = elgg_view('input/select', array(
     ),
     'value' => $vars['entity']->stp_en ? $vars['entity']->stp_en : elgg_echo('option:no'),
 ));
-$stopwords_link = elgg_view('input/file', array(
-    'name' => 'stpFile',
-    'class' => 'elgg-input-thin',
-));
-$stopLinkHelp = elgg_echo('options:stop:help');
-$stopLinkHelp .= $vars['entity']->stp_file ? $vars['entity']->stp_file : elgg_echo('no:file');
 
+//  Enable/disable categories
 $category = elgg_echo('options:category');
 $category_enable = elgg_view('input/select', array(
     'name' => 'params[cat_en]',
@@ -85,21 +76,53 @@ $category_enable = elgg_view('input/select', array(
 ));
 $vars['entity']->cat_list ? $catListValue = explode(",",$vars['entity']->cat_list) : $catListValue = elgg_echo('option:all');
 
-$arr = [];
-$arr['all'] = elgg_echo('option:all');
-$types = get_registered_entity_types();
-foreach($types['object'] as $type){
-    print_r($types['object'][$type]);
-    $arr["$type"] = $type;
+//  Get the list of category groups
+
+//  Get all the different subtypes
+$client = elgg_solr_get_client();
+$query = $client->createSelect();
+
+$facetSet = $query->getFacetSet();
+$facetSet->createFacetField('subtypes')->setField('subtype');
+
+$resultset = $client->select($query);
+
+$facet = $resultset->getFacetSet()->getFacet('subtypes');
+$types = ['group', 'user'];
+foreach ($facet as $value => $count) {
+    if($value){
+        $types[] .= $value;
+    }
 }
+
+$categories = [];
+$categories['all'] = elgg_echo('option:all');
+foreach($types as $type){
+    $categories["$type"] = $type;
+}
+
+$vars['entity']->category_groups ? $groupListValue = explode("[",$vars['entity']->category_groups) : $groupListValue = elgg_echo('option:all');
+$groupnamelist = [];
+$catGroupsList = null;
+foreach ($groupListValue as $value){
+    $value = explode(",", $value);
+    if($value[0]){
+        $groupnamelist[] .= $value[0];
+    }
+    $catGroupsList = $value;
+}
+
+$categoriesGroups = array_merge(['all', 'group', 'user'], $groupnamelist);
 $category_list = elgg_view('input/select', array(
     'name' => 'params[cat_list]',
-    'options_values' => $arr,
+    'options_values' => $vars['entity']->cate_en != 'no' ? $categoriesGroups : $categories,
     'value' => $catListValue,
     'multiple' => 'multiple',
 ));
 $catListHelp = elgg_echo('options:cat:list:help');
+$catListHelpWarning = elgg_echo('options:cat:list:help:warning');
 
+//  Enable/disable sort
 $sort = elgg_echo('options:sort');
 $sort_enable = elgg_view('input/select', array(
     'name' => 'params[sort_en]',
@@ -111,32 +134,32 @@ $sort_enable = elgg_view('input/select', array(
 ));
 $vars['entity']->sort_list ? $sortListValue = explode(",",$vars['entity']->sort_list) : $sortListValue = 'timeno';
 
+//  Sort options
+$sorter = array(
+    //'popularity' => elgg_echo('option:popularity'),     // TODO: implement popularity
+    'relevancy' => elgg_echo('option:relevancy'),       // Hoogste score(solr)
+    'timeon' => elgg_echo('option:timeon'),             // Time old - new
+    'timeno' => elgg_echo('option:timeno'),             // Time new - old
+    'abcaz' => elgg_echo('option:abcaz'),               // Alphabet A - Z
+    'abcza' => elgg_echo('option:abcza'));              // Alphabet Z - A
+
 $sort_list = elgg_view('input/select', array(
     'name' => 'params[sort_list]',
-    'options_values' => array(
-        'popularity' => elgg_echo('option:popularity'),   // Aantal vrienden, aantal replies
-        'timeon' => elgg_echo('option:timeon'), // Time old - new
-        'timeno' => elgg_echo('option:timeno'), // Time new - old
-        'abcaz' => elgg_echo('option:abcaz'),   // Alphabet A - Z
-        'abcza' => elgg_echo('option:abcza'),   // Alphabet Z - A
-    ),
+    'options_values' => $sorter,
     'value' => $sortListValue,
     'multiple' => 'multiple',
 ));
 $sortListHelp = elgg_echo('options:sort:list:help');
+
+//  Set the 'default' of sort
 $sort_default = elgg_view('input/select', array(
     'name' => 'params[sort_def]',
-    'options_values' => array(
-        'popularity' => elgg_echo('option:popularity'),   // Aantal vrienden, aantal replies
-        'timeon' => elgg_echo('option:timeon'), // Time old - new
-        'timeno' => elgg_echo('option:timeno'), // Time new - old
-        'abcaz' => elgg_echo('option:abcaz'),   // Alphabet A - Z
-        'abcza' => elgg_echo('option:abcza'),   // Alphabet Z - A
-    ),
+    'options_values' => $sorter,
     'value' => $vars['entity']->sort_def ? $vars['entity']->sort_def : 'timeno',
 ));
 $sortDefHelp = elgg_echo('options:sort:list:default:help');
 
+//  Boolean search
 $tags = elgg_echo('options:tags');
 $tags_enable = elgg_view('input/select', array(
     'name' => 'params[tags_en]',
@@ -147,7 +170,7 @@ $tags_enable = elgg_view('input/select', array(
     'value' => $vars['entity']->tags_en ? $vars['entity']->tags_en : elgg_echo('option:no'),
 ));
 
-//  STOPWOORDEN(de het een)
+//  Stopwoorden (de het een)
 $user = elgg_echo('options:user');
 $user_enable = elgg_view('input/select', array(
     'name' => 'params[user_en]',
@@ -157,17 +180,8 @@ $user_enable = elgg_view('input/select', array(
     ),
     'value' => $vars['entity']->user_en ? $vars['entity']->user_en : elgg_echo('option:no'),
 ));
-$userAd = elgg_echo('options:user:admin');
-$userAd_enable = elgg_view('input/select', array(
-    'name' => 'params[usAd_en]',
-    'options_values' => array(
-        'yes' => elgg_echo('option:yes'),
-        'no' => elgg_echo('option:no'),
-    ),
-    'value' => $vars['entity']->usAd_en ? $vars['entity']->usAd_en : elgg_echo('option:no'),
-));
-$userAdHelp = elgg_echo('options:user:admin:help');
 
+//  Date
 $date = elgg_echo('options:date');
 $date_enable = elgg_view('input/select', array(
     'name' => 'params[date_en]',
@@ -177,37 +191,8 @@ $date_enable = elgg_view('input/select', array(
     ),
     'value' => $vars['entity']->date_en ? $vars['entity']->date_en : elgg_echo('option:no'),
 ));
-$dateDay = elgg_echo('options:date:day');
-$dateDay_en = elgg_view('input/select', array(
-    'name' => 'params[day_en]',
-    'options_values' => array(
-        'yes' => elgg_echo('option:yes'),
-        'no' => elgg_echo('option:no'),
-    ),
-    'value' => $vars['entity']->day_en ? $vars['entity']->day_en : elgg_echo('option:no'),
-));
-$dateDayHelp = elgg_echo('options:date:day:help');
-$dateMonth = elgg_echo('options:date:month');
-$dateMonth_enable = elgg_view('input/select', array(
-    'name' => 'params[mon_en]',
-    'options_values' => array(
-        'yes' => elgg_echo('option:yes'),
-        'no' => elgg_echo('option:no'),
-    ),
-    'value' => $vars['entity']->mon_en ? $vars['entity']->mon_en : elgg_echo('option:no'),
-));
-$dateMonthHelp = elgg_echo('options:date:month:help');
-$dateYear = elgg_echo('options:date:year');
-$dateYear_enable = elgg_view('input/select', array(
-    'name' => 'params[year_en]',
-    'options_values' => array(
-        'yes' => elgg_echo('option:yes'),
-        'no' => elgg_echo('option:no'),
-    ),
-    'value' => $vars['entity']->year_en ? $vars['entity']->year_en : elgg_echo('option:no'),
-));
-$dateYearHelp = elgg_echo('options:date:year:help');
 
+//  Amount of results
 $results = elgg_echo('options:results');
 $results_enable = elgg_view('input/select', array(
     'name' => 'params[res_en]',
@@ -224,58 +209,6 @@ $results_amount = elgg_view('input/text', array(
     'placeholder' => $vars['entity']->res_am ? $vars['entity']->res_am : elgg_echo('options:results:placeholder'),
 ));
 $resultsAmountHelp = elgg_echo('options:results:help');
-
-
-// Relevance options
-
-$searchRel = elgg_view('input/text', array(
-    'name' => 'params[searchRel]',
-    'value' => $vars['entity']->searchRel == '' ? elgg_echo('options:results:placeholder') : $vars['entity']->searchRel,
-    'class' => 'elgg-input-thin',
-    'placeholder' => $vars['entity']->searchRel ? $vars['entity']->searchRel : elgg_echo('options:results:placeholder'),
-));
-$synonymRel = elgg_view('input/text', array(
-    'name' => 'params[synonymRel]',
-    'value' => $vars['entity']->synonymRel == '' ? elgg_echo('options:results:placeholder') : $vars['entity']->synonymRel,
-    'class' => 'elgg-input-thin',
-    'placeholder' => $vars['entity']->synonymRel ? $vars['entity']->synonymRel : elgg_echo('options:results:placeholder'),
-));
-$categoryRel = elgg_view('input/text', array(
-    'name' => 'params[categoryRel]',
-    'value' => $vars['entity']->categoryRel == '' ? elgg_echo('options:results:placeholder') : $vars['entity']->categoryRel,
-    'class' => 'elgg-input-thin',
-    'placeholder' => $vars['entity']->categoryRel ? $vars['entity']->categoryRel : elgg_echo('options:results:placeholder'),
-));
-$sortRel = elgg_view('input/text', array(
-    'name' => 'params[sortRel]',
-    'value' => $vars['entity']->sortRel == '' ? elgg_echo('options:results:placeholder') : $vars['entity']->sortRel,
-    'class' => 'elgg-input-thin',
-    'placeholder' => $vars['entity']->sortRel ? $vars['entity']->sortRel : elgg_echo('options:results:placeholder'),
-));
-$tagsRel = elgg_view('input/text', array(
-    'name' => 'params[tagsRel]',
-    'value' => $vars['entity']->tagsRel == '' ? elgg_echo('options:results:placeholder') : $vars['entity']->tagsRel,
-    'class' => 'elgg-input-thin',
-    'placeholder' => $vars['entity']->tagsRel ? $vars['entity']->tagsRel : elgg_echo('options:results:placeholder'),
-));
-$userRel = elgg_view('input/text', array(
-    'name' => 'params[userRel]',
-    'value' => $vars['entity']->userRel == '' ? elgg_echo('options:results:placeholder') : $vars['entity']->userRel,
-    'class' => 'elgg-input-thin',
-    'placeholder' => $vars['entity']->userRel ? $vars['entity']->userRel : elgg_echo('options:results:placeholder'),
-));
-$dateRel = elgg_view('input/text', array(
-    'name' => 'params[dateRel]',
-    'value' => $vars['entity']->dateRel == '' ? elgg_echo('options:results:placeholder') : $vars['entity']->dateRel,
-    'class' => 'elgg-input-thin',
-    'placeholder' => $vars['entity']->dateRel ? $vars['entity']->dateRel : elgg_echo('options:results:placeholder'),
-));
-$resultsRel = elgg_view('input/text', array(
-    'name' => 'params[resultsRel]',
-    'value' => $vars['entity']->resultsRel == '' ? elgg_echo('options:results:placeholder') : $vars['entity']->resultsRel,
-    'class' => 'elgg-input-thin',
-    'placeholder' => $vars['entity']->resultsRel ? $vars['entity']->resultsRel : elgg_echo('options:results:placeholder'),
-));
 
 //  Hidden pop-up options(for add/edit)
 //  synwords
@@ -476,13 +409,104 @@ $popupSyn = elgg_format_element('div', [
     'id' => 'popup-syn-open',
 ], $synTable);
 
-
-$relevancyTitle = elgg_echo('options:relevancy:title');
-$relevancyInfo = elgg_echo('options:relevancy:info');
 $optionsTitle = elgg_echo('options:title');
+$categoriesTitle = elgg_echo('categories:title');
+
+$cate = elgg_echo('options:category:groups:enable');
+$cate_enable = elgg_view('input/select', array(
+    'name' => 'params[cate_en]',
+    'options_values' => array(
+        'yes' => elgg_echo('option:yes'),
+        'no' => elgg_echo('option:no'),
+    ),
+    'value' => $vars['entity']->cate_en ? $vars['entity']->cate_en : elgg_echo('option:no'),
+));
+$cate_hint = elgg_echo('options:category:groups:enable:hint');
+
+//  Searchfield for categories  (add autofill from categories list)
+$categoriesHidden = elgg_view('input/text', array(
+    'id' => 'categories',
+    'class' => 'hidden',
+    'value' => $categories,
+));
+
+$vars['entity']->category_groups ? $catListValue = $vars['entity']->category_groups : $catListValue = '';
+//  This is where the array of groups with their categories will be
+$categorieGroupHidden = elgg_view('input/text', array(
+    'name' => 'params[category_groups]',
+    'id' => 'categoryGroups',
+    'class' => 'hidden',
+    'value' => $catListValue
+));
+
+$cateSearchLabel = elgg_echo('options:category:search');
+$cateSearch = elgg_view('input/text', array(
+    'id' => 'categoryInput',
+    'class' => 'elgg-input-thin',
+    'placeholder' => elgg_echo('options:category:search:placeholder'),
+));
+
+//  Set the groupname of the category list
+$cateGroupnameLabel = elgg_echo('options:category:group:name');
+$cateGroupname = elgg_view('input/text', array(
+    'id' => 'groupName',
+    'class' => 'elgg-input-thin category-group-name',
+    'placeholder' => elgg_echo('options:category:group:name:placeholder'),
+));
+
+//  Get a list of categories that are in said group
+$categoriesInGroupLabel = elgg_echo('options:category:group:categories');
+$categoriesInGroup = elgg_view('input/longtext', array(
+    'id' => 'groupsCategories',
+    'disabled' => 'disabled',
+    'class' => 'elgg-input-thin category-list',
+    'placeholder' => elgg_echo('options:category:group:categories:placeholder'),
+));
+
+//  Get the list of categories
+$categoriesDisplayListLabel = elgg_echo('options:category:categories:list');
+$categoriesDisplayList = elgg_view('input/select', array(
+    'options_values' => $categories,
+    'id' => 'categoriesDisplayList'
+));
+
+$cateGroupListLabel = elgg_echo('options:category:group:list');
+$cateGroupList = elgg_view('input/select', array(
+    'id' => "groupSelect",
+    'options_values' => $groupnamelist, //  Get the list of cat groups here
+));
+
+$cateSearchAdd = elgg_view('input/button', array(
+    'id' => 'addCate',
+    'value' => elgg_echo('option:save:category:Add'),
+    'class' => 'elgg-button-submit elgg-button',
+));
+
+$cateSearchRemove = elgg_view('input/button', array(
+    'id' => 'removeCate',
+    'value' => elgg_echo('option:save:category:Remove'),
+    'class' => 'elgg-button-submit elgg-button',
+));
+
+$saveCategoryGroup = elgg_view('input/button', array(
+    'id' => 'saveGroupCate',
+    'value' => elgg_echo('option:save:category:group'),
+    'class' => 'elgg-button-submit elgg-button',
+));
+
+$deleteCategoryGroup = elgg_view('input/button', array(
+    'id' => 'deleteGroupCate',
+    'value' => elgg_echo('option:delete:category:group'),
+    'class' => 'elgg-button-submit elgg-button',
+));
+
+$clearCategories = elgg_view('input/button', array(
+    'id' => 'clearCate',
+    'value' => elgg_echo('option:clear:category'),
+    'class' => 'elgg-button-submit elgg-button',
+));
 
 elgg_extend_view('css/admin', 'css/admin/advanced_search');
-
 $settings = <<<__HTML
     <h1>$optionsTitle</h1>
 <table>
@@ -494,8 +518,8 @@ $settings = <<<__HTML
   </tr>
  </thead>
   <tr>
-    <td><label>$search</label></td>
-    <td>$search_enable</td>
+    <td><label>$adminOnly</label></td>
+    <td>$adminOnly_enable</td>
   </tr>
   <tr>
     <td><label>$synonym</label></td>
@@ -510,7 +534,7 @@ $settings = <<<__HTML
   <tr>
     <td><label>$category</label></td>
     <td>$category_enable</td>
-    <td>$category_list <br> $catListHelp</td>
+    <td>$category_list <br> $catListHelp <br> $catListHelpWarning</td>
   </tr>
   <tr>
     <td><label>$sort</label></td>
@@ -531,14 +555,6 @@ $settings = <<<__HTML
   <tr>
     <td><label>$user</label></td>
     <td>$user_enable</td>
-    <td>
-        <table>
-            <tr>
-                <td><label>$userAd</label></td>
-                <td>$userAd_enable $userAdHelp</td>
-            </tr>
-        </table>
-    </td>
   </tr>
   <tr>
     <td><label>$date</label></td>
@@ -549,52 +565,50 @@ $settings = <<<__HTML
     <td>$results_enable</td>
     <td>$results_amount <br> $resultsAmountHelp</td>
   </tr>
-</table><!--
+</table>
 $formSubmit
 
-    <h1>$relevancyTitle</h1>
-    <p>$relevancyInfo</p>
+    <h1>$categoriesTitle</h1>
 <table>
-  <tr>
-    <td><label>$search</label></td>
-    <td>$searchRel <br></td>
-  </tr>
-  <tr>
-    <td><label>$synonym</label></td>
-    <td>$synonymRel <br></td>
-  </tr>
-  <tr>
-    <td><label>$category</label></td>
-    <td>$categoryRel <br></td>
-  </tr>
-  <tr>
-    <td><label>$sort</label></td>
-    <td>$sortRel <br></td>
-  </tr>
-  <tr>
-    <td><label>$tags</label></td>
-    <td>$tagsRel <br></td>
-  </tr>
-  <tr>
-    <td><label>$user</label></td>
-    <td>$userRel <br></td>
-  </tr>
-  <tr>
-    <td><label>$date</label></td>
-    <td>$dateRel <br></td>
-  </tr>
-  <tr>
-    <td><label>$results</label></td>
-    <td>$resultsRel <br></td>
-  </tr>
-</table>-->
-
-<div class='popup-body'>
-</div>
-
-<div class='popup-body'>
-</div>
+$categoriesHidden
+$categorieGroupHidden
+    <tr>
+        <td> $cate </td>
+        <td> $cate_enable </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td> $cate_hint </td>
+    </tr>
+    <tr>
+        <td> $cateGroupListLabel </td>
+        <td> $cateGroupList </td>
+    </tr>
+    <tr>
+        <td> $categoriesDisplayListLabel </td>
+        <td> $categoriesDisplayList </td>
+    </tr>
+    <tr>
+        <td> $cateSearchLabel </td>
+        <td> $cateSearch </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td> $cateSearchAdd $cateSearchRemove </td>
+    </tr>
+    <tr>
+        <td> $cateGroupnameLabel </td>
+        <td> $cateGroupname </td>
+    </tr>
+    <tr>
+        <td> $categoriesInGroupLabel </td>
+        <td> $categoriesInGroup </td>
+    </tr>
+    <tr>
+        <td> $saveCategoryGroup </td>
+        <td> $deleteCategoryGroup $clearCategories</td>
+    </tr>
+</table>
 __HTML;
 
 echo $settings;
-?>
