@@ -84,9 +84,14 @@ if($search['date']){
 if($search['dateTo']){
     $date = new DateTime($search['dateTo']);
     $dateTo = $date->getTimestamp();
+
+    if($search['date'] == $search['dateTo']){
+        $dateTo += 86400;
+    }
 } else {
     $dateTo = "*";
 }
+
 
 $multiQuery = "((time_created:[".$dateFrom." TO ".$dateTo."]) AND ";
 

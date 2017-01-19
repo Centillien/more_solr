@@ -157,6 +157,7 @@ return array(
     'no:description' => "No description found",
 
     'form:error:fields' => 'The \'search\' field is required.',
+    'form:error:date' => 'The date from field can not be more recent than the date to field.',
 
     'results:language' => 'Language',
 

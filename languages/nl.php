@@ -151,6 +151,7 @@ return array(
     'no:description' => "Geen samenvatting gevonden.",
 
     'form:error:fields' => 'Vul het \'zoeken\' veld in.',
+    'form:error:date' => 'Het datum vanaf veld kan niet nieuwer zijn dan het datum tot veld.',
 
     'results:language' => 'Taal',
 

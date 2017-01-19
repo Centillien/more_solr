@@ -12,12 +12,19 @@ submit.onsubmit = function() {
             spotter = 1
         }
     }
-    if(spotter == 1) {
-        submit.submit();
-    } else {
+    if(spotter != 1) {
         popup.className = "elgg-module-popup hidden elgg-state-highlight";
         popup.style.display = 'none';
         elgg.register_error(elgg.echo('form:error:fields'));
+        return false;
+    }
+
+    console.log($( "#date" ).val() < $( "#dateTo" ).val());
+
+    if($( "#date" ).val() > $( "#dateTo" ).val()){
+        popup.className = "elgg-module-popup hidden elgg-state-highlight";
+        popup.style.display = 'none';
+        elgg.register_error(elgg.echo('form:error:date'));
         return false;
     }
 };
@@ -113,3 +120,4 @@ function findClass(element, className) {
     recurse(element, className, false);
     return foundElement;
 }
+
