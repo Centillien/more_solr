@@ -51,14 +51,13 @@ if($setting != 'no'){
 
         $popup = elgg_format_element('div', [
             'class' => 'elgg-module-popup hidden',
-            'id' => 'popup-module-more-solr',
+            'id' => 'popup-module',
         ], $popup_content);
 
         $link = elgg_view('output/url', [
-            'href' => '#popup-module-more-solr',
+            'href' => '#popup-module',
             'text' => 'Advanced options',
             'rel' => 'popup',
-            'class' => 'elgg-lightbox',
             'data-position' => json_encode([
                 'my' => 'center bottom',
                 'at' => 'center top',

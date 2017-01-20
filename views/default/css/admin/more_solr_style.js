@@ -2,7 +2,7 @@
  * Created by niels on 9/11/16.
  */
 var submit = document.getElementById('searchForm');
-var popup = document.getElementById('popup-module-more-solr');
+var popup = document.getElementById('popup-module');
 var reqFields = document.getElementsByClassName('requiredFields');
 var spotter = 0;
 
