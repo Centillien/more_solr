@@ -65,7 +65,11 @@ if(!$( "#advancedResults").find("li" ).length) {
     $( "#noItems" ).css('display','block');
 }
 
-var users = JSON.parse($( "#hiddenUsers").val());
+var users = $( "#hiddenUsers").val();
+users = users.replace(/"/g, "");
+users = users.replace(/\[/g, "");
+users = users.replace(/]/g, "");
+users = users.split(",");
 $("#userAuto").autocomplete({
     source: users
 });

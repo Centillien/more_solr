@@ -163,7 +163,9 @@ if($search['users']){
         $userIdArr = explode(":", $search['users']);
         $size = count($userIdArr) - 1;
 
-        $multiQuery .= " AND (owner_guid:" . $userIdArr[$size]." OR id:".$userIdArr[$size].")";
+        if(is_numeric($userIdArr[$size])){
+            $multiQuery .= " AND (owner_guid:" . $userIdArr[$size]." OR id:".$userIdArr[$size].")";
+        }
     }
 }
 
