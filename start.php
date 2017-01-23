@@ -22,7 +22,6 @@ if($setting != 'no'){
  */
 function more_solr_init()
 {
-    $setting = elgg_get_plugin_setting('admin_only', 'more_solr');
     elgg_extend_view('css/admin', 'css/admin/more_solr_admin');
     elgg_extend_view('css/elgg', 'css/admin/more_solr_admin');
 
