@@ -206,7 +206,7 @@ function addField (counter, maxvalue) {
         var newdiv = document.createElement('input');
         newdiv.setAttribute("type", "text");
         newdiv.setAttribute("name", "addSins["+counter+"]");
-        newdiv.setAttribute("class", "elgg-input-thin elgg-input-text listInputs extraInput");
+        newdiv.setAttribute("class", "myvox-input-thin myvox-input-text listInputs extraInput");
         document.getElementById('addInputList').appendChild(newdiv);
         document.getElementById('addcounter').innerHTML = counter + " / " + maxvalue;
     }
@@ -217,7 +217,7 @@ function eddField (counterEd, maxvalue) {
         var newdiv = document.createElement('input');
         newdiv.setAttribute("type", "text");
         newdiv.setAttribute("name", "eddSins["+counterEd+"]");
-        newdiv.setAttribute("class", "elgg-input-thin elgg-input-text listInputs extraInput");
+        newdiv.setAttribute("class", "myvox-input-thin myvox-input-text listInputs extraInput");
         document.getElementById('eddInputList').appendChild(newdiv);
         document.getElementById('eddcounter').innerHTML = counterEd + " / " + maxvalue;
     }
