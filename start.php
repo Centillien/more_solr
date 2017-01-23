@@ -24,7 +24,6 @@ function more_solr_init()
 {
     elgg_extend_view('css/admin', 'css/admin/more_solr_admin');
     elgg_extend_view('css/elgg', 'css/admin/more_solr_admin');
-    elgg_extend_view('css/myvox', 'css/admin/more_solr_admin');
 
     $action_url = elgg_get_plugins_path() . "more_solr/actions/";
     elgg_register_action("word_handler", "{$action_url}word_handler.php");

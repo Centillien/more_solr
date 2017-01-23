@@ -13,7 +13,7 @@ submit.onsubmit = function() {
         }
     }
     if(spotter != 1) {
-        popup.className = "myvox-module-popup hidden myvox-state-highlight";
+        popup.className = "elgg-module-popup hidden elgg-state-highlight";
         popup.style.display = 'none';
         elgg.register_error(elgg.echo('form:error:fields'));
         return false;
@@ -22,7 +22,7 @@ submit.onsubmit = function() {
     console.log($( "#date" ).val() < $( "#dateTo" ).val());
 
     if($( "#date" ).val() > $( "#dateTo" ).val()){
-        popup.className = "myvox-module-popup hidden myvox-state-highlight";
+        popup.className = "elgg-module-popup hidden elgg-state-highlight";
         popup.style.display = 'none';
         elgg.register_error(elgg.echo('form:error:date'));
         return false;
