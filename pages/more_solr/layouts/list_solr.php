@@ -1,6 +1,4 @@
 <?php
-elgg_load_js('jsStyle');
-
 //  Set the title of the results page
 $title = elgg_echo('search:results:title');
 

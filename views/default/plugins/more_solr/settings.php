@@ -2,10 +2,9 @@
 /**
  * advanced search plugin settings
  */
+elgg_require_js('more_solr/admin_settings');
 
-elgg_load_js('admin_settings');
 /** Get stopwords and synonyms file */
-
 //  Get the list of stopwords
 $fileStp = new ElggFile();
 $fileStp->owner_guid = 7777;
@@ -286,7 +285,6 @@ $synPopup = elgg_view('output/url', [
     'href' => '#popup-syn-open',
     'text' => elgg_echo('options:buttons:synonym'),
     'rel' => 'popup',
-    'class' => 'elgg-lightbox',
     'data-position' => json_encode([
         'my' => 'center bottom',
         'at' => 'center top',
@@ -297,7 +295,6 @@ $stpPopup = elgg_view('output/url', [
     'href' => '#popup-stop-open',
     'text' => elgg_echo('options:buttons:stopword'),
     'rel' => 'popup',
-    'class' => 'elgg-lightbox',
     'data-position' => json_encode([
         'my' => 'center bottom',
         'at' => 'center top',

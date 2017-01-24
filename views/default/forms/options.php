@@ -2,7 +2,7 @@
 /**
  * Advanced search plugin settings
  */
-elgg_load_js('jsStyle');
+elgg_require_js('more_solr/more_solr_style');
 
 $search = elgg_echo('options:search');
 $search_bar = elgg_view('input/text', array(
