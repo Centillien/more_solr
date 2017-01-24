@@ -64,8 +64,10 @@ function editWord ($type, $input, $old) {
         $input = array_filter($input, function($value) { return $value !== ''; });
         if(count($input) > 1){
             $input = implode(",", $input);
+            $old = implode(",", $old);
             $synonyms = implode(PHP_EOL, $synonyms);
-            $synonyms = str_replace($old, $input, $synonyms);
+            $synonyms = str_replace($old, "", $synonyms);
+            $synonyms .= PHP_EOL.$input;
             system_message($old.elgg_echo('handler:successful:change').$input.elgg_echo('handler:refresh'));
         } else {
             register_error(elgg_echo('handler:minAmWords'));

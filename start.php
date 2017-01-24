@@ -33,9 +33,6 @@ function more_solr_init()
     elgg_register_action('more_solr/settings/save', dirname(__FILE__) . '/actions/plugin_settings.php', 'admin');
 
     elgg_register_page_handler('more_solr', 'more_page_handler');
-
-    elgg_register_js('jsStyle', elgg_get_simplecache_url('css/admin/more_solr_style.js'));
-    elgg_register_js('admin_settings', elgg_get_simplecache_url('/admin_settings.js'));
 }
 
 function more_page_handler($page) {
