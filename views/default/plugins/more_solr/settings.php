@@ -2,7 +2,7 @@
 /**
  * advanced search plugin settings
  */
-elgg_require_js('more_solr/admin_settings');
+elgg_require_js("elgg/admin_settings");
 
 /** Get stopwords and synonyms file */
 //  Get the list of stopwords

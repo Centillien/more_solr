@@ -1,6 +1,6 @@
 define(function(require) {
-    var elgg = require("elgg");
-    var $ = require("jquery");
+    var elgg = require('elgg');
+    var $ = require('jquery');
     /**
      * Created by niels on 5/12/16.
      */
